@@ -1,0 +1,33 @@
+---
+import Base from './Base.astro';
+const { frontmatter } = Astro.props;
+---
+<Base title={`${frontmatter.title} — Agent Workflow Playbook`} description={frontmatter.description}>
+  <header class="nav">
+    <div class="wrap row">
+      <a class="wordmark" href="/">Agent Workflow Playbook</a>
+      <nav>
+        <a href="/docs/">Docs</a>
+        <a href="/methodology/">Methodology</a>
+        <a href="https://github.com/shakacode/agent-workflows">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap doc">
+    <h1>{frontmatter.title}</h1>
+    <slot />
+  </main>
+</Base>
+
+<style>
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: var(--max); }
+  .nav { border-bottom: 1px solid var(--line); padding: 0.9rem 0; }
+  .nav nav { display: flex; gap: 1.25rem; }
+  .nav a { color: var(--ink-soft); }
+  .wordmark { font-weight: 650; color: var(--ink) !important; }
+  .doc { padding: 3rem 1.25rem 5rem; }
+  .doc h1 { letter-spacing: -0.02em; }
+  .doc :global(h2) { margin-top: 2.25rem; letter-spacing: -0.01em; }
+  .doc :global(p), .doc :global(li) { color: var(--ink-soft); }
+</style>
