@@ -1,0 +1,94 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Agent Workflow Playbook — run AI coding agents in fleets, safely',
+  description = 'A portable open-source pack for planning, batching, reviewing, and auditing multi-PR work by Codex and Claude Code across all your repos. By ShakaCode.',
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0a0c0f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f4ee" media="(prefers-color-scheme: light)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap bar">
+        <a class="brandmark" href="/" aria-label="Agent Workflow Playbook home">
+          <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="7" fill="var(--brand)" opacity="0.14" />
+            <rect x="6" y="9" width="4.5" height="14" rx="2.25" fill="var(--gate)" />
+            <rect x="13.75" y="9" width="4.5" height="14" rx="2.25" fill="var(--brand)" />
+            <rect x="21.5" y="9" width="4.5" height="14" rx="2.25" fill="var(--brand)" />
+          </svg>
+          <span><b>Agent Workflow Playbook</b> <span class="dim">/ ShakaCode</span></span>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a class="hide-sm" href="/#how">How it works</a>
+          <a class="hide-sm" href="/#skills">Skills</a>
+          <a class="hide-sm" href="/#safety">Safety</a>
+          <a class="hide-sm" href="/#stack">The stack</a>
+          <a href="https://github.com/shakacode/agent-workflows">GitHub&nbsp;↗</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="cols">
+          <div>
+            <h4>The stack</h4>
+            <a href="https://github.com/shakacode/agent-workflows">agent-workflows — the pack</a>
+            <a href="https://github.com/shakacode/agent-coordination">agent-coordination — backend</a>
+            <a href="https://github.com/shakacode/agent-coordination-dashboard">dashboard — operator view</a>
+          </div>
+          <div>
+            <h4>Learn</h4>
+            <a href="/#how">The batch lifecycle</a>
+            <a href="/#methodology">Methodology</a>
+            <a href="/#safety">Security posture</a>
+          </div>
+          <div>
+            <h4>ShakaCode</h4>
+            <a href="https://www.shakacode.com">shakacode.com&nbsp;↗</a>
+            <a href="https://github.com/shakacode">github.com/shakacode&nbsp;↗</a>
+          </div>
+        </div>
+        <div class="fine">
+          <span>Built by ShakaCode · open source</span>
+          <span>plan → batch → review → audit</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
