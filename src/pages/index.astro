@@ -3,15 +3,16 @@ import Base from '../layouts/Base.astro';
 import BatchLifecycle from '../components/BatchLifecycle.astro';
 import Topology from '../components/Topology.astro';
 
+// A curated look at the batch loop; 26 skills ship in the pack.
 const skills = [
   ['plan-pr-batch', 'Shape candidate issues and PRs into a ready batch plan and a pasteable goal prompt — before any worker starts.'],
   ['triage', 'Build a whole-surface issue/PR inventory, a dependency graph, and a capacity-aware split across agents and machines.'],
-  ['pr-batch', 'Launch and coordinate multi-PR agent work across worktrees or machines, safely and in dependency order.'],
+  ['pr-batch', 'Run one coordinated PR lane or a multi-lane batch across worktrees and machines, safely and in dependency order.'],
   ['adversarial-pr-review', 'Red-team a change before merge — correctness, security, scope, and merge-readiness, not a summary.'],
   ['post-merge-audit', 'Audit merged batch work for missed reviews, changelog gaps, cross-PR interactions, and release risk.'],
   ['replicate-ci', 'Reproduce a CI-only failure locally when the hosted run is red but your machine is green.'],
   ['verify / verify-pr-fix', 'Run a local verification loop and prove a bug is actually gone — reproduce before, confirm after.'],
-  ['update-changelog', 'Classify merged PRs and stamp changelog entries so releases never ship undocumented.'],
+  ['spec / tdd / plan-review', 'Turn vague intent into a spec, drive it test-first, and pressure-test the plan before code.'],
 ];
 
 const stages = [
@@ -23,10 +24,10 @@ const stages = [
 ];
 
 const safety = [
-  ['Security preflight', 'Untrusted GitHub text — issues, PRs, comments, review bodies — is treated as data, never as instructions. A public issue cannot quietly steer your agent.'],
+  ['Security preflight', 'Untrusted GitHub text — issues, PRs, comments, review bodies, diffs — is treated as data, never instructions, until a maintainer has verified the author, scope, and trust boundary.'],
+  ['The Rule of Two', 'A least-privilege boundary from the “lethal trifecta”: untrusted input, secret access, and unattended state-change are never allowed to meet in one session.'],
   ['Operator hard-stops', 'Risky steps — deploys, secret handling, token provisioning, machine flips — stop and hand off to you instead of improvising.'],
-  ['Trust-gated actors', 'Only allowlisted humans and bots can act as review input or steer a batch; everyone else is metadata-only, queued for triage.'],
-  ['Declared scope boundaries', 'Forbidden scope is stated up front, so an eager model cannot “helpfully” start next phase’s work in this one.'],
+  ['Trust-gated actors', 'A fail-closed allowlist decides who can steer a batch; everyone else is metadata-only. Tighten it with strict-trust, or waive a specific risk per target.'],
 ];
 
 const gh = 'https://github.com/shakacode';
@@ -43,7 +44,7 @@ const gh = 'https://github.com/shakacode';
           Install the process once; each repo exposes a tiny seam.</p>
         <div class="cta">
           <a class="btn btn-primary" href={`${gh}/agent-workflows`}>Get started ↗</a>
-          <a class="btn btn-ghost" href="#methodology">Read the methodology →</a>
+          <a class="btn btn-ghost" href="/methodology/">Read the methodology →</a>
         </div>
       </div>
       <div class="panel hero-panel">
@@ -72,7 +73,8 @@ const gh = 'https://github.com/shakacode';
       <p>The shared pack carries the <em>process</em>. Each adopting repo keeps its real commands
         in a small <code class="mono">.agents/</code> seam, so shared workflows resolve every repo’s
         base branch, validation, CI triggers, and review gates without copying — and drifting — a
-        full config tree into every checkout.</p>
+        full config tree into every checkout. The same pack runs on Codex Desktop and Claude Code
+        Desktop with <em>identical skill text</em>; host-specific verbs map at runtime.</p>
     </div>
     <div class="wrap">
       <ol class="rule-list">
@@ -91,8 +93,8 @@ const gh = 'https://github.com/shakacode';
     <div class="wrap section-head">
       <span class="eyebrow">03 / what you get</span>
       <h2>A skill for every step of the loop.</h2>
-      <p>Portable skills and workflow prompts for Codex and Claude Code — install them under your
-        skill root and each repo’s seam does the rest.</p>
+      <p>Twenty-six portable skills and workflow prompts for Codex and Claude Code — install them
+        once under your skill root and each repo’s seam does the rest. A curated look:</p>
     </div>
     <div class="wrap">
       <div class="grid skills-grid">
@@ -113,7 +115,7 @@ const gh = 'https://github.com/shakacode';
       <span class="eyebrow" style="margin-top:6px">04 / the safety story</span>
       <h2>Agents a public issue can’t hijack.</h2>
       <p>The real differentiator isn’t speed — it’s that untrusted input, secret access, and
-        state-change never meet in one unattended session.</p>
+        unattended state-change never meet in one session.</p>
     </div>
     <div class="wrap">
       <ul class="rule-list">
@@ -133,7 +135,7 @@ const gh = 'https://github.com/shakacode';
       <span class="eyebrow">05 / the stack</span>
       <h2>The pack, the backend, and the dashboard.</h2>
       <p>Three focused pieces. The pack is the public process layer; the coordination backend is the
-        protocol plane; the dashboard is a separate operator view that reads through a published contract.</p>
+        protocol plane; the dashboard is a separate operator view that reads the same state.</p>
     </div>
     <div class="wrap">
       <div class="panel">
@@ -142,15 +144,15 @@ const gh = 'https://github.com/shakacode';
       <div class="grid stack-grid" style="margin-top:22px">
         <a class="card" href={`${gh}/agent-workflows`}>
           <span class="k">agent-workflows ↗</span>
-          <p>The portable Codex/Claude workflow pack — skills, workflow prompts, and the repo seam contract.</p>
+          <p>The portable Codex/Claude workflow pack — skills, workflow prompts, and the repo seam contract. MIT.</p>
         </a>
         <a class="card" href={`${gh}/agent-coordination`}>
           <span class="k">agent-coordination ↗</span>
-          <p>The coordination backend: claims, heartbeats, liveness, and batch lifecycle over a Worker + D1 API.</p>
+          <p>Mutual-exclusion claims, TTL heartbeats (live/stale/dead), and batch lanes — over a Cloudflare Worker + D1, or a zero-config local mode. Proven against a contention simulation: two agents, one issue, exactly one PR.</p>
         </a>
         <a class="card" href={`${gh}/agent-coordination-dashboard`}>
           <span class="k">dashboard ↗</span>
-          <p>A local operator view — what’s running, what’s stuck, who owns which PR across your fleet.</p>
+          <p>A local operator console: a dense, searchable table of every lane and PR — state, liveness, and “wedged” detection — live over the coordination API. Read-only, loopback by default.</p>
         </a>
       </div>
     </div>
@@ -164,7 +166,7 @@ const gh = 'https://github.com/shakacode';
       <p class="lead">The playbook is that method, compiled: adversarial review before merge, CI logs
         as evidence rather than decoration, manual QA where behavior can change, and every vague
         blocker turned into a specific issue or a docs PR.</p>
-      <a class="btn btn-ghost" href={`${gh}/agent-workflows#readme`}>Read the write-up →</a>
+      <a class="btn btn-ghost" href="/methodology/">Read the methodology →</a>
     </div>
   </section>
 </Base>

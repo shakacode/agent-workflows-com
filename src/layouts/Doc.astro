@@ -1,0 +1,16 @@
+---
+import Base from './Base.astro';
+const { frontmatter } = Astro.props;
+---
+<Base
+  title={`${frontmatter.title} — Agent Workflow Playbook`}
+  description={frontmatter.description}
+>
+  <article class="doc">
+    <span class="eyebrow">{frontmatter.eyebrow ?? 'Docs'}</span>
+    <h1>{frontmatter.title}</h1>
+    <div class="doc-body">
+      <slot />
+    </div>
+  </article>
+</Base>
