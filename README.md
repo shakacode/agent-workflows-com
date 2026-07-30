@@ -7,7 +7,7 @@ Landing page and simple docs for the ShakaCode agent stack:
 - [agent-coordination-dashboard](https://github.com/shakacode/agent-coordination-dashboard) — operator dashboard
 
 Built with [Astro](https://astro.build). Deploys to Cloudflare Pages at
-[agents.shakaflow.com](https://agents.shakaflow.com).
+[agents.shakacode.com](https://agents.shakacode.com).
 
 Design source: [`docs/landing-page-design.md`](https://github.com/shakacode/agent-workflows/blob/main/docs/landing-page-design.md) in agent-workflows.
 
@@ -34,4 +34,4 @@ Cloudflare Pages project: `agent-workflows-com`.
 - Build command: `npm run build`
 - Output directory: `dist`
 - Production branch: `main`
-- Custom domain: `agents.shakaflow.com`
+- Custom domain: `agents.shakacode.com`
