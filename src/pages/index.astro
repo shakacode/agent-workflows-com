@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import BatchLifecycle from '../components/BatchLifecycle.astro';
 import Topology from '../components/Topology.astro';
 
-// A curated look at the batch loop; 26 skills ship in the pack.
+// A curated look at the batch loop; 28 skills ship in the pack.
 const skills = [
   ['plan-pr-batch', 'Shape candidate issues and PRs into a ready batch plan and a pasteable goal prompt — before any worker starts.'],
   ['triage', 'Build a whole-surface issue/PR inventory, a dependency graph, and a capacity-aware split across agents and machines.'],
@@ -93,7 +93,7 @@ const gh = 'https://github.com/shakacode';
     <div class="wrap section-head">
       <span class="eyebrow">03 / what you get</span>
       <h2>A skill for every step of the loop.</h2>
-      <p>Twenty-six portable skills and workflow prompts for Codex and Claude Code — install them
+      <p>Twenty-eight portable skills and workflow prompts for Codex and Claude Code — install them
         once under your skill root and each repo’s seam does the rest. A curated look:</p>
     </div>
     <div class="wrap">
@@ -169,6 +169,38 @@ const gh = 'https://github.com/shakacode';
       <a class="btn btn-ghost" href="/methodology/">Read the methodology →</a>
     </div>
   </section>
+
+  <!-- FOR TEAMS -->
+  <section id="for-teams">
+    <div class="wrap consulting">
+      <div class="consulting-copy">
+        <span class="eyebrow">07 / for engineering teams</span>
+        <h2>Bring the operating model into your organization.</h2>
+        <p class="lead">The open-source pack is the starting point. ShakaCode helps engineering
+          teams turn ad-hoc AI coding into a repeatable system: choose the right tools, encode
+          reusable skills, establish trust and verification gates, and run multiple agent tasks
+          asynchronously without losing control of quality.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="https://www.shakacode.com/contact/">Talk with ShakaCode ↗</a>
+          <a class="btn btn-ghost" href="https://www.shakacode.com/services/">Explore our services ↗</a>
+        </div>
+      </div>
+      <div class="panel proof-panel" aria-label="ShakaCode experience">
+        <div class="proof">
+          <strong>Since 2011</strong>
+          <span>Remote-first software consulting and delivery</span>
+        </div>
+        <div class="proof">
+          <strong>23M+</strong>
+          <span>Open-source package downloads</span>
+        </div>
+        <div class="proof">
+          <strong>Practical adoption</strong>
+          <span>Assessment, rollout, guardrails, and team enablement</span>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>
 
 <style>
@@ -199,5 +231,19 @@ const gh = 'https://github.com/shakacode';
     text-wrap: balance;
   }
   .methodology .btn { justify-self: start; }
+
+  .consulting { display: grid; gap: clamp(30px, 5vw, 58px); align-items: center; }
+  .consulting-copy { display: grid; gap: 20px; }
+  .consulting-copy .lead { max-width: 60ch; }
+  .proof-panel { display: grid; gap: 0; padding-block: 8px; }
+  .proof { display: grid; gap: 2px; padding: 20px 8px; border-top: 1px solid var(--line); }
+  .proof:first-child { border-top: 0; }
+  .proof strong { color: var(--brand-ink); font-family: var(--font-mono); font-size: 1rem; }
+  .proof span { color: var(--ink-dim); font-size: 0.95rem; }
+
+  @media (min-width: 840px) {
+    .consulting { grid-template-columns: 1.25fr 0.75fr; }
+  }
+
   code.mono { font-size: 0.86em; padding: 0.1em 0.4em; border: 1px solid var(--line); border-radius: 6px; background: color-mix(in srgb, var(--surface) 70%, transparent); }
 </style>

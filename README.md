@@ -6,14 +6,13 @@ Landing page and simple docs for the ShakaCode agent stack:
 - [agent-coordination](https://github.com/shakacode/agent-coordination) — coordination backend (claims, heartbeats, liveness)
 - [agent-coordination-dashboard](https://github.com/shakacode/agent-coordination-dashboard) — operator dashboard
 
-Built with [Astro](https://astro.build). Deploys to Cloudflare Pages.
+Built with [Astro](https://astro.build). Deploys to Cloudflare Pages at
+[agents.shakaflow.com](https://agents.shakaflow.com).
 
 Design source: [`docs/landing-page-design.md`](https://github.com/shakacode/agent-workflows/blob/main/docs/landing-page-design.md) in agent-workflows.
 
-> **Open decision:** that design spec locked the site into a `site/` directory inside
-> agent-workflows at `agent-workflows.shakacode.com`. This repo supersedes that
-> location decision if we keep it — see the repo discussion before adding content
-> in both places.
+This repository supersedes the original design spec's proposal to keep the site in
+a `site/` directory inside `agent-workflows`.
 
 ## Develop
 
@@ -30,5 +29,9 @@ npm run build   # outputs to dist/
 
 ## Deploy
 
-Cloudflare Pages, build command `npm run build`, output directory `dist`.
-CNAME target TBD: `agent-workflows.shakacode.com` (per spec) or a dedicated domain.
+Cloudflare Pages project: `agent-workflows-com`.
+
+- Build command: `npm run build`
+- Output directory: `dist`
+- Production branch: `main`
+- Custom domain: `agents.shakaflow.com`
