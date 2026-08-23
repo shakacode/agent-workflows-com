@@ -51,7 +51,7 @@ Until then, the merge gate should fail closed.
 
 ## Then we adversarially audited 30 recent commits
 
-The missed-review incident was not our only input. Alexandre Borela audited the 30 most recent non-trivial commits in [Shakapacker](https://github.com/shakacode/shakapacker), our open-source integration between Ruby on Rails and modern JavaScript bundlers.
+The missed-review incident was not our only input. Alexandre audited the 30 most recent non-trivial commits in [Shakapacker](https://github.com/shakacode/shakapacker), our open-source integration between Ruby on Rails and modern JavaScript bundlers.
 
 The audit used one agent per commit. Each agent read surrounding code rather than only the diff, traced behavior across files, and replayed selected claims with tests or primary sources.
 
