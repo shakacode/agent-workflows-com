@@ -1,0 +1,171 @@
+---
+import Base from '../../layouts/Base.astro';
+import DistributionLineage from '../../components/DistributionLineage.astro';
+---
+
+<Base
+  title="Git-native distributions and customization — Agent Workflow Playbook"
+  description="How Agent Workflows plans to support trusted upstream releases, explicit customization, and synchronizable derived distributions."
+>
+  <article class="doc distribution-doc">
+    <span class="eyebrow">Distribution model</span>
+    <h1>Git-native distributions and customization</h1>
+    <div class="doc-body">
+      <p class="intro">Agent Workflows is designed to support both a trusted upstream and a healthy
+        ecosystem of customized distributions. In that target model, teams may consume reviewed <strong>Upstream Releases</strong>{' '}
+        unchanged, maintain long-lived forks with explicit
+        provenance and patch histories, and contribute portable improvements back upstream.</p>
+
+      <aside class="status-note" aria-label="Current project status">
+        <span class="gatebadge">Target model</span>
+        <p>The Source Pack currently has a <strong>development-channel installation model</strong>.
+          Immutable, human-reviewed Upstream Releases and formal Derived Distribution tooling are
+          the target model. Stable release installation, automated fork synchronization, a
+          distribution registry, and signed releases are not currently available.</p>
+      </aside>
+
+      <blockquote>“AI reduces the cost of divergence without hiding divergence.”</blockquote>
+
+      <p>Customization is encouraged. The responsibility is to keep ownership, provenance,
+        validation, and release claims visible at the layer where each change belongs.</p>
+
+      <h2>Choose the narrowest customization layer</h2>
+
+      <ol class="customization-ladder">
+        <li>
+          <strong class="ladder-title">Configure the Consumer Repo.</strong>
+          <span>Put repository-specific commands, CI, trust, branch, and release policy in the
+            Consumer Repo’s <strong>Agent Workflow Configuration Seam</strong>.</span>
+        </li>
+        <li>
+          <strong class="ladder-title">Separate personal workflows.</strong>
+          <span>Put unrelated personal workflows in separate personal skills or plugins. They are
+            not part of the shared Source Pack.</span>
+        </li>
+        <li>
+          <strong class="ladder-title">Fork shared behavior deliberately.</strong>
+          <span>Fork Agent Workflows when changing shared Source Pack behavior, curating features,
+            or maintaining organization-wide defaults.</span>
+        </li>
+        <li>
+          <strong class="ladder-title">Contribute portable improvements upstream.</strong>
+          <span>When a change is generally useful, prepare it for the shared project instead of
+            leaving every Derived Distribution to rediscover it.</span>
+        </li>
+        <li>
+          <strong class="ladder-title">Track temporary downstream fixes.</strong>
+          <span>Keep each temporary patch explicit until upstream accepts it or an Upstream Release
+            supersedes it.</span>
+        </li>
+      </ol>
+
+      <h2>Forks are first-class distributions.</h2>
+
+      <p>A maintained fork is not accidental drift. It is a <strong>Derived Distribution</strong>{' '}
+        with its own release boundary and an accountable relationship to the Source Pack. Each
+        Derived Distribution should carry:</p>
+
+      <ul>
+        <li>an exact Upstream Release and commit as its baseline;</li>
+        <li>its own immutable release identity;</li>
+        <li>an explicit downstream patch ledger;</li>
+        <li>validation and synchronization evidence;</li>
+        <li>a path for contributing improvements upstream; and</li>
+        <li>release claims that remain distinct from upstream’s claims.</li>
+      </ul>
+
+      <div class="lineage-panel">
+        <DistributionLineage />
+      </div>
+
+      <h2>AI-assisted synchronization</h2>
+
+      <p>AI can lower the maintenance cost of an honest fork. It can compare Upstream Releases,
+        classify relevant changes, detect semantic conflicts, adapt local patches, identify patches
+        that upstream has superseded, prepare synchronization pull requests, and extract portable
+        contributions.</p>
+
+      <p>Humans still approve stable release promotion at the <strong>exact candidate
+        commit</strong>. AI review is advisory; it is not human release approval.</p>
+
+      <h2>Two update modes</h2>
+
+      <div class="mode-grid">
+        <section class="mode-card">
+          <span class="k">Normal path</span>
+          <h3>Adopt a complete Upstream Release</h3>
+          <p>The safer default. Rebase the Derived Distribution on one coherent upstream boundary,
+            reconcile its patch ledger, validate the candidate, and promote an exact downstream
+            commit.</p>
+        </section>
+        <section class="mode-card">
+          <span class="k">Exception path</span>
+          <h3>Selectively backport specific changes</h3>
+          <p>Useful for urgent fixes. The Derived Distribution owns the resulting compatibility
+            claim, its validation evidence, and the later reconciliation with a complete Upstream
+            Release.</p>
+        </section>
+      </div>
+
+      <h2>Why this matters</h2>
+
+      <ul class="why-grid">
+        <li>Safe, exact, rollback-capable upgrades.</li>
+        <li>Freedom to customize without concealing divergence.</li>
+        <li>Long-lived forks that remain synchronizable.</li>
+        <li>Well-defined upstream and derived releases.</li>
+        <li>Easier contribution back to the shared project.</li>
+        <li>A visible ecosystem of maintained distributions as evidence of adoption and credibility.</li>
+      </ul>
+
+      <h2>Repository references</h2>
+
+      <p>The current repository documents the{' '}
+        <a href="https://github.com/shakacode/agent-workflows/blob/main/docs/source-pack-glossary.md">Source Pack vocabulary</a>,{' '}
+        <a href="https://github.com/shakacode/agent-workflows/blob/main/docs/seam-design.md">Agent Workflow Configuration Seam</a>,{' '}
+        <a href="https://github.com/shakacode/agent-workflows/blob/main/docs/installation-and-upgrades.md">development-channel installation</a>,
+        and{' '}<a href="https://github.com/shakacode/agent-workflows/blob/main/docs/repository-supply-chain.md">release trust boundary</a>.{' '}
+        The formal distribution-and-forks guide, Derived Distribution protocol, and architecture
+        decision will be linked here after they are merged into the Source Pack repository.</p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .distribution-doc { max-width: 860px; }
+  .intro { color: var(--ink-dim); font-size: 1.16rem; line-height: 1.68; }
+  .status-note {
+    display: grid; gap: 14px; margin: 30px 0; padding: 22px;
+    background: color-mix(in srgb, var(--gate) 7%, var(--bg-elev));
+    border: 1px solid color-mix(in srgb, var(--gate) 34%, var(--line)); border-radius: var(--radius);
+  }
+  .status-note .gatebadge { justify-self: start; }
+  .status-note p { margin: 0; }
+  blockquote {
+    margin: 42px 0 26px; padding-left: 24px; border-left: 2px solid var(--brand);
+    color: var(--ink); font-family: var(--font-display); font-size: clamp(1.65rem, 4vw, 2.45rem);
+    font-weight: 430; line-height: 1.2; letter-spacing: -0.01em;
+  }
+  .customization-ladder { list-style: none; counter-reset: ladder; padding: 0; }
+  .customization-ladder li {
+    counter-increment: ladder; display: grid; grid-template-columns: 2.4rem 1fr; gap: 5px 14px;
+    padding: 18px 0; border-top: 1px solid var(--line);
+  }
+  .customization-ladder li::before {
+    content: counter(ladder, decimal-leading-zero); grid-row: 1 / span 2;
+    color: var(--gate-ink); font-family: var(--font-mono); font-size: 0.8rem;
+  }
+  .customization-ladder .ladder-title,
+  .customization-ladder li > span { grid-column: 2; }
+  .lineage-panel { margin: 30px 0 12px; padding: clamp(18px, 3vw, 28px); background: var(--bg-elev); border: 1px solid var(--line-strong); border-radius: var(--radius); }
+  .mode-grid { display: grid; gap: 18px; margin: 24px 0; }
+  .mode-card { padding: 24px; background: color-mix(in srgb, var(--surface) 82%, transparent); border: 1px solid var(--line); border-radius: var(--radius); }
+  .mode-card .k { color: var(--brand-ink); font-family: var(--font-mono); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .mode-card h3 { margin-top: 8px; }
+  .mode-card p { margin-bottom: 0; }
+  .why-grid { display: grid; gap: 8px 28px; }
+
+  @media (min-width: 720px) {
+    .mode-grid, .why-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
