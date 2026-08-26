@@ -161,6 +161,7 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .nav a { color: var(--ink-dim); transition: color .18s; }
 .nav a:hover { color: var(--ink); }
 @media (max-width: 720px) { .nav .hide-sm { display: none; } }
+@media (max-width: 1040px) { .nav .hide-md { display: none; } }
 
 .site-footer { border-top: 1px solid var(--line); padding: 56px 0 40px; color: var(--ink-dim); }
 .site-footer .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
