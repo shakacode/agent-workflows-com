@@ -4,22 +4,66 @@ import BatchLifecycle from '../components/BatchLifecycle.astro';
 import DistributionLineage from '../components/DistributionLineage.astro';
 import Topology from '../components/Topology.astro';
 
-// A curated look at the batch loop; 28 skills ship in the pack.
+// The plain-language trust model. Each row maps one of the five to a capability
+// that exists in the pack today — no forward-looking claims in this list.
+// `backticks` in the third field render as inline mono, mini-markdown style.
+const trust = [
+  [
+    'Context',
+    'The agent starts from your repo’s real facts, not a guess.',
+    'every repo declares its own base branch, setup, and validation commands in a small ' +
+      '`.agents/` directory, and shared skills read them — so a portable workflow runs your ' +
+      'commands instead of inventing them.',
+  ],
+  [
+    'Scope',
+    'Risky or delegated work gets an explicit list of the files it owns.',
+    '`pr-batch` requires an execution envelope of owned paths when lane risk or bounded ' +
+      'delegation calls for one. Widening it is allowed where a path is genuinely necessary — ' +
+      'but every added path has to be recorded, with its reason, in the lane record the ' +
+      'coordinator reads.',
+  ],
+  [
+    'Validation',
+    '“Done” means your repo’s own gate passed, on the commit you are about to merge.',
+    '`.agents/bin/validate` is the pre-push gate, and review reads check status at the pull ' +
+      'request’s current head SHA — not an older, greener run.',
+  ],
+  [
+    'Evidence',
+    'Every claim ships with the command and the output behind it.',
+    'lanes attach a QA evidence block to the PR — exact commands, exact results — and treat ' +
+      'CI logs as evidence rather than decoration. “The agent said it tested” is not proof.',
+  ],
+  [
+    'Review',
+    'A second agent tries to prove the first one wrong. A human still decides.',
+    'an independent checker QAs the maker’s work, `adversarial-pr-review` red-teams the diff ' +
+      'for what is wrong rather than summarizing it, and unresolved review threads are ' +
+      'triaged before anything is called merge-ready.',
+  ],
+];
+
+// Ten of the 34 skills in the pack (which also ships 7 workflow prompts).
+// "day one" marks the set documented as working with no coordination backend
+// and no repo seam.
 const skills = [
-  ['plan-pr-batch', 'Shape candidate issues and PRs into a ready batch plan and a pasteable goal prompt — before any worker starts.'],
-  ['triage', 'Build a whole-surface issue/PR inventory, a dependency graph, and a capacity-aware split across agents and machines.'],
-  ['pr-batch', 'Run one coordinated PR lane or a multi-lane batch across worktrees and machines, safely and in dependency order.'],
-  ['adversarial-pr-review', 'Red-team a change before merge — correctness, security, scope, and merge-readiness, not a summary.'],
-  ['post-merge-audit', 'Audit merged batch work for missed reviews, changelog gaps, cross-PR interactions, and release risk.'],
-  ['replicate-ci', 'Reproduce a CI-only failure locally when the hosted run is red but your machine is green.'],
-  ['verify / verify-pr-fix', 'Run a local verification loop and prove a bug is actually gone — reproduce before, confirm after.'],
-  ['spec / tdd / plan-review', 'Turn vague intent into a spec, drive it test-first, and pressure-test the plan before code.'],
+  ['day one', 'verify', 'Run your repo’s real setup and validation, then prove the branch is ready before you open the PR.'],
+  ['day one', 'tdd', 'Red-green-refactor discipline — reproduce the bug as a failing test first, then fix it.'],
+  ['day one', 'adversarial-pr-review', 'Red-team a change before merge — correctness, security, scope, and merge-readiness, not a summary.'],
+  ['day one', 'address-review', 'Triage PR review comments into must-fix, discuss, optional, and skipped — then work the list.'],
+  ['day one', 'update-changelog', 'An honest changelog built from what actually merged.'],
+  ['at scale', 'plan-pr-batch', 'Shape candidate issues and PRs into a ready batch plan and a pasteable goal prompt — before any worker starts.'],
+  ['at scale', 'triage', 'Build a whole-surface issue/PR inventory, a dependency graph, and a capacity-aware split across agents and machines.'],
+  ['at scale', 'pr-batch', 'Run one coordinated PR lane or a multi-lane batch across worktrees and machines, safely and in dependency order.'],
+  ['at scale', 'batch-status', 'Ask where every lane stands right now — coordination state reconciled against live GitHub.'],
+  ['at scale', 'post-merge-audit', 'Audit merged batch work for missed reviews, changelog gaps, cross-PR interactions, and release risk.'],
 ];
 
 const stages = [
   ['plan-pr-batch', 'Turn issues into a scoped, dependency-aware batch and a goal prompt.'],
   ['triage', 'Map the whole surface; split work to fit your agent and machine capacity.'],
-  ['pr-batch', 'Run the workers — one lane per target, coordinated through the backend.'],
+  ['pr-batch', 'Run the workers — one lane, or many, coordinated through the backend.'],
   ['adversarial-pr-review', 'Skeptical pre-merge review that hunts for what is wrong.'],
   ['post-merge-audit', 'Sweep the merged batch for gaps and cross-PR surprises.'],
 ];
@@ -32,17 +76,24 @@ const safety = [
 ];
 
 const gh = 'https://github.com/shakacode';
+
+const pageTitle = 'Agent Workflows — the engineering system around your coding agents';
+const pageDescription =
+  'Open-source workflows that make context, scope, validation, evidence, and human review ' +
+  'explicit for AI coding agents — on your next pull request, and across coordinated fleets. ' +
+  'Plus practical adoption help from ShakaCode.';
 ---
-<Base>
+<Base title={pageTitle} description={pageDescription}>
   <!-- HERO -->
   <section class="hero" style="border-top:none">
     <div class="wrap">
       <div class="stagger hero-copy">
         <span class="eyebrow">Open source · Codex + Claude Code</span>
-        <h1>Run AI coding agents<br />in fleets — <em>safely</em>.</h1>
-        <p class="lead">The ShakaCode Agent Workflow Playbook is a portable pack for planning,
-          batching, reviewing, and auditing multi-PR agent work across all your repos.
-          Install the process once; each repo exposes a tiny seam.</p>
+        <h1>The engineering system around your <em>coding agents</em>.</h1>
+        <p class="lead">Your agent writes the code. This is everything around it — the context it
+          starts from, the scope it may touch, the checks it must pass, the evidence it leaves,
+          and the human review that lands it. Start on one pull request; scale to fleets across
+          repos.</p>
         <div class="cta">
           <a class="btn btn-primary" href={`${gh}/agent-workflows`}>Get started ↗</a>
           <a class="btn btn-ghost" href="/methodology/">Read the methodology →</a>
@@ -50,7 +101,7 @@ const gh = 'https://github.com/shakacode';
       </div>
       <div class="panel hero-panel">
         <BatchLifecycle />
-        <p class="diagram-caption">The batch lifecycle — the amber gate is the differentiator: untrusted input is checked before an agent ever acts on it.</p>
+        <p class="diagram-caption">How the work moves — the amber gate is the differentiator: untrusted input is checked before an agent ever acts on it. The same path runs for one lane or many.</p>
       </div>
     </div>
   </section>
@@ -59,23 +110,54 @@ const gh = 'https://github.com/shakacode';
   <section id="problem">
     <div class="wrap section-head">
       <span class="eyebrow">01 / the problem</span>
-      <h2>One agent, one PR doesn’t scale.</h2>
-      <p>A single agent on a single PR is easy. Running many agents across many repositories is
-        where it breaks — trust boundaries, CI parity, review load, scope creep, merge safety.
-        The playbook turns that into a repeatable, gated process instead of a pile of prompts.</p>
+      <h2>The hard part isn’t the code. It’s knowing what was checked.</h2>
+      <p>One agent on one pull request already has this problem. It hands you something plausible,
+        and you are left reconstructing what it read, what it was allowed to change, what it
+        actually ran, and what any of that proves. Agent Workflows makes those answers explicit
+        from your first PR — one agent, one repo, nothing to host. Because they are explicit, the
+        same steps keep holding when you scale to many agents across many repositories.</p>
+    </div>
+  </section>
+
+  <!-- THE MODEL -->
+  <section id="model">
+    <div class="wrap section-head">
+      <span class="eyebrow">02 / the model</span>
+      <h2>Five things an agent should never leave implicit.</h2>
+      <p>Trust in agent work isn’t a feeling — it’s five questions with checkable answers. Every
+        part of this project exists to make one of them explicit, and each one already works on a
+        single pull request.</p>
+    </div>
+    <div class="wrap">
+      <ul class="rule-list model-list">
+        {trust.map(([term, promise, today]) => (
+          <li>
+            <span class="n">{term}</span>
+            <span>
+              <strong>{promise}</strong>
+              <span class="model-today">
+                <span class="lbl mono">today</span>
+                {today.split('`').map((part, i) => (i % 2 ? <code class="mono">{part}</code> : part))}
+              </span>
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
   <!-- HOW IT WORKS -->
   <section id="how">
     <div class="wrap section-head">
-      <span class="eyebrow">02 / how it works</span>
-      <h2>Install the process once. Expose a tiny seam per repo.</h2>
-      <p>The shared pack carries the <em>process</em>. Each adopting repo keeps its real commands
-        in a small <code class="mono">.agents/</code> seam, so shared workflows resolve every repo’s
-        base branch, validation, CI triggers, and review gates without copying — and drifting — a
-        full config tree into every checkout. The same pack runs on Codex Desktop and Claude Code
-        Desktop with <em>identical skill text</em>; host-specific verbs map at runtime.</p>
+      <span class="eyebrow">03 / how it works</span>
+      <h2>Install the process once. Each repo answers for itself.</h2>
+      <p>Two words carry the mechanism. The shared <em>pack</em> holds the process — the skills,
+        the prompts, the gates. Each adopting repo keeps its real commands in a small
+        <code class="mono">.agents/</code> <em>seam</em> — the directory from the model above — so
+        shared workflows resolve every repo’s base branch, validation, CI triggers, and review
+        gates without copying, and then drifting, a full config tree into every checkout. The same
+        pack runs on Codex Desktop and Claude Code Desktop with <em>identical skill text</em>;
+        host-specific verbs map at runtime.</p>
     </div>
     <div class="wrap">
       <ol class="rule-list">
@@ -89,42 +171,23 @@ const gh = 'https://github.com/shakacode';
     </div>
   </section>
 
-  <!-- DISTRIBUTIONS -->
-  <section id="distributions">
-    <div class="wrap distribution-layout">
-      <div class="distribution-copy">
-        <span class="eyebrow">03 / Git-native customization</span>
-        <h2>Customize freely. Keep the divergence visible.</h2>
-        <blockquote>“AI reduces the cost of divergence without hiding divergence.”</blockquote>
-        <p class="lead">Agent Workflows is designed for both a trusted upstream and a healthy
-          ecosystem of customized distributions. A Consumer Repo owns its policy through the Agent
-          Workflow Configuration Seam. A maintained fork becomes a Derived Distribution with an
-          exact upstream baseline, explicit patches, independent validation, and its own release
-          claims.</p>
-        <a class="btn btn-ghost" href="/docs/distributions/">Explore the distribution model →</a>
-      </div>
-      <div class="panel distribution-panel">
-        <DistributionLineage />
-        <p class="distribution-status"><strong>Today:</strong> development-channel installation.{' '}
-          <strong>Target:</strong> immutable human-reviewed Upstream Releases and formal Derived
-          Distribution tooling.</p>
-      </div>
-    </div>
-  </section>
-
   <!-- SKILLS -->
   <section id="skills">
     <div class="wrap section-head">
       <span class="eyebrow">04 / what you get</span>
       <h2>A skill for every step of the loop.</h2>
-      <p>Twenty-eight portable skills and workflow prompts for Codex and Claude Code — install them
-        once under your skill root and each repo’s seam does the rest. A curated look:</p>
+      <p>Thirty-four portable skills and seven workflow prompts for Codex and Claude Code. The
+        ones marked <strong>day one</strong> work the moment you install them — no coordination
+        backend, no repo seam. Ten of them:</p>
     </div>
     <div class="wrap">
       <div class="grid skills-grid">
-        {skills.map(([name, desc]) => (
+        {skills.map(([tier, name, desc]) => (
           <div class="card">
-            <span class="k">{name}</span>
+            <div class="card-top">
+              <span class="k">{name}</span>
+              <span class={tier === 'day one' ? 'tier tier-now' : 'tier'}>{tier}</span>
+            </div>
             <p>{desc}</p>
           </div>
         ))}
@@ -182,10 +245,33 @@ const gh = 'https://github.com/shakacode';
     </div>
   </section>
 
+  <!-- DISTRIBUTIONS -->
+  <section id="distributions">
+    <div class="wrap distribution-layout">
+      <div class="distribution-copy">
+        <span class="eyebrow">07 / Git-native customization</span>
+        <h2>Customize freely. Keep the divergence visible.</h2>
+        <blockquote>“AI reduces the cost of divergence without hiding divergence.”</blockquote>
+        <p class="lead">Agent Workflows is designed for both a trusted upstream and a healthy
+          ecosystem of customized distributions. A Consumer Repo owns its policy through the Agent
+          Workflow Configuration Seam. A maintained fork becomes a Derived Distribution with an
+          exact upstream baseline, explicit patches, independent validation, and its own release
+          claims.</p>
+        <a class="btn btn-ghost" href="/docs/distributions/">Explore the distribution model →</a>
+      </div>
+      <div class="panel distribution-panel">
+        <DistributionLineage />
+        <p class="distribution-status"><strong>Today:</strong> development-channel installation.{' '}
+          <strong>Target:</strong> immutable human-reviewed Upstream Releases and formal Derived
+          Distribution tooling.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- METHODOLOGY -->
   <section id="methodology">
     <div class="wrap methodology">
-      <span class="eyebrow">07 / methodology</span>
+      <span class="eyebrow">08 / methodology</span>
       <blockquote>“Use AI aggressively, verify the risky parts, document what was learned, and keep shipping.”</blockquote>
       <p class="lead">The playbook is that method, compiled: adversarial review before merge, CI logs
         as evidence rather than decoration, manual QA where behavior can change, and every vague
@@ -198,7 +284,7 @@ const gh = 'https://github.com/shakacode';
   <section id="for-teams">
     <div class="wrap consulting">
       <div class="consulting-copy">
-        <span class="eyebrow">08 / for engineering teams</span>
+        <span class="eyebrow">09 / for engineering teams</span>
         <h2>Bring the operating model into your organization.</h2>
         <p class="lead">The open-source pack is the starting point. ShakaCode helps engineering
           teams turn ad-hoc AI coding into a repeatable system: choose the right tools, encode
@@ -231,17 +317,57 @@ const gh = 'https://github.com/shakacode';
   .hero { padding-top: clamp(56px, 8vw, 96px); }
   .hero .wrap { display: grid; gap: clamp(34px, 5vw, 56px); }
   .hero-copy { display: grid; gap: 22px; max-width: 34ch; }
+  /* the headline is a full sentence, not three words: step the display size
+     down from the global h1 token so the CTAs stay above the fold. */
+  .hero-copy h1 { font-size: clamp(2.35rem, 4.7vw, 3.5rem); text-wrap: balance; }
   .hero-copy h1 em { font-style: italic; color: var(--brand-ink); }
   .hero-copy .lead { max-width: 52ch; }
   .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
   .hero-panel { padding: clamp(18px, 3vw, 34px); }
+
+  /* On a phone the hero has to fit both CTAs above the fold — tighten the
+     leading, the gaps and the top padding rather than cutting the message. */
+  @media (max-width: 560px) {
+    .hero { padding-top: 34px; }
+    .hero-copy { gap: 16px; }
+    .hero-copy h1 { font-size: clamp(2.05rem, 8.4vw, 2.45rem); }
+    .hero-copy .lead { font-size: 1.04rem; line-height: 1.5; }
+  }
 
   @media (min-width: 940px) {
     .hero .wrap { grid-template-columns: 0.92fr 1.08fr; align-items: center; }
     .hero-copy { max-width: none; }
   }
 
+  /* the five-part trust model — a rule-list whose rail holds a word, not a number */
+  .model-list li { grid-template-columns: 1fr; gap: 10px; padding: 22px 0; }
+  .model-list .n {
+    color: var(--brand-ink); font-size: 0.74rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  .model-list strong { display: block; color: var(--ink); font-weight: 600; font-size: 1.08rem; line-height: 1.4; }
+  .model-list .model-today { display: block; color: var(--ink-dim); font-size: 0.98rem; margin-top: 7px; }
+  .model-list .lbl {
+    /* --ink-dim, not --ink-faint: at 0.7rem this needs 4.5:1 in both themes. */
+    color: var(--ink-dim); font-size: 0.7rem; letter-spacing: 0.2em;
+    text-transform: uppercase; margin-right: 0.9em;
+  }
+
+  @media (min-width: 760px) {
+    .model-list li { grid-template-columns: 9.5em 1fr; gap: 22px; }
+  }
+
   .skills-grid { grid-template-columns: repeat(auto-fit, minmax(248px, 1fr)); }
+  .skills-grid .card { display: grid; gap: 10px; align-content: start; }
+  .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .tier {
+    flex: none; font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.16em;
+    /* the tier carries meaning, so it has to clear 4.5:1 like any other label */
+    text-transform: uppercase; color: var(--ink-dim); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.3em 0.75em; white-space: nowrap;
+  }
+  .tier-now { color: var(--brand-ink); border-color: color-mix(in srgb, var(--brand) 42%, transparent); }
+
   .stack-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   a.card { transition: border-color .2s, transform .16s; }
   a.card:hover { border-color: color-mix(in srgb, var(--brand) 50%, transparent); transform: translateY(-3px); }
