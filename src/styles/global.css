@@ -75,7 +75,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Keyboard focus. Links are undecorated here, so an explicit ring is the only
    affordance a keyboard user gets; the UA default is not reliable on either theme. */
-:focus-visible { outline: 2px solid var(--brand-ink); outline-offset: 3px; border-radius: 2px; }
+:focus-visible { outline: 2px solid var(--brand-ink); outline-offset: 3px; }
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -157,7 +157,9 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg) 74%, transparent);
   border-bottom: 1px solid var(--line);
 }
-.site-header .bar { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+/* the gap keeps the brandmark and the first nav link from touching when the bar
+   is at its tightest; below that the brandmark wraps, which is the old behavior. */
+.site-header .bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 62px; }
 .brandmark { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.02em; }
 .brandmark b { font-weight: 600; }
 .brandmark .dim { color: var(--ink-faint); }

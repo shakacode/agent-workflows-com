@@ -17,10 +17,11 @@ const trust = [
   ],
   [
     'Scope',
-    'Each agent is told exactly which files it owns.',
-    '`pr-batch` gives each lane an explicit execution envelope of owned paths. A worker that ' +
-      'needs a path outside it stops and asks for the path to be added, instead of quietly ' +
-      'widening its own blast radius.',
+    'Risky or delegated work gets an explicit list of the files it owns.',
+    '`pr-batch` requires an execution envelope of owned paths when lane risk or bounded ' +
+      'delegation calls for one. Widening it is allowed where a path is genuinely necessary — ' +
+      'but every added path has to be recorded, with its reason, in the lane record the ' +
+      'coordinator reads.',
   ],
   [
     'Validation',
@@ -43,8 +44,9 @@ const trust = [
   ],
 ];
 
-// A curated look; 28 skills ship in the pack. "day one" marks the set documented
-// as working with no coordination backend and no repo seam.
+// Ten of the 34 skills in the pack (which also ships 7 workflow prompts).
+// "day one" marks the set documented as working with no coordination backend
+// and no repo seam.
 const skills = [
   ['day one', 'verify', 'Run your repo’s real setup and validation, then prove the branch is ready before you open the PR.'],
   ['day one', 'tdd', 'Red-green-refactor discipline — reproduce the bug as a failing test first, then fix it.'],
@@ -90,8 +92,8 @@ const pageDescription =
         <h1>The engineering system around your <em>coding agents</em>.</h1>
         <p class="lead">Your agent writes the code. This is everything around it — the context it
           starts from, the scope it may touch, the checks it must pass, the evidence it leaves,
-          and the human review that lands it. Useful on your next pull request; it scales to many
-          agents across many repos when you want it to.</p>
+          and the human review that lands it. Start on one pull request; scale to fleets across
+          repos.</p>
         <div class="cta">
           <a class="btn btn-primary" href={`${gh}/agent-workflows`}>Get started ↗</a>
           <a class="btn btn-ghost" href="/methodology/">Read the methodology →</a>
@@ -174,9 +176,9 @@ const pageDescription =
     <div class="wrap section-head">
       <span class="eyebrow">04 / what you get</span>
       <h2>A skill for every step of the loop.</h2>
-      <p>Twenty-eight portable skills and workflow prompts for Codex and Claude Code. The ones
-        marked <strong>day one</strong> work the moment you install them — no coordination
-        backend, no repo seam. A curated look:</p>
+      <p>Thirty-four portable skills and seven workflow prompts for Codex and Claude Code. The
+        ones marked <strong>day one</strong> work the moment you install them — no coordination
+        backend, no repo seam. Ten of them:</p>
     </div>
     <div class="wrap">
       <div class="grid skills-grid">
@@ -323,6 +325,15 @@ const pageDescription =
   .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
   .hero-panel { padding: clamp(18px, 3vw, 34px); }
 
+  /* On a phone the hero has to fit both CTAs above the fold — tighten the
+     leading, the gaps and the top padding rather than cutting the message. */
+  @media (max-width: 560px) {
+    .hero { padding-top: 34px; }
+    .hero-copy { gap: 16px; }
+    .hero-copy h1 { font-size: clamp(2.05rem, 8.4vw, 2.45rem); }
+    .hero-copy .lead { font-size: 1.04rem; line-height: 1.5; }
+  }
+
   @media (min-width: 940px) {
     .hero .wrap { grid-template-columns: 0.92fr 1.08fr; align-items: center; }
     .hero-copy { max-width: none; }
@@ -337,7 +348,8 @@ const pageDescription =
   .model-list strong { display: block; color: var(--ink); font-weight: 600; font-size: 1.08rem; line-height: 1.4; }
   .model-list .model-today { display: block; color: var(--ink-dim); font-size: 0.98rem; margin-top: 7px; }
   .model-list .lbl {
-    color: var(--ink-faint); font-size: 0.7rem; letter-spacing: 0.2em;
+    /* --ink-dim, not --ink-faint: at 0.7rem this needs 4.5:1 in both themes. */
+    color: var(--ink-dim); font-size: 0.7rem; letter-spacing: 0.2em;
     text-transform: uppercase; margin-right: 0.9em;
   }
 
@@ -350,7 +362,8 @@ const pageDescription =
   .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
   .tier {
     flex: none; font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.16em;
-    text-transform: uppercase; color: var(--ink-faint); border: 1px solid var(--line);
+    /* the tier carries meaning, so it has to clear 4.5:1 like any other label */
+    text-transform: uppercase; color: var(--ink-dim); border: 1px solid var(--line);
     border-radius: 999px; padding: 0.3em 0.75em; white-space: nowrap;
   }
   .tier-now { color: var(--brand-ink); border-color: color-mix(in srgb, var(--brand) 42%, transparent); }
