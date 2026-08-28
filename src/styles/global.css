@@ -161,11 +161,16 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .brandmark { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.02em; }
 .brandmark b { font-weight: 600; }
 .brandmark .dim { color: var(--ink-faint); }
-.nav { display: flex; align-items: center; gap: 22px; font-family: var(--font-mono); font-size: 0.82rem; }
-.nav a { color: var(--ink-dim); transition: color .18s; }
+.nav { display: flex; align-items: center; gap: 16px; font-family: var(--font-mono); font-size: 0.82rem; }
+/* the bar carries seven section links now — never let a label break mid-phrase */
+.nav a { color: var(--ink-dim); transition: color .18s; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
+/* Nav link priority, lowest first: hide-lg drops soonest, hide-sm last. The
+   1119px step is the .wrap cap — below it the bar loses width while every link
+   is still shown, so the lowest-priority link has to drop across that whole band. */
+@media (max-width: 1119px) { .nav .hide-lg { display: none; } }
+@media (max-width: 999px) { .nav .hide-md { display: none; } }
 @media (max-width: 720px) { .nav .hide-sm { display: none; } }
-@media (max-width: 1040px) { .nav .hide-md { display: none; } }
 
 .site-footer { border-top: 1px solid var(--line); padding: 56px 0 40px; color: var(--ink-dim); }
 .site-footer .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
