@@ -7,8 +7,9 @@
 // Terminology and commands are pinned to src/pages/docs/quickstart.md and
 // src/pages/docs/architecture.md: pack, seam / `.agents/`, coordination
 // backend, dashboard, claims, heartbeats, lanes. `scripts/check-adoption-ladder.mjs`
-// asserts against the built HTML below (the `adopt-*` classes and ids are its
-// contract) so this list can't drift from that Quickstart silently.
+// asserts against the built HTML below (the `adopt-*` classes, `data-level`
+// values, and ids are its contract, including an exact level -> Quickstart
+// anchor mapping) so this list can't drift from that Quickstart silently.
 const levels = [
   {
     n: '01',
@@ -38,7 +39,12 @@ const levels = [
     n: '03',
     title: 'Coordinate genuinely parallel work',
     problem: 'Multiple agents — or machines — are working the same backlog at once, and two of them keep reaching for the same issue.',
-    prereqs: 'A repo seam already in place, and work that is actually parallelizable, not a single lane in sequence.',
+    // Not "a repo seam already in place" — neither quickstart.md nor
+    // architecture.md makes the seam a prerequisite of the coordination
+    // backend. The backend is its own protocol plane (a zero-config local
+    // store works for a single machine), and its own demo is zero-setup —
+    // saying otherwise would contradict the very section this links to.
+    prereqs: 'Work that is actually parallelizable — multiple agents or machines on one backlog. The backend itself needs no seam, and its demo needs zero setup.',
     optional: 'The dashboard — a read-only operator view over the same state. Useful, never required.',
     next: {
       label: 'Try the coordination backend',
@@ -48,7 +54,7 @@ const levels = [
   },
 ];
 ---
-<ol class="grid adopt-ladder">
+<ol class="grid adopt-ladder" role="list">
   {levels.map((level) => (
     <li class="card adopt-level" data-level={level.n}>
       <div class="adopt-head">
@@ -71,7 +77,7 @@ const levels = [
 
 <div class="card adopt-caveat" id="adopt-when-not">
   <h3>When not to add more machinery</h3>
-  <ul>
+  <ul role="list">
     <li>A low-risk change — a typo, a copy edit, a one-line config tweak — doesn’t need a claim or a lane. Run the skill, open the PR.</li>
     <li>Work that isn’t actually parallel. Claims and heartbeats exist to stop two agents from reaching for the same issue; if only one agent is touching the repo, there’s nothing to coordinate.</li>
     <li>A backlog worked one item at a time. Lanes solve contention — they don’t make sequential work faster.</li>
@@ -82,7 +88,14 @@ const levels = [
   /* Reuses .grid + .card from global.css for the level cards, and the same
      .card for the two callouts below — no parallel visual system, just the
      structure a four-field level and a short callout need. */
-  .adopt-ladder { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); list-style: none; padding: 0; margin: 0 0 22px; }
+  .adopt-ladder {
+    /* min(260px, 100%): below ~308px content width the fixed 260px track
+       floor pushed a card past the .wrap edge. Letting the track shrink to
+       the container width (not below it) keeps auto-fit's multi-column
+       behavior everywhere else while removing that one overflow case. */
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+    list-style: none; padding: 0; margin: 0 0 22px;
+  }
   .adopt-level { display: grid; gap: 12px; align-content: start; }
 
   .adopt-head { display: grid; gap: 6px; }
@@ -106,7 +119,13 @@ const levels = [
   }
   .adopt-next:hover { border-color: var(--brand-ink); }
 
-  .adopt-note { color: var(--ink); font-size: 1rem; line-height: 1.6; }
+  /* margin-bottom, not just the global `p { margin: 0 }` default: this note
+     sits between .adopt-ladder (which already carries margin: 0 0 22px) and
+     .adopt-caveat (a .card with no margin of its own). Without it the two
+     bordered .card boxes touch at 0px — a doubled hairline with pinched
+     corners — instead of matching the 22px gap every other card boundary in
+     this section uses. */
+  .adopt-note { color: var(--ink); font-size: 1rem; line-height: 1.6; margin: 0 0 22px; }
   .adopt-note strong { font-weight: 600; }
 
   .adopt-caveat { display: grid; gap: 10px; }

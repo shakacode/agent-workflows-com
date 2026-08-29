@@ -14,14 +14,22 @@
 //   1. Every internal link inside the #adopt section of dist/index.html
 //      resolves: the target page exists in dist/, and every #fragment it
 //      targets exists as an id="..." in that target page's built HTML.
-//   2. At least one of those links points directly into the Quickstart
-//      (/docs/quickstart/#...) — issue #9 requires level 1's next action to
-//      land in the Quickstart, not the GitHub repo root.
-//   3. The ladder still has exactly three levels, and each level still
-//      carries its problem / prerequisites / optional / next-action content.
+//   2. Each level's next-action link is an <a> with a non-empty href, and
+//      that href matches EXPECTED_NEXT_HREF exactly for that level — not
+//      just "some link happens to point into the Quickstart somewhere."
+//   3. The ladder still has exactly three levels (matched by the
+//      `adopt-level` class token, not a literal attribute string, so
+//      cosmetic class-order/extra-class edits don't false-positive), and
+//      each level's problem / prerequisites / optional fields are present
+//      AND have non-empty text content beyond their label.
 //   4. The "coordination backend and dashboard are not required for
-//      standalone skills or ordinary single-lane work" statement is present.
-//   5. Any external URLs inside the ladder are on the small allowlist below
+//      standalone skills or ordinary single-lane work" statement is present
+//      as a contiguous phrase (see the NOTE at Rule 4 below on what this
+//      can and cannot catch).
+//   5. The "when not to add more machinery" callout still names both
+//      required topics — a low-risk change, and work that isn't actually
+//      parallel — checked by content, not just by counting <li> elements.
+//   6. Any external URLs inside the ladder are on the small allowlist below
 //      (shape check only — this script never fetches anything).
 
 import { existsSync, readFileSync } from 'node:fs';
@@ -68,6 +76,27 @@ function extractLinks(html) {
   return links;
 }
 
+// True class-token match — `\bTOKEN\b` inside the class attribute value —
+// not a literal substring/attribute-order match. `class="adopt-level card"`,
+// `class="card adopt-level featured"`, and `class="card adopt-level"` all
+// match identically; only the token's presence is the contract.
+function hasClassToken(attrsOrTag, token) {
+  const re = new RegExp(`class="[^"]*\\b${token}\\b[^"]*"`);
+  return re.test(attrsOrTag);
+}
+
+// Named, explicit level -> Quickstart-anchor mapping. This is the actual
+// contract issue #9 asks for ("link the first level directly to the
+// relevant Quickstart section") — a level's next-action href must match its
+// own row here exactly, not merely "point somewhere in the Quickstart."
+// Changing where a level points is a deliberate, one-line, reviewable edit
+// to this table — it is not supposed to be easy to do by accident.
+const EXPECTED_NEXT_HREF = {
+  '01': '/docs/quickstart/#qs-day-one-skill',
+  '02': '/docs/quickstart/#qs-repo-seam',
+  '03': '/docs/quickstart/#qs-coordinated-batches',
+};
+
 // External URLs are allowed in the ladder only from these origins/prefixes.
 // This is a shape check — the script never fetches any of these.
 const EXTERNAL_ALLOWLIST = [
@@ -99,7 +128,7 @@ if (sectionStartIdx === -1) {
 }
 
 if (sectionHtml) {
-  // --- Rule 1 & 5: every link resolves; external links are allowlisted. ---
+  // --- Rule 1 & 6: every link resolves; external links are allowlisted. ---
   const links = extractLinks(sectionHtml);
   if (links.length === 0) {
     fail('The #adopt section has no <a href> links at all — expected at least one "next action" link per level.');
@@ -141,54 +170,132 @@ if (sectionHtml) {
     fail(`Ladder link "${href}" is neither a same-page fragment, a site-absolute path, nor an http(s) URL — this check doesn't know how to validate it.`);
   }
 
-  // --- Rule 2: at least one link lands directly in the Quickstart. --------
-  const quickstartLinks = links.filter((href) => href.startsWith('/docs/quickstart/#'));
-  if (quickstartLinks.length === 0) {
-    fail('No ladder link points into /docs/quickstart/#... — issue #9 requires level 1\'s next action to link directly to the relevant Quickstart section, not just the GitHub repo root.');
+  // --- Extract each level block by class TOKEN (order/extra-class safe), --
+  // --- not by a literal "card adopt-level" attribute-value match. ---------
+  const levelBlocks = [];
+  {
+    const liRe = /<li\b([^>]*)>([\s\S]*?)<\/li>/g;
+    let m;
+    while ((m = liRe.exec(sectionHtml))) {
+      const [, attrs, body] = m;
+      if (!hasClassToken(attrs, 'adopt-level')) continue; // e.g. the caveat's plain <li> bullets
+      const levelMatch = attrs.match(/data-level="([^"]*)"/);
+      levelBlocks.push({ level: levelMatch ? levelMatch[1] : null, body });
+    }
   }
 
-  // --- Rule 3: exactly three levels, each with all four required fields. --
-  const levelBlocks = [...sectionHtml.matchAll(/<li class="card adopt-level" data-level="([^"]+)"[^>]*>([\s\S]*?)<\/li>/g)];
   if (levelBlocks.length !== 3) {
-    fail(`Expected exactly 3 adoption-ladder levels (<li class="adopt-level" data-level="...">), found ${levelBlocks.length}.`);
+    fail(`Expected exactly 3 adoption-ladder levels (an <li> carrying the "adopt-level" class), found ${levelBlocks.length}.`);
   }
+
+  // Extracts the text of a "<p class="...FIELD..."` field, with its
+  // "adopt-label" span (the "Problem" / "Prerequisites" / "Optional" label
+  // itself) stripped first so a label-only, content-emptied field reads as
+  // empty rather than as "has text."
+  function fieldText(body, fieldClass) {
+    const re = new RegExp(`<p class="[^"]*\\b${fieldClass}\\b[^"]*"[^>]*>([\\s\\S]*?)<\\/p>`);
+    const m = body.match(re);
+    if (!m) return null;
+    const withoutLabel = m[1].replace(/<span class="[^"]*\badopt-label\b[^"]*"[^>]*>[\s\S]*?<\/span>/, '');
+    return withoutLabel.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  // Extracts the href of the <a> carrying the "adopt-next" class token —
+  // returns null if no such <a> exists at all (e.g. it was swapped for a
+  // link-less <span>), and '' if it exists with an empty href.
+  function nextHref(body) {
+    const aRe = /<a\b([^>]*)>/g;
+    let m;
+    while ((m = aRe.exec(body))) {
+      const attrs = m[1];
+      if (!hasClassToken(attrs, 'adopt-next')) continue;
+      const hrefMatch = attrs.match(/href="([^"]*)"/);
+      return hrefMatch ? hrefMatch[1] : '';
+    }
+    return null;
+  }
+
   const seenLevels = new Set();
-  const requiredFields = ['adopt-problem', 'adopt-prereqs', 'adopt-optional', 'adopt-next'];
-  for (const [, levelNum, body] of levelBlocks) {
+  const proseFields = ['adopt-problem', 'adopt-prereqs', 'adopt-optional'];
+  for (const { level: levelNum, body } of levelBlocks) {
+    if (levelNum === null) {
+      fail('A ladder level <li> carries the "adopt-level" class but no data-level attribute.');
+      continue;
+    }
     if (seenLevels.has(levelNum)) fail(`Duplicate ladder level "${levelNum}" — data-level values must be unique.`);
     seenLevels.add(levelNum);
-    for (const cls of requiredFields) {
-      const re = new RegExp(`class="[^"]*\\b${cls}\\b[^"]*"`);
-      if (!re.test(body)) {
-        fail(`Ladder level ${levelNum} is missing its "${cls}" content — every level must state a problem, prerequisites, what's optional, and a next action.`);
+
+    // --- Rule 3: problem / prerequisites / optional must exist AND be non-empty.
+    for (const cls of proseFields) {
+      const text = fieldText(body, cls);
+      if (text === null) {
+        fail(`Ladder level ${levelNum} is missing its "${cls}" element entirely.`);
+      } else if (text.length === 0) {
+        fail(`Ladder level ${levelNum}'s "${cls}" field has no text content — the label is present but the sentence describing it was emptied.`);
       }
+    }
+
+    // --- Rule 2: next action must be a real, non-empty link to the exact ---
+    // --- Quickstart anchor this level owns (EXPECTED_NEXT_HREF), not just
+    // --- "the adopt-next class exists somewhere" or "some quickstart link
+    // --- exists on the page."
+    const href = nextHref(body);
+    if (href === null) {
+      fail(`Ladder level ${levelNum}'s next action must be an <a> carrying the "adopt-next" class with a non-empty href — found no such <a> (it may have been replaced by a link-less element).`);
+    } else if (href === '') {
+      fail(`Ladder level ${levelNum}'s "adopt-next" <a> has an empty href.`);
+    } else if (!(levelNum in EXPECTED_NEXT_HREF)) {
+      fail(`Ladder level ${levelNum} has no entry in EXPECTED_NEXT_HREF at the top of scripts/check-adoption-ladder.mjs — add one deliberately so this level's destination is pinned.`);
+    } else if (href !== EXPECTED_NEXT_HREF[levelNum]) {
+      fail(`Ladder level ${levelNum}'s next action links to "${href}", but EXPECTED_NEXT_HREF says it must link to "${EXPECTED_NEXT_HREF[levelNum]}". If this is a deliberate change, update EXPECTED_NEXT_HREF to match.`);
     }
   }
 
   // --- Rule 4: the "backend/dashboard not required" statement. ------------
+  // NOTE — this is a drift check, not a semantic reviewer. It requires one
+  // specific, contiguous phrase to still be present verbatim (whitespace-
+  // normalized, case-insensitive). That is stricter than testing four
+  // keywords independently (which a scrambled or reworded paragraph could
+  // satisfy by accident), but it is NOT proof against a deliberate rewrite
+  // that keeps the same words in a different sense — e.g. a sentence framed
+  // as "ignore the myth that the coordination backend and the dashboard are
+  // not required ... you need both from day one" would still contain this
+  // exact phrase and would still pass. Catching a meaning flip that keeps
+  // the same words requires human judgment, not a string match — any rewrite
+  // of this statement, inverted or not, still needs human review at PR time.
+  const REQUIRED_PHRASE =
+    'coordination backend and the dashboard are not required for standalone skills or ordinary single-lane work';
   const noteMatch = sectionHtml.match(/id="adopt-backend-optional"[^>]*>([\s\S]*?)<\/p>/);
   if (!noteMatch) {
     fail('No element with id="adopt-backend-optional" found in the #adopt section — the "coordination backend and dashboard are not required" statement is missing.');
   } else {
-    const text = noteMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-    const hasBackend = /coordination backend/i.test(text);
-    const hasDashboard = /\bdashboard\b/i.test(text);
-    const hasNotRequired = /not required/i.test(text);
-    const hasScope = /(single-lane|standalone skill)/i.test(text);
-    if (!(hasBackend && hasDashboard && hasNotRequired && hasScope)) {
-      fail(`The #adopt-backend-optional statement no longer says the coordination backend AND dashboard are NOT REQUIRED for standalone skills / single-lane work. Current text: "${text}"`);
+    const text = noteMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!text.includes(REQUIRED_PHRASE)) {
+      fail(`The #adopt-backend-optional statement no longer contains the phrase "${REQUIRED_PHRASE}" verbatim. Current text: "${text}"`);
     }
   }
 
-  // --- Rule 3b (part of "when not to add more machinery" acceptance item):
-  // the caveat block must still exist and still be non-trivial.
+  // --- Rule 5: the "when not to add more machinery" callout must still ----
+  // name BOTH required topics — a low-risk change, and work that isn't
+  // actually parallel — checked by normalized content, not by counting
+  // <li> elements (a count alone can't tell which topics survived).
   const caveatMatch = sectionHtml.match(/id="adopt-when-not"[^>]*>([\s\S]*?)<\/div>/);
   if (!caveatMatch) {
     fail('No element with id="adopt-when-not" found in the #adopt section — the "when not to add more machinery" guidance is missing.');
   } else {
-    const items = [...caveatMatch[1].matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)];
-    if (items.length < 2) {
-      fail(`The "when not to add more machinery" block (#adopt-when-not) has only ${items.length} item(s) — expected at least 2.`);
+    const normalized = caveatMatch[1]
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/[‘’]/g, "'") // curly apostrophes -> straight, so "isn't" matches either way
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+      .trim();
+    const hasLowRiskTopic = /low-risk|low risk/.test(normalized);
+    const hasNonParallelTopic = /\b(not|isn't|non-)\b[^.]{0,40}parallel/.test(normalized);
+    if (!hasLowRiskTopic) {
+      fail(`The "when not to add more machinery" block (#adopt-when-not) no longer mentions a low-risk change. Current text: "${normalized}"`);
+    }
+    if (!hasNonParallelTopic) {
+      fail(`The "when not to add more machinery" block (#adopt-when-not) no longer mentions work that isn't actually parallel / parallelizable. Current text: "${normalized}"`);
     }
   }
 }
