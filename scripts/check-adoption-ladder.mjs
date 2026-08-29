@@ -17,18 +17,20 @@
 //   2. Each level's next-action link is an <a> with a non-empty href, and
 //      that href matches EXPECTED_NEXT_HREF exactly for that level — not
 //      just "some link happens to point into the Quickstart somewhere."
-//   3. The ladder still has exactly three levels (matched by the
-//      `adopt-level` class token, not a literal attribute string, so
-//      cosmetic class-order/extra-class edits don't false-positive), and
-//      each level's problem / prerequisites / optional fields are present
-//      AND have non-empty text content beyond their label.
+//   3. The ladder still has exactly three levels (matched by true class-TOKEN
+//      membership, not a literal attribute string or a `\b`-boundary regex —
+//      see hasClassToken below — so cosmetic class-order/extra-class/
+//      similarly-prefixed-class edits don't false-positive), and each
+//      level's problem / prerequisites / optional fields are present AND
+//      have non-empty text content beyond their label.
 //   4. The "coordination backend and dashboard are not required for
 //      standalone skills or ordinary single-lane work" statement is present
 //      as a contiguous phrase (see the NOTE at Rule 4 below on what this
 //      can and cannot catch).
-//   5. The "when not to add more machinery" callout still names both
-//      required topics — a low-risk change, and work that isn't actually
-//      parallel — checked by content, not just by counting <li> elements.
+//   5. The "when not to add more machinery" callout still contains both
+//      required topics as affirmative, contiguous phrases pinned from the
+//      shipped copy — a low-risk change, and work that isn't actually
+//      parallel (see the NOTE at Rule 5 below).
 //   6. Any external URLs inside the ladder are on the small allowlist below
 //      (shape check only — this script never fetches anything).
 
@@ -76,13 +78,20 @@ function extractLinks(html) {
   return links;
 }
 
-// True class-token match — `\bTOKEN\b` inside the class attribute value —
-// not a literal substring/attribute-order match. `class="adopt-level card"`,
-// `class="card adopt-level featured"`, and `class="card adopt-level"` all
-// match identically; only the token's presence is the contract.
-function hasClassToken(attrsOrTag, token) {
-  const re = new RegExp(`class="[^"]*\\b${token}\\b[^"]*"`);
-  return re.test(attrsOrTag);
+// True class-TOKEN membership: split the class attribute on whitespace and
+// test for an exact element, not a substring/regex-boundary match. A `\b`
+// regex boundary is NOT enough here — `-` is a non-word character, so
+// `\badopt-level\b` still matches inside `adopt-level-summary`, and a
+// hand-rolled attribute string like `class="card adopt-level"` breaks the
+// moment classes are reordered or a class is added. Splitting on whitespace
+// and checking array membership is the only one of the three that is
+// actually order- and neighbor-safe.
+function classTokens(attrs) {
+  const m = attrs.match(/class="([^"]*)"/);
+  return m ? m[1].split(/\s+/).filter(Boolean) : [];
+}
+function hasClassToken(attrs, token) {
+  return classTokens(attrs).includes(token);
 }
 
 // Named, explicit level -> Quickstart-anchor mapping. This is the actual
@@ -95,6 +104,17 @@ const EXPECTED_NEXT_HREF = {
   '01': '/docs/quickstart/#qs-day-one-skill',
   '02': '/docs/quickstart/#qs-repo-seam',
   '03': '/docs/quickstart/#qs-coordinated-batches',
+};
+
+// Rule 5's two required topics, pinned as affirmative, contiguous phrases
+// taken verbatim from the shipped copy in src/components/AdoptionLadder.astro
+// (whitespace-normalized, curly apostrophes straightened, lowercased — see
+// the normalization applied before matching, below). Update these
+// deliberately, in the same diff, if that copy's wording changes.
+const REQUIRED_CAVEAT_PHRASES = {
+  lowRisk:
+    "a low-risk change — a typo, a copy edit, a one-line config tweak — doesn't need a claim or a lane",
+  nonParallel: "work that isn't actually parallel",
 };
 
 // External URLs are allowed in the ladder only from these origins/prefixes.
@@ -170,39 +190,59 @@ if (sectionHtml) {
     fail(`Ladder link "${href}" is neither a same-page fragment, a site-absolute path, nor an http(s) URL — this check doesn't know how to validate it.`);
   }
 
-  // --- Extract each level block by class TOKEN (order/extra-class safe), --
-  // --- not by a literal "card adopt-level" attribute-value match. ---------
-  const levelBlocks = [];
-  {
-    const liRe = /<li\b([^>]*)>([\s\S]*?)<\/li>/g;
+  // Extracts each level's own HTML body by finding every <li> that carries
+  // the "adopt-level" class token, then slicing from just after that <li>'s
+  // own opening tag to the START of the NEXT such <li> (or, for the last
+  // level, to the </ol> that closes the ladder) — not to the first </li>
+  // found anywhere inside it. A non-greedy "up to the first </li>" boundary
+  // breaks the moment a level's own content contains any nested list (e.g.
+  // <ul><li>...</li></ul> inside a field): that inner </li> would close the
+  // match early and silently truncate everything after it, including later
+  // fields and the next-action link.
+  function extractLevelBlocks(html) {
+    const openRe = /<li\b([^>]*)>/g;
+    const opens = [];
     let m;
-    while ((m = liRe.exec(sectionHtml))) {
-      const [, attrs, body] = m;
+    while ((m = openRe.exec(html))) {
+      const attrs = m[1];
       if (!hasClassToken(attrs, 'adopt-level')) continue; // e.g. the caveat's plain <li> bullets
-      const levelMatch = attrs.match(/data-level="([^"]*)"/);
-      levelBlocks.push({ level: levelMatch ? levelMatch[1] : null, body });
+      opens.push({ attrs, tagStart: m.index, contentStart: m.index + m[0].length });
     }
+    const olCloseIdx = html.indexOf('</ol>');
+    return opens.map(({ attrs, contentStart }, i) => {
+      const end = i + 1 < opens.length ? opens[i + 1].tagStart : (olCloseIdx !== -1 ? olCloseIdx : html.length);
+      return { attrs, body: html.slice(contentStart, end) };
+    });
   }
+
+  const levelBlocks = extractLevelBlocks(sectionHtml);
 
   if (levelBlocks.length !== 3) {
-    fail(`Expected exactly 3 adoption-ladder levels (an <li> carrying the "adopt-level" class), found ${levelBlocks.length}.`);
+    fail(`Expected exactly 3 adoption-ladder levels (an <li> carrying the "adopt-level" class token), found ${levelBlocks.length}.`);
   }
 
-  // Extracts the text of a "<p class="...FIELD..."` field, with its
-  // "adopt-label" span (the "Problem" / "Prerequisites" / "Optional" label
-  // itself) stripped first so a label-only, content-emptied field reads as
-  // empty rather than as "has text."
+  // Extracts the text of the "<p>" field carrying the given class token,
+  // with its "adopt-label" span (the "Problem" / "Prerequisites" / "Optional"
+  // label itself) stripped first so a label-only, content-emptied field
+  // reads as empty rather than as "has text."
   function fieldText(body, fieldClass) {
-    const re = new RegExp(`<p class="[^"]*\\b${fieldClass}\\b[^"]*"[^>]*>([\\s\\S]*?)<\\/p>`);
-    const m = body.match(re);
-    if (!m) return null;
-    const withoutLabel = m[1].replace(/<span class="[^"]*\badopt-label\b[^"]*"[^>]*>[\s\S]*?<\/span>/, '');
-    return withoutLabel.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    const pRe = /<p\b([^>]*)>([\s\S]*?)<\/p>/g;
+    let m;
+    while ((m = pRe.exec(body))) {
+      const [, attrs, inner] = m;
+      if (!hasClassToken(attrs, fieldClass)) continue;
+      const withoutLabel = inner.replace(/<span\b([^>]*)>[\s\S]*?<\/span>/, (full, spanAttrs) =>
+        hasClassToken(spanAttrs, 'adopt-label') ? '' : full
+      );
+      return withoutLabel.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    }
+    return null;
   }
 
   // Extracts the href of the <a> carrying the "adopt-next" class token —
   // returns null if no such <a> exists at all (e.g. it was swapped for a
-  // link-less <span>), and '' if it exists with an empty href.
+  // link-less <span>, or the only <a> present carries some other class like
+  // "adopt-next-icon"), and '' if it exists with an empty href.
   function nextHref(body) {
     const aRe = /<a\b([^>]*)>/g;
     let m;
@@ -217,7 +257,9 @@ if (sectionHtml) {
 
   const seenLevels = new Set();
   const proseFields = ['adopt-problem', 'adopt-prereqs', 'adopt-optional'];
-  for (const { level: levelNum, body } of levelBlocks) {
+  for (const { attrs, body } of levelBlocks) {
+    const levelMatch = attrs.match(/data-level="([^"]*)"/);
+    const levelNum = levelMatch ? levelMatch[1] : null;
     if (levelNum === null) {
       fail('A ladder level <li> carries the "adopt-level" class but no data-level attribute.');
       continue;
@@ -241,7 +283,7 @@ if (sectionHtml) {
     // --- exists on the page."
     const href = nextHref(body);
     if (href === null) {
-      fail(`Ladder level ${levelNum}'s next action must be an <a> carrying the "adopt-next" class with a non-empty href — found no such <a> (it may have been replaced by a link-less element).`);
+      fail(`Ladder level ${levelNum}'s next action must be an <a> carrying the "adopt-next" class with a non-empty href — found no such <a> (it may have been replaced by a link-less element, or the only <a> present carries a different class).`);
     } else if (href === '') {
       fail(`Ladder level ${levelNum}'s "adopt-next" <a> has an empty href.`);
     } else if (!(levelNum in EXPECTED_NEXT_HREF)) {
@@ -276,26 +318,38 @@ if (sectionHtml) {
   }
 
   // --- Rule 5: the "when not to add more machinery" callout must still ----
-  // name BOTH required topics — a low-risk change, and work that isn't
-  // actually parallel — checked by normalized content, not by counting
-  // <li> elements (a count alone can't tell which topics survived).
+  // contain BOTH required topics as affirmative, contiguous phrases.
+  //
+  // NOTE — same limitation as Rule 4, for the same reason: this is a drift
+  // check, not a semantic reviewer. An earlier version of this rule matched
+  // loose keywords near each other ("low-risk" anywhere; "not"/"isn't"/
+  // "non-" within 40 characters of "parallel"), which a sentence stating the
+  // OPPOSITE of both recommendations could still satisfy — e.g. "This is
+  // not a low-risk change; it is parallel." mentions both topic words while
+  // asserting the reverse of both, and passed. Pinning a longer, affirmative
+  // phrase straight from the shipped copy (REQUIRED_CAVEAT_PHRASES, above)
+  // raises the bar: a short negated fragment like "not a low-risk change"
+  // does not contain the full pinned phrase, so it fails correctly. It is
+  // still a string match, not an understanding of the sentence — a
+  // determined, meaning-preserving rewrite that keeps these exact words in a
+  // new, inverted sentence (the same class of attack as Rule 4's "ignore the
+  // myth that ..." example) would still pass. Any rewrite of this callout,
+  // inverted or not, still needs human review at PR time.
   const caveatMatch = sectionHtml.match(/id="adopt-when-not"[^>]*>([\s\S]*?)<\/div>/);
   if (!caveatMatch) {
     fail('No element with id="adopt-when-not" found in the #adopt section — the "when not to add more machinery" guidance is missing.');
   } else {
     const normalized = caveatMatch[1]
       .replace(/<[^>]+>/g, ' ')
-      .replace(/[‘’]/g, "'") // curly apostrophes -> straight, so "isn't" matches either way
+      .replace(/[‘’]/g, "'") // curly apostrophes -> straight, so the pinned phrases match either way
       .replace(/\s+/g, ' ')
       .toLowerCase()
       .trim();
-    const hasLowRiskTopic = /low-risk|low risk/.test(normalized);
-    const hasNonParallelTopic = /\b(not|isn't|non-)\b[^.]{0,40}parallel/.test(normalized);
-    if (!hasLowRiskTopic) {
-      fail(`The "when not to add more machinery" block (#adopt-when-not) no longer mentions a low-risk change. Current text: "${normalized}"`);
+    if (!normalized.includes(REQUIRED_CAVEAT_PHRASES.lowRisk)) {
+      fail(`The "when not to add more machinery" block (#adopt-when-not) no longer contains the phrase "${REQUIRED_CAVEAT_PHRASES.lowRisk}" verbatim — the low-risk-change guidance is missing or was reworded. Current text: "${normalized}"`);
     }
-    if (!hasNonParallelTopic) {
-      fail(`The "when not to add more machinery" block (#adopt-when-not) no longer mentions work that isn't actually parallel / parallelizable. Current text: "${normalized}"`);
+    if (!normalized.includes(REQUIRED_CAVEAT_PHRASES.nonParallel)) {
+      fail(`The "when not to add more machinery" block (#adopt-when-not) no longer contains the phrase "${REQUIRED_CAVEAT_PHRASES.nonParallel}" verbatim — the non-parallel-work guidance is missing or was reworded. Current text: "${normalized}"`);
     }
   }
 }
