@@ -182,7 +182,9 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .site-footer .fine { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 @media (max-width: 720px) { .site-footer .cols { grid-template-columns: 1fr 1fr; } }
 
-.diagram-caption { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint); margin-top: 14px; }
+/* --ink-dim, not --ink-faint: this caption sits directly under the hero
+   diagram and has to clear 4.5:1 like the diagram text it explains. */
+.diagram-caption { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-dim); margin-top: 14px; }
 
 /* ===== markdown docs (Doc.astro) ===== */
 .doc { max-width: 760px; margin: 0 auto; padding: clamp(52px, 7vw, 88px) 24px 96px; }
