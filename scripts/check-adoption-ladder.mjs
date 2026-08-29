@@ -20,9 +20,13 @@
 //   3. The ladder still has exactly three levels (matched by true class-TOKEN
 //      membership, not a literal attribute string or a `\b`-boundary regex —
 //      see hasClassToken below — so cosmetic class-order/extra-class/
-//      similarly-prefixed-class edits don't false-positive), and each
+//      similarly-prefixed-class edits don't false-positive), each level's
+//      body is bounded by the ladder's own matching </ol> (not the first
+//      </ol> anywhere in the section — see extractLevelBlocks), and each
 //      level's problem / prerequisites / optional fields are present AND
-//      have non-empty text content beyond their label.
+//      have non-empty text content beyond their label (with the label found
+//      by class token across every span in the field, not just the first
+//      span encountered — see fieldText).
 //   4. The "coordination backend and dashboard are not required for
 //      standalone skills or ordinary single-lane work" statement is present
 //      as a contiguous phrase (see the NOTE at Rule 4 below on what this
@@ -190,16 +194,51 @@ if (sectionHtml) {
     fail(`Ladder link "${href}" is neither a same-page fragment, a site-absolute path, nor an http(s) URL — this check doesn't know how to validate it.`);
   }
 
+  // Finds the index of the </ol> that matches the ladder's OWN <ol>
+  // (opened just before `fromIndex`), via a depth-counted scan over every
+  // <ol>/</ol> tag from `fromIndex` onward. A blind `indexOf('</ol>')`
+  // finds the first </ol> anywhere after it, which is wrong the moment a
+  // level's own field contains a nested <ol> (e.g. <ol><li>...</li></ol>
+  // inside "Optional") — that nested list's close sits before the ladder's
+  // real close, so slicing to it truncates (or inverts, start > end) the
+  // last level's body and misattributes the resulting failures to the
+  // wrong level entirely.
+  function findMatchingOlClose(html, fromIndex) {
+    const tagRe = /<\/?ol\b[^>]*>/g;
+    tagRe.lastIndex = fromIndex;
+    let depth = 1;
+    let m;
+    while ((m = tagRe.exec(html))) {
+      if (m[0].startsWith('</')) {
+        depth -= 1;
+        if (depth === 0) return m.index;
+      } else {
+        depth += 1;
+      }
+    }
+    return -1; // unmatched — caller falls back to end-of-string
+  }
+
   // Extracts each level's own HTML body by finding every <li> that carries
   // the "adopt-level" class token, then slicing from just after that <li>'s
   // own opening tag to the START of the NEXT such <li> (or, for the last
-  // level, to the </ol> that closes the ladder) — not to the first </li>
-  // found anywhere inside it. A non-greedy "up to the first </li>" boundary
-  // breaks the moment a level's own content contains any nested list (e.g.
-  // <ul><li>...</li></ul> inside a field): that inner </li> would close the
-  // match early and silently truncate everything after it, including later
-  // fields and the next-action link.
+  // level, to the ladder <ol>'s own matching close) — not to the first
+  // </li> (or </ol>) found anywhere inside it. A non-greedy "first closing
+  // tag" boundary breaks the moment a level's own content contains ANY
+  // nested list, because that inner close tag ends the match early and
+  // truncates everything meant to come after it.
   function extractLevelBlocks(html) {
+    const olOpenRe = /<ol\b([^>]*)>/g;
+    let olOpenEnd = -1;
+    let olMatch;
+    while ((olMatch = olOpenRe.exec(html))) {
+      if (hasClassToken(olMatch[1], 'adopt-ladder')) {
+        olOpenEnd = olMatch.index + olMatch[0].length;
+        break;
+      }
+    }
+    const olCloseIdx = olOpenEnd !== -1 ? findMatchingOlClose(html, olOpenEnd) : -1;
+
     const openRe = /<li\b([^>]*)>/g;
     const opens = [];
     let m;
@@ -208,7 +247,7 @@ if (sectionHtml) {
       if (!hasClassToken(attrs, 'adopt-level')) continue; // e.g. the caveat's plain <li> bullets
       opens.push({ attrs, tagStart: m.index, contentStart: m.index + m[0].length });
     }
-    const olCloseIdx = html.indexOf('</ol>');
+
     return opens.map(({ attrs, contentStart }, i) => {
       const end = i + 1 < opens.length ? opens[i + 1].tagStart : (olCloseIdx !== -1 ? olCloseIdx : html.length);
       return { attrs, body: html.slice(contentStart, end) };
@@ -221,17 +260,22 @@ if (sectionHtml) {
     fail(`Expected exactly 3 adoption-ladder levels (an <li> carrying the "adopt-level" class token), found ${levelBlocks.length}.`);
   }
 
-  // Extracts the text of the "<p>" field carrying the given class token,
-  // with its "adopt-label" span (the "Problem" / "Prerequisites" / "Optional"
-  // label itself) stripped first so a label-only, content-emptied field
-  // reads as empty rather than as "has text."
+  // Extracts the text of the "<p>" field carrying the given class token.
+  // Every <span>...</span> in the field is scanned (globally, not just the
+  // first one found) and the ONE whose own class tokens include
+  // "adopt-label" — the "Problem" / "Prerequisites" / "Optional" label
+  // itself — is removed; any other span (a decorative icon, or prose that
+  // happens to be wrapped in a span) is left exactly as-is. This is a
+  // targeted removal of the label specifically, not a blanket "strip every
+  // span" — the latter would make a field whose real prose is wrapped in a
+  // span read as empty, which is its own false positive.
   function fieldText(body, fieldClass) {
     const pRe = /<p\b([^>]*)>([\s\S]*?)<\/p>/g;
     let m;
     while ((m = pRe.exec(body))) {
       const [, attrs, inner] = m;
       if (!hasClassToken(attrs, fieldClass)) continue;
-      const withoutLabel = inner.replace(/<span\b([^>]*)>[\s\S]*?<\/span>/, (full, spanAttrs) =>
+      const withoutLabel = inner.replace(/<span\b([^>]*)>[\s\S]*?<\/span>/g, (full, spanAttrs) =>
         hasClassToken(spanAttrs, 'adopt-label') ? '' : full
       );
       return withoutLabel.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
