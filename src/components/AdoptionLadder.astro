@@ -1,0 +1,116 @@
+---
+// The risk-scaled adoption ladder: three levels from "one recurring failure"
+// to "genuinely parallel work." Self-contained, like Topology and
+// BatchLifecycle — the homepage section around it only supplies the eyebrow,
+// heading, and intro copy.
+//
+// Terminology and commands are pinned to src/pages/docs/quickstart.md and
+// src/pages/docs/architecture.md: pack, seam / `.agents/`, coordination
+// backend, dashboard, claims, heartbeats, lanes. `scripts/check-adoption-ladder.mjs`
+// asserts against the built HTML below (the `adopt-*` classes and ids are its
+// contract) so this list can't drift from that Quickstart silently.
+const levels = [
+  {
+    n: '01',
+    title: 'Start with one recurring failure',
+    problem: 'The same mistake keeps slipping through review on one repo, one pull request at a time.',
+    prereqs: 'The pack installed on your agent host, plus whatever deterministic check your repo already runs.',
+    optional: 'A coordination backend. A repo seam. Neither exists yet, and neither is required here.',
+    next: {
+      label: 'Run a day-one skill',
+      href: '/docs/quickstart/#qs-day-one-skill',
+      aria: 'Run a day-one skill — Quickstart, step 2',
+    },
+  },
+  {
+    n: '02',
+    title: 'Standardize across a repository or team',
+    problem: 'Every agent — and every teammate — is guessing at your repo’s real setup, validate, and test commands.',
+    prereqs: 'The pack installed, and a repo willing to declare its own commands once.',
+    optional: 'The coordination backend and the dashboard — still not required at this level.',
+    next: {
+      label: 'Scaffold the repo seam',
+      href: '/docs/quickstart/#qs-repo-seam',
+      aria: 'Scaffold the repo seam — Quickstart, step 3',
+    },
+  },
+  {
+    n: '03',
+    title: 'Coordinate genuinely parallel work',
+    problem: 'Multiple agents — or machines — are working the same backlog at once, and two of them keep reaching for the same issue.',
+    prereqs: 'A repo seam already in place, and work that is actually parallelizable, not a single lane in sequence.',
+    optional: 'The dashboard — a read-only operator view over the same state. Useful, never required.',
+    next: {
+      label: 'Try the coordination backend',
+      href: '/docs/quickstart/#qs-coordinated-batches',
+      aria: 'Try the coordination backend — Quickstart, step 4',
+    },
+  },
+];
+---
+<ol class="grid adopt-ladder">
+  {levels.map((level) => (
+    <li class="card adopt-level" data-level={level.n}>
+      <div class="adopt-head">
+        <span class="adopt-n mono">Level {level.n}</span>
+        <h3>{level.title}</h3>
+      </div>
+      <p class="adopt-problem"><span class="adopt-label mono">Problem</span>{level.problem}</p>
+      <p class="adopt-prereqs"><span class="adopt-label mono">Prerequisites</span>{level.prereqs}</p>
+      <p class="adopt-optional"><span class="adopt-label mono">Optional</span>{level.optional}</p>
+      <a class="adopt-next" href={level.next.href} aria-label={level.next.aria}>{level.next.label} →</a>
+    </li>
+  ))}
+</ol>
+
+<p class="card adopt-note" id="adopt-backend-optional">
+  The coordination backend and the dashboard are <strong>not required for standalone skills or
+  ordinary single-lane work</strong> — they exist for the day genuinely parallel work turns
+  collisions into a real coordination problem, not before.
+</p>
+
+<div class="card adopt-caveat" id="adopt-when-not">
+  <h3>When not to add more machinery</h3>
+  <ul>
+    <li>A low-risk change — a typo, a copy edit, a one-line config tweak — doesn’t need a claim or a lane. Run the skill, open the PR.</li>
+    <li>Work that isn’t actually parallel. Claims and heartbeats exist to stop two agents from reaching for the same issue; if only one agent is touching the repo, there’s nothing to coordinate.</li>
+    <li>A backlog worked one item at a time. Lanes solve contention — they don’t make sequential work faster.</li>
+  </ul>
+</div>
+
+<style>
+  /* Reuses .grid + .card from global.css for the level cards, and the same
+     .card for the two callouts below — no parallel visual system, just the
+     structure a four-field level and a short callout need. */
+  .adopt-ladder { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); list-style: none; padding: 0; margin: 0 0 22px; }
+  .adopt-level { display: grid; gap: 12px; align-content: start; }
+
+  .adopt-head { display: grid; gap: 6px; }
+  .adopt-n { color: var(--brand-ink); font-size: 0.76rem; letter-spacing: 0.18em; text-transform: uppercase; }
+  .adopt-head h3 { font-size: 1.12rem; }
+
+  .adopt-problem, .adopt-prereqs, .adopt-optional { color: var(--ink-dim); font-size: 0.96rem; line-height: 1.55; }
+  /* --ink-dim, not --ink-faint: these labels carry meaning (they're the
+     scannable "problem / prerequisites / optional" structure the issue asks
+     for), so they clear 4.5:1 in both themes like every other label on this
+     page. */
+  .adopt-label {
+    display: block; color: var(--ink-dim); font-size: 0.7rem; letter-spacing: 0.16em;
+    text-transform: uppercase; margin-bottom: 0.35em;
+  }
+
+  .adopt-next {
+    justify-self: start; margin-top: 4px; color: var(--brand-ink); font-family: var(--font-mono);
+    font-size: 0.88rem; border-bottom: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+    padding-bottom: 1px; transition: border-color .18s;
+  }
+  .adopt-next:hover { border-color: var(--brand-ink); }
+
+  .adopt-note { color: var(--ink); font-size: 1rem; line-height: 1.6; }
+  .adopt-note strong { font-weight: 600; }
+
+  .adopt-caveat { display: grid; gap: 10px; }
+  .adopt-caveat h3 { font-size: 1.05rem; }
+  .adopt-caveat ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+  .adopt-caveat li { color: var(--ink-dim); font-size: 0.96rem; line-height: 1.55; }
+</style>
