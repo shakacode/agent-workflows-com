@@ -84,7 +84,7 @@ These are examples of operating patterns, not product profiles that exist today:
 - A **product-discovery site behind a production promotion gate** can test many ideas quickly in
   previews. Moving a chosen version to production still requires current evidence and the person
   authorized to promote it.
-- A **release-train open source project** can keep ordinary pull-request checks focused, then
+- A **release-train open-source project** can keep ordinary pull-request checks focused, then
   concentrate cross-version testing, integration review, and release evidence before a release
   candidate or final version.
 

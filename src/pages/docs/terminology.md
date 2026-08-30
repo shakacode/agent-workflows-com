@@ -32,7 +32,7 @@ changes, resolving exceptions, and authorizing sensitive actions.
 
 ### Elapsed time
 
-Wall-clock time from starting the work to reaching the required verified outcome. It includes
+Wall-clock time from starting the work to reaching the verified outcome required by the task. It includes
 waiting for people, workers, tests, CI, services, and integration—not just active coding time.
 
 ### Tokens and token budget
