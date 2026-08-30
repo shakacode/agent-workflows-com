@@ -87,8 +87,9 @@ verification, and outcome.
 
 ### Coordination claim
 
-A recorded assertion that one live task owns a target. It prevents two writers from changing the
-same issue or pull request at the same time and supports an explicit handoff or takeover.
+A recorded assertion that one live task owns a target. An atomic private claim prevents competing
+ownership; a public claim comment is an advisory, cooperative safeguard against conflicting
+writers. Both support an explicit handoff or takeover.
 
 ## Planning, execution, and integration
 

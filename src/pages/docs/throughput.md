@@ -11,7 +11,7 @@ description: How Agent Workflows balances valuable delivery, human attention, el
 In plain language: get more worthwhile, working software from the review time, waiting time,
 and model budget available—without dropping the few protections that must always hold. Faster
 is not the same as starting the most workers or merging the most pull requests. Work only counts
-when it is useful, checked, and integrated safely.
+when it is useful, checked, and has reached the verified outcome required by the task.
 
 This page is an **explanation**, not the workflow contract. The
 [agent-workflows source-pack repository](https://github.com/shakacode/agent-workflows) owns the
@@ -112,8 +112,8 @@ or whether coordination cost merely moved elsewhere.
 
 The source pack currently provides versioned skills and workflow documentation, repository-owned
 setup and validation through the `.agents/` seam, isolated worktrees for concurrent lanes,
-coordination claims that prevent conflicting writers, current-head verification and review gates,
-and privacy-safe
+coordination modes for atomic private claims, advisory public claim comments, and serial
+no-backend work, current-head verification and review gates, and privacy-safe
 [batch usage receipts](https://github.com/shakacode/agent-workflows/blob/main/docs/batch-usage-receipt.md).
 
 The controls are configured through several separate gates today. There is no single shipped
