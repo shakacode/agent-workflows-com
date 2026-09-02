@@ -37,6 +37,13 @@
 //      parallel (see the NOTE at Rule 5 below).
 //   6. Any external URLs inside the ladder are on the small allowlist below
 //      (shape check only — this script never fetches anything).
+//
+// Before Rule 5 runs for real: a set of in-memory self-checks (see
+// runCaveatSelfChecks, below) mutates a COPY of the real, already-loaded
+// #adopt-when-not element from the current build — not a synthetic
+// stand-in — and asserts the checker's own extraction logic reacts
+// correctly (issue #24). They run on every invocation once the build is
+// loaded, before Rule 5's real assertions.
 
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -98,6 +105,60 @@ function hasClassToken(attrs, token) {
   return classTokens(attrs).includes(token);
 }
 
+// Finds the index of the closing tag that matches the OPENING tag assumed
+// already consumed just before `fromIndex` (depth 1), via a depth-counted
+// scan over every <tagName>/</tagName> tag of that SAME name from
+// `fromIndex` onward. Returns -1 if the tags never balance. Generalizes the
+// same technique extractLevelBlocks below uses for the ladder's own <ol>:
+// a non-greedy "first closing tag of this kind" match breaks the moment the
+// element nests another element of the same tag name.
+function findMatchingTagClose(html, tagName, fromIndex) {
+  const tagRe = new RegExp(`<(/?)${tagName}\\b[^>]*>`, 'g');
+  tagRe.lastIndex = fromIndex;
+  let depth = 1;
+  let m;
+  while ((m = tagRe.exec(html))) {
+    if (m[1] === '/') {
+      depth -= 1;
+      if (depth === 0) return m.index;
+    } else {
+      depth += 1;
+    }
+  }
+  return -1; // unmatched
+}
+
+// Extracts the element carrying id="${id}" — whatever its tag name is — as
+// { tagName, openTag, innerHtml, matched }, by locating its own opening tag
+// and then depth-counting every open/close tag of that SAME tag name from
+// there (findMatchingTagClose) to find its real matching close. `matched` is
+// false if the tags never balance (innerHtml then runs to end-of-string, and
+// callers should treat that the same as "not found"). This replaces a
+// non-greedy "id="${id}"[^>]*>([\s\S]*?)<\/TAG>" match, which is wrong the
+// moment the element's own content nests another element of the same tag
+// name (e.g. a future layout <div> wrapped around a caveat's heading) —
+// that inner close tag ends the match early and truncates everything after
+// it, producing a false failure even though the rendered text is unchanged.
+// Returns null if no element with that id exists at all.
+function extractElementById(html, id) {
+  const openTagRe = /<([a-zA-Z][a-zA-Z0-9-]*)\b([^>]*)>/g;
+  let m;
+  while ((m = openTagRe.exec(html))) {
+    const [full, tagName, attrs] = m;
+    const idMatch = attrs.match(/\sid="([^"]*)"/);
+    if (!idMatch || idMatch[1] !== id) continue;
+    const contentStart = m.index + full.length;
+    const closeIdx = findMatchingTagClose(html, tagName, contentStart);
+    return {
+      tagName,
+      openTag: full,
+      innerHtml: html.slice(contentStart, closeIdx !== -1 ? closeIdx : html.length),
+      matched: closeIdx !== -1,
+    };
+  }
+  return null;
+}
+
 // Named, explicit level -> Quickstart-anchor mapping. This is the actual
 // contract issue #9 asks for ("link the first level directly to the
 // relevant Quickstart section") — a level's next-action href must match its
@@ -121,12 +182,172 @@ const REQUIRED_CAVEAT_PHRASES = {
   nonParallel: "work that isn't actually parallel",
 };
 
+// Normalizes an extracted element's innerHTML into the same space-joined,
+// straight-quote, lowercase, trimmed text used to test REQUIRED_CAVEAT_PHRASES.
+// Shared by the real Rule 5 check below and by runCaveatSelfChecks'
+// mutation controls, so both exercise the exact same normalization.
+function normalizeCaveatText(html) {
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/[‘’]/g, "'") // curly apostrophes -> straight, so the pinned phrases match either way
+    .replace(/\s+/g, ' ')
+    .toLowerCase()
+    .trim();
+}
+
+// Returns which keys of REQUIRED_CAVEAT_PHRASES are absent from an
+// already-normalized text. Empty array means both required phrases are present.
+function missingCaveatPhrases(normalizedText) {
+  return Object.keys(REQUIRED_CAVEAT_PHRASES).filter(
+    (key) => !normalizedText.includes(REQUIRED_CAVEAT_PHRASES[key])
+  );
+}
+
 // External URLs are allowed in the ladder only from these origins/prefixes.
 // This is a shape check — the script never fetches any of these.
 const EXTERNAL_ALLOWLIST = [
   /^https:\/\/github\.com\/shakacode(\/|$)/,
   /^https:\/\/(www\.)?shakacode\.com(\/|$)/,
 ];
+
+// ---------------------------------------------------------------------------
+// Self-checks (issue #24): in-memory mutation controls for extractElementById
+// / Rule 5's caveat extraction. These mutate a COPY of the real, already-
+// loaded #adopt-when-not element's innerHtml from the current build (not a
+// synthetic stand-in), re-run the same extraction/normalization Rule 5's
+// real check below uses, and assert the checker's OWN extraction logic
+// reacts the way it must. Working from the real element (via its own
+// openTag, whatever attributes Astro happened to add) rather than a
+// hand-built fixture means these controls exercise the exact markup shape
+// the real check will see. Every mutation control first asserts the
+// mutation actually landed (a loose .includes()/inequality check, not
+// exact-string equality — Astro-emitted markup gains attributes over time,
+// so pinning an exact string would be its own source of drift) before it
+// checks the extraction behavior, so a control can never silently no-op.
+// ---------------------------------------------------------------------------
+
+// Wraps the caveat's own <h3> heading in an extra <div> — a content-
+// preserving mutation of the REAL loaded markup, and the exact shape of the
+// bug in issue #24: a future layout wrapper around the heading that changes
+// no rendered text at all. Returns null if no <h3> is found in innerHtml.
+function wrapHeadingInDiv(innerHtml) {
+  const headingRe = /<h3\b[^>]*>[\s\S]*?<\/h3>/;
+  const m = headingRe.exec(innerHtml);
+  if (!m) return null;
+  const wrapped = `<div class="self-check-heading-wrap">${m[0]}</div>`;
+  return innerHtml.slice(0, m.index) + wrapped + innerHtml.slice(m.index + m[0].length);
+}
+
+// Replaces the one <li> whose normalized text contains `phrase` with a
+// neutral placeholder that doesn't mention it — a mutation of the REAL
+// loaded markup that removes one required caveat while leaving the rest of
+// the list's markup shape intact. Assumes the caveat's <li> bullets don't
+// themselves nest another <li> (true of the current shipped markup — see
+// src/components/AdoptionLadder.astro); this is a test-fixture mutation
+// helper, not one of the production extraction rules above. Returns
+// { result, found }; found is false if no <li> normalizes to something
+// containing the phrase.
+function removeLiContainingPhrase(innerHtml, phrase) {
+  let found = false;
+  const result = innerHtml.replace(/<li\b[^>]*>[\s\S]*?<\/li>/g, (block) => {
+    if (!found && normalizeCaveatText(block).includes(phrase)) {
+      found = true;
+      return '<li>This bullet no longer mentions that guidance at all.</li>';
+    }
+    return block;
+  });
+  return { result, found };
+}
+
+// Runs the mutation controls against the real caveatEl extracted from the
+// current build. Returns null (self-checks skipped, nothing to mutate) if
+// caveatEl itself is missing or unmatched, OR if the real, UNMUTATED
+// baseline is already missing a required phrase. Both are real-build
+// failures, not checker bugs, and Rule 5's real check below already
+// reports them with its own precise message; duplicating them here as a
+// "self-check failure" would misattribute a site-content regression to the
+// checker's own logic (verified empirically: without this guard, dropping
+// a required phrase from the real build makes the "still passes" and
+// "mutation applied" controls fail for the wrong reason — the phrase is
+// already gone before any self-check mutation runs, not because the
+// checker's extraction is broken).
+function runCaveatSelfChecks(caveatEl) {
+  if (!caveatEl || !caveatEl.matched) return null;
+
+  const baseline = caveatEl.innerHtml;
+  if (missingCaveatPhrases(normalizeCaveatText(baseline)).length > 0) return null;
+
+  /** @type {{name: string, ok: boolean, detail?: string}[]} */
+  const checks = [];
+  const record = (name, ok, detail) => checks.push({ name, ok, detail });
+
+  // --- Control: content-preserving nested wrapper must still pass. This is
+  // the exact shape of the bug in issue #24 — a future layout wrapper (e.g.
+  // a <div> around the heading) that changes no text content at all.
+  const nestedInner = wrapHeadingInDiv(baseline);
+  record(
+    'nested-wrapper mutation applied',
+    nestedInner !== null && nestedInner.includes('self-check-heading-wrap') && nestedInner !== baseline,
+    'expected wrapping the real <h3> heading in an extra <div> to change the markup and contain the wrapper'
+  );
+  if (nestedInner !== null) {
+    const nestedMarkup = `${caveatEl.openTag}${nestedInner}</${caveatEl.tagName}>`;
+    const nestedEl = extractElementById(nestedMarkup, 'adopt-when-not');
+    record(
+      'nested-wrapper still passes',
+      !!nestedEl && nestedEl.matched && missingCaveatPhrases(normalizeCaveatText(nestedEl.innerHtml)).length === 0,
+      'extraction must still find both required phrases when the real heading is wrapped in an extra <div>'
+    );
+  }
+
+  // --- Controls: dropping either required phrase must still fail. ---------
+  for (const key of Object.keys(REQUIRED_CAVEAT_PHRASES)) {
+    const phrase = REQUIRED_CAVEAT_PHRASES[key];
+    const { result: mutatedInner, found } = removeLiContainingPhrase(baseline, phrase);
+    record(
+      `missing-${key} mutation applied`,
+      found && mutatedInner !== baseline && !normalizeCaveatText(mutatedInner).includes(phrase),
+      `expected to find and neutralize the real <li> containing the "${key}" phrase`
+    );
+    const mutatedMarkup = `${caveatEl.openTag}${mutatedInner}</${caveatEl.tagName}>`;
+    const mutatedEl = extractElementById(mutatedMarkup, 'adopt-when-not');
+    const missing =
+      mutatedEl && mutatedEl.matched
+        ? missingCaveatPhrases(normalizeCaveatText(mutatedEl.innerHtml))
+        : Object.keys(REQUIRED_CAVEAT_PHRASES);
+    record(
+      `missing-${key} still fails`,
+      missing.includes(key),
+      `extraction must report the "${key}" phrase missing once its <li> is neutralized`
+    );
+  }
+
+  return checks;
+}
+
+// Prints and, on any control failure, exits(1) for the results of
+// runCaveatSelfChecks. `checks === null` means self-checks were skipped
+// (see runCaveatSelfChecks above) — nothing to print; the real Rule 5
+// check reports the reason.
+function reportSelfChecks(checks) {
+  if (checks === null) return;
+
+  const failed = checks.filter((c) => !c.ok);
+  if (failed.length > 0) {
+    console.error("check-adoption-ladder: SELF-CHECK FAILED — the checker's own extraction logic is broken:\n");
+    for (const c of failed) console.error(`  - ${c.name}${c.detail ? `: ${c.detail}` : ''}`);
+    console.error(
+      `\n${failed.length}/${checks.length} self-check control(s) failed. This is a bug in ` +
+        'scripts/check-adoption-ladder.mjs itself, not in the built site.'
+    );
+    process.exit(1);
+  }
+
+  console.log(
+    `check-adoption-ladder: self-checks OK (${checks.length}/${checks.length} mutation controls passed: ` +
+      `${checks.map((c) => c.name).join(', ')}).`
+  );
+}
 
 const indexHtml = readDistFile('index.html');
 if (indexHtml === null) {
@@ -143,7 +364,12 @@ let sectionHtml = '';
 if (sectionStartIdx === -1) {
   fail('dist/index.html has no <section id="adopt"> — the homepage adoption-ladder section is missing entirely.');
 } else {
-  const closeIdx = indexHtml.indexOf('</section>', sectionStartIdx);
+  // Balanced-tag scan (findMatchingTagClose), not a blind
+  // indexOf('</section>') — the same non-greedy-pattern bug class issue #24
+  // fixes for #adopt-when-not: a blind first-occurrence match would be wrong
+  // the moment the #adopt section itself nests another <section>.
+  const openTagEnd = indexHtml.indexOf('>', sectionStartIdx);
+  const closeIdx = openTagEnd === -1 ? -1 : findMatchingTagClose(indexHtml, 'section', openTagEnd + 1);
   if (closeIdx === -1) {
     fail('<section id="adopt"> in dist/index.html has no matching </section>.');
   } else {
@@ -379,20 +605,27 @@ if (sectionHtml) {
   // new, inverted sentence (the same class of attack as Rule 4's "ignore the
   // myth that ..." example) would still pass. Any rewrite of this callout,
   // inverted or not, still needs human review at PR time.
-  const caveatMatch = sectionHtml.match(/id="adopt-when-not"[^>]*>([\s\S]*?)<\/div>/);
-  if (!caveatMatch) {
+  //
+  // The element itself is extracted with extractElementById's balanced-tag
+  // scanner (depth-counting every <div>/</div> of #adopt-when-not's OWN tag
+  // name from its opening tag onward) — not a non-greedy "first </div>"
+  // match. The latter breaks the moment the callout's own content nests
+  // another <div> (e.g. a future layout wrapper around the heading), which
+  // truncates the extracted text before either pinned phrase and produces a
+  // false failure even though the rendered caveat text hasn't changed
+  // (issue #24). runCaveatSelfChecks' nested-wrapper control pins exactly
+  // this case, against the real loaded element, on every run (just below).
+  const caveatEl = extractElementById(sectionHtml, 'adopt-when-not');
+  reportSelfChecks(runCaveatSelfChecks(caveatEl));
+  if (!caveatEl || !caveatEl.matched) {
     fail('No element with id="adopt-when-not" found in the #adopt section — the "when not to add more machinery" guidance is missing.');
   } else {
-    const normalized = caveatMatch[1]
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/[‘’]/g, "'") // curly apostrophes -> straight, so the pinned phrases match either way
-      .replace(/\s+/g, ' ')
-      .toLowerCase()
-      .trim();
-    if (!normalized.includes(REQUIRED_CAVEAT_PHRASES.lowRisk)) {
+    const normalized = normalizeCaveatText(caveatEl.innerHtml);
+    const missing = missingCaveatPhrases(normalized);
+    if (missing.includes('lowRisk')) {
       fail(`The "when not to add more machinery" block (#adopt-when-not) no longer contains the phrase "${REQUIRED_CAVEAT_PHRASES.lowRisk}" verbatim — the low-risk-change guidance is missing or was reworded. Current text: "${normalized}"`);
     }
-    if (!normalized.includes(REQUIRED_CAVEAT_PHRASES.nonParallel)) {
+    if (missing.includes('nonParallel')) {
       fail(`The "when not to add more machinery" block (#adopt-when-not) no longer contains the phrase "${REQUIRED_CAVEAT_PHRASES.nonParallel}" verbatim — the non-parallel-work guidance is missing or was reworded. Current text: "${normalized}"`);
     }
   }
