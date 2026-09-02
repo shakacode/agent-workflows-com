@@ -358,3 +358,123 @@ doc scrollWidth vs clientWidth | 1440 vs 1440 ok
 flow scrollWidth vs clientWidth | 479 vs 479 ok
 END</pre>
 
+### v3 (scoped rail) 320
+BEGIN
+viewport | 320x900
+.hero-panel | 17px | 272x623 | lines=27 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-flow | 17px | 234x447 | lines=23 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-source | 12.48px | 234x17 | lines=1 | "from github issues & prs"
+.lc-gate-name | 16px | 200x21 | lines=1 | "security gate"
+.lc-gate-sub | 13.12px | 200x38 | lines=2 | "untrusted input never becomes instructions"
+stage1 .lc-step | 12.48px | 73x16 | lines=1 | "01"
+stage1 .lc-stage | 15.2px | 73x20 | lines=1 | "plan"
+stage2 .lc-step | 12.48px | 73x16 | lines=1 | "02"
+stage2 .lc-stage | 15.2px | 73x20 | lines=1 | "split"
+stage3 .lc-step | 12.48px | 73x16 | lines=1 | "03"
+stage3 .lc-stage | 15.2px | 73x20 | lines=1 | "run"
+stage4 .lc-step | 12.48px | 73x16 | lines=1 | "04"
+stage4 .lc-stage | 15.2px | 73x20 | lines=1 | "review"
+stage5 .lc-step | 12.48px | 180x16 | lines=1 | "05"
+stage5 .lc-stage | 15.2px | 180x20 | lines=1 | "audit"
+.lc-rail | 12.8px | 206x69 | lines=5 | "backed byshared coordination, so no two agents take one task"
+.diagram-caption | 12.48px | 234x124 | lines=6 | "How the work moves — the amber gate is the differentiator: untrusted i"
+doc scrollWidth vs clientWidth | 320 vs 320 ok
+flow scrollWidth vs clientWidth | 234 vs 234 ok
+END</pre>
+
+### v3 (scoped rail) 390
+BEGIN
+viewport | 390x900
+.hero-panel | 17px | 342x562 | lines=24 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-flow | 17px | 304x428 | lines=22 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-source | 12.48px | 304x17 | lines=1 | "from github issues & prs"
+.lc-gate-name | 16px | 270x21 | lines=1 | "security gate"
+.lc-gate-sub | 13.12px | 270x38 | lines=2 | "untrusted input never becomes instructions"
+stage1 .lc-step | 12.48px | 108x16 | lines=1 | "01"
+stage1 .lc-stage | 15.2px | 108x20 | lines=1 | "plan"
+stage2 .lc-step | 12.48px | 108x16 | lines=1 | "02"
+stage2 .lc-stage | 15.2px | 108x20 | lines=1 | "split"
+stage3 .lc-step | 12.48px | 108x16 | lines=1 | "03"
+stage3 .lc-stage | 15.2px | 108x20 | lines=1 | "run"
+stage4 .lc-step | 12.48px | 108x16 | lines=1 | "04"
+stage4 .lc-stage | 15.2px | 108x20 | lines=1 | "review"
+stage5 .lc-step | 12.48px | 250x16 | lines=1 | "05"
+stage5 .lc-stage | 15.2px | 250x20 | lines=1 | "audit"
+.lc-rail | 12.8px | 276x49 | lines=4 | "backed byshared coordination, so no two agents take one task"
+.diagram-caption | 12.48px | 304x82 | lines=4 | "How the work moves — the amber gate is the differentiator: untrusted i"
+doc scrollWidth vs clientWidth | 390 vs 390 ok
+flow scrollWidth vs clientWidth | 304 vs 304 ok
+END</pre>
+
+### v3 (scoped rail) 768
+BEGIN
+viewport | 768x900
+.hero-panel | 17px | 720x365 | lines=20 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-flow | 17px | 672x262 | lines=20 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-source | 12.48px | 672x17 | lines=1 | "from github issues & prs"
+.lc-gate-name | 16px | 638x21 | lines=1 | "security gate"
+.lc-gate-sub | 13.12px | 638x19 | lines=1 | "untrusted input never becomes instructions"
+stage1 .lc-step | 12.48px | 96x16 | lines=1 | "01"
+stage1 .lc-stage | 15.2px | 96x20 | lines=1 | "plan"
+stage2 .lc-step | 12.48px | 96x16 | lines=1 | "02"
+stage2 .lc-stage | 15.2px | 96x20 | lines=1 | "split"
+stage3 .lc-step | 12.48px | 96x16 | lines=1 | "03"
+stage3 .lc-stage | 15.2px | 96x20 | lines=1 | "run"
+stage4 .lc-step | 12.48px | 96x16 | lines=1 | "04"
+stage4 .lc-stage | 15.2px | 96x20 | lines=1 | "review"
+stage5 .lc-step | 12.48px | 96x16 | lines=1 | "05"
+stage5 .lc-stage | 15.2px | 96x20 | lines=1 | "audit"
+.lc-rail | 12.8px | 644x30 | lines=3 | "backed byshared coordination, so no two agents take one task"
+.diagram-caption | 12.48px | 672x41 | lines=2 | "How the work moves — the amber gate is the differentiator: untrusted i"
+doc scrollWidth vs clientWidth | 768 vs 768 ok
+flow scrollWidth vs clientWidth | 672 vs 672 ok
+END</pre>
+
+### v3 (scoped rail) 1024
+BEGIN
+viewport | 1024x900
+.hero-panel | 17px | 499x484 | lines=22 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-flow | 17px | 436x345 | lines=21 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-source | 12.48px | 436x17 | lines=1 | "from github issues & prs"
+.lc-gate-name | 16px | 402x21 | lines=1 | "security gate"
+.lc-gate-sub | 13.12px | 402x19 | lines=1 | "untrusted input never becomes instructions"
+stage1 .lc-step | 12.48px | 105x16 | lines=1 | "01"
+stage1 .lc-stage | 15.2px | 105x20 | lines=1 | "plan"
+stage2 .lc-step | 12.48px | 105x16 | lines=1 | "02"
+stage2 .lc-stage | 15.2px | 105x20 | lines=1 | "split"
+stage3 .lc-step | 12.48px | 105x16 | lines=1 | "03"
+stage3 .lc-stage | 15.2px | 105x20 | lines=1 | "run"
+stage4 .lc-step | 12.48px | 174x16 | lines=1 | "04"
+stage4 .lc-stage | 15.2px | 174x20 | lines=1 | "review"
+stage5 .lc-step | 12.48px | 174x16 | lines=1 | "05"
+stage5 .lc-stage | 15.2px | 174x20 | lines=1 | "audit"
+.lc-rail | 12.8px | 408x49 | lines=4 | "backed byshared coordination, so no two agents take one task"
+.diagram-caption | 12.48px | 436x62 | lines=3 | "How the work moves — the amber gate is the differentiator: untrusted i"
+doc scrollWidth vs clientWidth | 1024 vs 1024 ok
+flow scrollWidth vs clientWidth | 436 vs 436 ok
+END</pre>
+
+### v3 (scoped rail) 1440
+BEGIN
+viewport | 1440x900
+.hero-panel | 17px | 549x491 | lines=22 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-flow | 17px | 479x345 | lines=21 | "from github issues & prssecurity gateuntrusted input never becomes ins"
+.lc-source | 12.48px | 479x17 | lines=1 | "from github issues & prs"
+.lc-gate-name | 16px | 445x21 | lines=1 | "security gate"
+.lc-gate-sub | 13.12px | 445x19 | lines=1 | "untrusted input never becomes instructions"
+stage1 .lc-step | 12.48px | 119x16 | lines=1 | "01"
+stage1 .lc-stage | 15.2px | 119x20 | lines=1 | "plan"
+stage2 .lc-step | 12.48px | 119x16 | lines=1 | "02"
+stage2 .lc-stage | 15.2px | 119x20 | lines=1 | "split"
+stage3 .lc-step | 12.48px | 119x16 | lines=1 | "03"
+stage3 .lc-stage | 15.2px | 119x20 | lines=1 | "run"
+stage4 .lc-step | 12.48px | 195x16 | lines=1 | "04"
+stage4 .lc-stage | 15.2px | 195x20 | lines=1 | "review"
+stage5 .lc-step | 12.48px | 195x16 | lines=1 | "05"
+stage5 .lc-stage | 15.2px | 195x20 | lines=1 | "audit"
+.lc-rail | 12.8px | 451x49 | lines=4 | "backed byshared coordination, so no two agents take one task"
+.diagram-caption | 12.48px | 479x62 | lines=3 | "How the work moves — the amber gate is the differentiator: untrusted i"
+doc scrollWidth vs clientWidth | 1440 vs 1440 ok
+flow scrollWidth vs clientWidth | 479 vs 479 ok
+END</pre>
+

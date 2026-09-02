@@ -1,7 +1,7 @@
 # QA evidence — issue #17, hero diagram plain language
 
 Lane `issue-17-hero-jargon`, batch `awc-c-20260901`.
-PR branch: `awc-c/issue-17-hero-plain-language` @ `7667ce4`.
+PR branch: `awc-c/issue-17-hero-plain-language` @ `9d3e6c6`.
 Only `src/components/BatchLifecycle.astro` changed — text nodes, the `aria-label`,
 and code comments. No CSS rule, colour, spacing or breakpoint was touched.
 
@@ -85,6 +85,28 @@ one. It already took two lines at 320 before this change, and it stays on one
 line at 768, 1024 and 1440. The replacement rail string was chosen at the same
 length as the one it replaces (53 characters each), which is why the rail height
 is unchanged at every width.
+
+The rail was then reworded again, to `shared coordination, so no two agents take
+one task` (51 characters), after the Codex reviewer pointed out that "parallel
+agents never collide" promised more than the system provides: the documented
+guarantee is mutual exclusion on the same target ("two workers never collide on
+the same target", methodology / Parallel work; and the homepage's contention
+example, two agents on one issue producing exactly one PR), not the absence of
+merge conflicts between agents on different targets. The shorter string keeps
+the same rail height:
+
+| Width | rail on main | rail, first wording | rail, scoped wording | lines (scoped) |
+| --- | --- | --- | --- | --- |
+| 320 | 206x69 | 206x69 | 206x69 | 3 |
+| 390 | 276x49 | 276x49 | 276x49 | 2 |
+| 768 | 644x30 | 644x30 | 644x30 | 1 |
+| 1024 | 408x49 | 408x49 | 408x49 | 2 |
+| 1440 | 451x49 | 451x49 | 451x49 | 2 |
+
+(Heights include the rail's 10px `padding-top`; line count is
+`(height - 10) / 19.2`. The rail is one line only at 768, where the hero panel
+is full-width; at 1024 and 1440 the two-column layout narrows the panel again.
+That is the shape `main` already had.)
 
 ### Stage box geometry — `.lc-stage` width x height
 
@@ -180,7 +202,7 @@ Get started ↗ | Read the methodology → |
 from github issues & prs |
 security gate | untrusted input never becomes instructions | ↓ |
 01 plan | 02 split | 03 run | 04 review | 05 audit |
-backed by shared coordination, so parallel agents never collide |
+backed by shared coordination, so no two agents take one task |
 How the work moves — the amber gate is the differentiator: untrusted input is
 checked before an agent ever acts on it. The same path runs for one lane or many.
 ```
