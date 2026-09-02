@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check:adoption-ladder": "node scripts/check-adoption-ladder.mjs",
-    "test": "npm run build && npm run check:adoption-ladder"
+    "check:links": "node scripts/check-links.mjs",
+    "test": "npm run build && npm run check:adoption-ladder && npm run check:links"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
