@@ -1,0 +1,134 @@
+---
+// One proof card for the homepage "evidence from real use" section (issue #10).
+//
+// The card contract — the five fields issue #10 asks for, in this order:
+//   1. the observed event or failure          -> "What happened"
+//   2. the control or workflow change it drove -> "The control it forced"
+//   3. the current result or status            -> "Where it stands"
+//   4. an honest limitation or open item       -> "Still open"
+//   5. a link to durable public evidence       -> the card footer links
+//
+// Sourcing rule for this file: every quantitative or efficacy claim below is
+// traceable to the published case study at /case-studies/30-ai-assisted-commits/
+// (canonical: https://shakacode.com/blog/audit-30-ai-assisted-commits/) or to a
+// public issue/pull request linked inline. Nothing here is estimated,
+// aggregated, or reconstructed from private work. The PR that added this
+// section carries the claim-to-source table.
+//
+// Deliberately model-agnostic: the study could not attribute the incorrect
+// security-advisory citation to any model, so this card makes no claim about
+// which agent produces better or worse output.
+const study = '/case-studies/30-ai-assisted-commits/';
+const shakapacker = 'https://github.com/shakacode/shakapacker/pull/';
+const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249';
+---
+<article class="card proof">
+  <div class="proof-head">
+    <span class="proof-tag mono">Case study · August 5, 2026</span>
+    <h3>The AI reviewer found it. We merged anyway.</h3>
+  </div>
+
+  <dl class="proof-fields">
+    <div class="proof-field">
+      <dt class="proof-label mono">What happened</dt>
+      <dd>
+        Hours before merge, an AI reviewer flagged two real risks on one pull request: a transient
+        <code>429</code> or <code>5xx</code> API failure could be treated like a confirmed delisting
+        and delete a healthy provider row, and the final exhausted retry could still sleep up to 60
+        seconds that no later attempt would use. Both findings sat inside a timeline of
+        <strong>83 conversation items</strong>. The pull request merged with neither one answered or
+        resolved. <strong>Detection succeeded. Integration discipline failed.</strong>
+      </dd>
+    </div>
+
+    <div class="proof-field">
+      <dt class="proof-label mono">The control it forced</dt>
+      <dd>
+        Current review findings have to be stateful. Before merge, each one gets exactly one
+        disposition — fixed and verified, explicitly rejected or accepted with a recorded rationale,
+        or converted into an owned follow-up with a defined trigger — and until then the merge gate
+        fails closed. A green check means a process finished; it is not evidence that anything was
+        dispositioned.
+      </dd>
+    </div>
+
+    <div class="proof-field">
+      <dt class="proof-label mono">Where it stands</dt>
+      <dd>
+        The adversarial audit of 30 recent
+        <a href="https://github.com/shakacode/shakapacker">Shakapacker</a> commits that followed the
+        incident found no critical or high-severity defects, and the four focused fixes it did
+        produce are merged upstream: <a href={`${shakapacker}1240`}>fail closed when <code>PATH</code>
+        is unset</a>, <a href={`${shakapacker}1241`}>make the Babel 8 smoke prove transformation</a>,
+        <a href={`${shakapacker}1242`}>actually lint the merge-readiness helper</a>, and
+        <a href={`${shakapacker}1239`}>correct stale upgrade references</a>.
+      </dd>
+    </div>
+
+    <div class="proof-field">
+      <dt class="proof-label mono">Still open</dt>
+      <dd>
+        The gate is not finished. <a href={failClosedIssue}>Fail closed on unsettled configured
+        reviews</a> is still an open issue, so today the disposition rule is a practice a human has
+        to hold, not something the system enforces. The study is also honest about a second limit:
+        its worst artifact — an incorrect security-advisory citation in permanent commit history —
+        could not be attributed to any model, because the change arrived from an outside pull
+        request with no recorded provenance. Without model, reasoning level, workflow version, and
+        gate configuration, “which agent produces more slop” is an anecdote, not a measurement.
+      </dd>
+    </div>
+  </dl>
+
+  <div class="proof-links">
+    <a class="proof-next" href={study}>Read the full case study →</a>
+    <a class="proof-next proof-next-quiet" href="/case-studies/">All case studies →</a>
+  </div>
+</article>
+
+<style>
+  /* Reuses .card and the .mono/label idiom from global.css — same visual
+     system as the adoption ladder above it, no parallel one. */
+  .proof { display: grid; gap: 18px; }
+
+  .proof-head { display: grid; gap: 6px; }
+  /* --ink-dim, not --ink-faint: this tag carries the study's date and kind,
+     so it clears 4.5:1 in both themes like every other label on the page. */
+  .proof-tag {
+    color: var(--ink-dim); font-size: 0.72rem; letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .proof-head h3 { font-size: 1.18rem; margin-bottom: 0; }
+
+  .proof-fields { display: grid; gap: 16px; margin: 0; }
+  /* Two columns only where there is room for a readable measure beside the
+     label; below that the label stacks above its answer. */
+  .proof-field { display: grid; gap: 6px; }
+  @media (min-width: 720px) {
+    .proof-field { grid-template-columns: 11rem minmax(0, 1fr); gap: 8px 24px; align-items: baseline; }
+  }
+  .proof-label { color: var(--ink-dim); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .proof-field dd { margin: 0; color: var(--ink-dim); font-size: 0.98rem; line-height: 1.6; }
+  .proof-field dd strong { color: var(--ink); font-weight: 600; }
+  .proof-field dd code {
+    font-family: var(--font-mono); font-size: 0.88em;
+    color: var(--ink); background: color-mix(in srgb, var(--ink) 8%, transparent);
+    border-radius: 4px; padding: 0.1em 0.35em;
+  }
+  .proof-field dd a {
+    color: var(--brand-ink);
+    border-bottom: 1px solid color-mix(in srgb, var(--brand) 40%, transparent);
+    /* Long link labels wrap mid-word rather than pushing the card wide at 390px. */
+    overflow-wrap: anywhere;
+  }
+  .proof-field dd a:hover { border-color: var(--brand-ink); }
+
+  .proof-links { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+  .proof-next {
+    color: var(--brand-ink); font-family: var(--font-mono); font-size: 0.88rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+    padding-bottom: 1px; transition: border-color .18s;
+  }
+  .proof-next:hover { border-color: var(--brand-ink); }
+  .proof-next-quiet { color: var(--ink-dim); border-bottom-color: var(--line-strong); }
+  .proof-next-quiet:hover { border-bottom-color: var(--ink-dim); }
+</style>
