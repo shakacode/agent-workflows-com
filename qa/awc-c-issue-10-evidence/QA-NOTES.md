@@ -1,7 +1,7 @@
 # QA evidence — homepage evidence section (issue #10)
 
 Lane `issue-10-evidence`, batch `awc-c-20260901`. Branch under test:
-`awc-c/issue-10-homepage-evidence` at `122acc2`. Baseline: `origin/main` at
+`awc-c/issue-10-homepage-evidence` at `78f8872`. Baseline: `origin/main` at
 `669f319`.
 
 ## How these were captured
@@ -37,9 +37,9 @@ Layout, measured on the rendered page:
 
 | Metric | 1440x900 | 390x844 |
 | --- | --- | --- |
-| `#evidence` section height | 1230 px | 2059 px |
+| `#evidence` section height | 1255 px | 2209 px |
 | Homepage height, before | 11060 px | 16611 px |
-| Homepage height, after | 12291 px | 18694 px |
+| Homepage height, after | 12316 px | 18820 px |
 | Horizontal overflow (`scrollWidth - innerWidth`), after | 0 px | 0 px |
 
 No horizontal overflow at either width, in either scheme. At 1440 the card's
@@ -51,29 +51,45 @@ Page weight — `dist/index.html` plus every local asset it links:
 | Build | index.html | Total (HTML + CSS + favicon) |
 | --- | --- | --- |
 | `origin/main` (669f319) | 35,523 B | 67,958 B (66.4 KB) |
-| this branch (122acc2) | 39,925 B | 74,501 B (72.8 KB) |
-| delta | +4,402 B | +6,543 B (+6.4 KB) |
+| this branch (78f8872) | 40,121 B | 74,714 B (73.0 KB) |
+| delta | +4,598 B | +6,756 B (+6.6 KB) |
+
+Sizes are 1024-base KB.
 
 No image was added. The case study's cover art
-(`public/images/case-studies/ai-audit/cover.png`) is 156 KB on its own, which
-already exceeds the 150 KB budget this lane was given for reusing it, so the
-card is text-only and the homepage gains 6.4 KB of HTML and scoped CSS instead.
+(`public/images/case-studies/ai-audit/cover.png`) is 155,692 B — 152.0 KB — on
+its own, which already exceeds the 150 KB budget this lane was given for
+reusing it, so the card is text-only and the homepage gains 6.6 KB of HTML and
+scoped CSS instead.
 
-Contrast, computed from the rendered colors against the composited card
-background (alpha flattened), at 1440 in both schemes:
+Contrast, computed at 1440 in both schemes from the rendered colors against
+each element's own effective background — the ancestor chain is walked and every
+layer composited down, so the card's `0.82` alpha surface is accounted for:
 
 | Element | Dark | Light |
 | --- | --- | --- |
+| Section eyebrow (`.eyebrow`, 11.8 px) | 13.61:1 | 6.35:1 |
+| Section `h2` (46.4 px) | 16.29:1 | 16.21:1 |
+| Section intro `p` (17.3 px) | 8.90:1 | 7.26:1 |
+| Card date tag (11.5 px) | 8.16:1 | 7.85:1 |
 | Card title (`h3`, 18.9 px) | 14.93:1 | 17.53:1 |
 | Field labels (`dt`, 11.2 px) | 8.16:1 | 7.85:1 |
 | Field prose (`dd`, 15.7 px) | 8.16:1 | 7.85:1 |
+| Inline `code` chip (13.8 px) | 8.02:1 | 7.95:1 |
 | Inline links in prose | 12.47:1 | 6.86:1 |
 | "Read the full case study" link | 12.47:1 | 6.86:1 |
 | "All case studies" link | 8.16:1 | 7.85:1 |
 
-Every value clears WCAG AA (4.5:1) for normal text in both themes. The card
-reuses `--ink`, `--ink-dim`, `--brand-ink`, and `--line-strong` from
-`global.css`; it defines no colors of its own.
+Every value clears WCAG AA (4.5:1) for normal text in both themes. The lowest,
+6.35:1, is the section eyebrow — that is the site's existing `.eyebrow` class
+rendering `--brand-ink` on the page background, not anything this section
+introduces; it passes AA and is unchanged from every other section head.
+
+The card reuses `--ink`, `--ink-dim`, `--brand-ink`, `--surface`, `--line`, and
+`--line-strong` from `global.css` and defines no colors of its own. Its inline
+`code` chip copies the site's inline-code recipe verbatim from
+`global.css:202-203` (`.doc-body code` and `.doc-body :not(pre) > code`), which
+is `.doc-body`-scoped and so cannot reach the homepage on its own.
 
 ## Rendered-copy check
 
@@ -82,7 +98,8 @@ All eight links inside the built `#evidence` section were resolved against
 exist in the built site, and the six external links are all on
 `github.com/shakacode/`. The section's rendered text was also scanned for the
 JSX whitespace-fusion pattern that the second commit fixes
-(`/[a-z][A-Z0-9]|,[a-z]/`) — zero matches at `122acc2`.
+(`/[a-z][A-Z0-9]|,[a-z]/`) — the only candidate at `78f8872` is the `tH` inside
+"GitHub", which is a legitimate intra-word capital, not a fused boundary.
 
 ## Validation at this head
 
