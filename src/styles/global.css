@@ -170,19 +170,22 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .brandmark { display: inline-flex; align-items: center; gap: 10px; flex: none; max-width: 100%; font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.02em; }
 .brandmark b { font-weight: 600; }
 .brandmark .dim { color: var(--ink-faint); }
-/* "/ ShakaCode" is decoration and costs ~107px. Below ~1000px the bar needs
-   that width for the nav, so the suffix goes. It stays in the DOM, and costs
-   assistive tech nothing either way: the link's aria-label overrides its text,
-   so the suffix was never announced. Seven section links fit
-   beside it: 344.5 + 20 + 694.9 = 1059.4 inside the 1072px .wrap. An eighth
-   link costs 110.5 more and does not, so if one is ever added this media query
-   has to become an unconditional display: none. */
-@media (max-width: 62.5em) { .brandmark .dim { display: none; } }
+/* "/ ShakaCode" is decoration and costs ~107px, and the bar has nowhere to
+   take it from. .wrap caps at 1120px, so the row has 1072px of content box at
+   every width from 1120px up; the eight section links plus Docs and GitHub are
+   805.4px, and the full brandmark is 344.5px. 344.5 + 20 + 805.4 = 1169.9,
+   which does not fit at any width. Without the suffix: 237.4 + 20 + 805.4 =
+   1062.8, one row with 29.3px between brandmark and nav.
+   So the suffix is off everywhere rather than below a breakpoint. It stays in
+   the DOM and costs assistive tech nothing: the link's aria-label overrides its
+   text, so the suffix was never announced. The name still appears in the footer
+   and in the OG card. */
+.brandmark .dim { display: none; }
 /* one step smaller on phones: at 360px the full-size wordmark plus the GitHub
    link is 8px too wide for the row, and this is cheaper than a second row. */
 @media (max-width: 24em) { .brandmark { font-size: 0.82rem; } }
 .nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; column-gap: 16px; row-gap: 6px; min-width: 0; font-family: var(--font-mono); font-size: 0.82rem; }
-/* the bar carries seven section links now — never let a label break mid-phrase */
+/* the bar carries eight section links now — never let a label break mid-phrase */
 .nav a { color: var(--ink-dim); transition: color .18s; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
 /* Nav link priority, lowest first: hide-lg drops soonest, then hide-md, then
@@ -239,11 +242,16 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
    Markdown has no `{#id}` heading-attribute support here (verified: it renders
    as literal text), so the anchor is a zero-size element placed just before
    the heading it names. `scroll-margin-top` keeps the target from landing
-   under the sticky 62px header; the site header only ever reserves that much
-   space, so the offset only needs to clear it plus a little breathing room.
+   under the sticky header.
    The rule also collapses the empty wrapping <p> markdown gives it, so the
    anchor adds no visible gap above the heading. */
-.qs-anchor { scroll-margin-top: 84px; }
+/* The header is 62px at a 16px root, but it is no longer a fixed height: at a
+   large browser font it wraps to two or three rows, measured at up to 5.32x the
+   root font size (127.6px at a 24px root, 161.1px at 32px). So the offset is a
+   floor of 84px — the old fixed value, which keeps the 16px behaviour byte for
+   byte — that rises with the root font once 6rem passes it. The homepage
+   section targets get the same treatment; they never had an offset at all. */
+.qs-anchor, main section[id] { scroll-margin-top: max(84px, calc(6rem - 12px)); }
 .doc-body p:has(> .qs-anchor:only-child) { margin: 0; }
 
 .doc-body blockquote {
