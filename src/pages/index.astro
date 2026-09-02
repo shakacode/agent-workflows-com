@@ -374,10 +374,13 @@ const pageDescription =
 
   .skills-grid { grid-template-columns: repeat(auto-fit, minmax(248px, 1fr)); }
   .skills-grid .card { display: grid; gap: 10px; align-content: start; }
-  /* wrap rather than overflow: at a large browser font the name and the tier
-     pill together are wider than a card. */
-  .card-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; }
-  .card-top > * { min-width: 0; }
+  .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  /* The tier pill never wraps, so the name's min-content used to set the whole
+     card row and push it past a narrow viewport at a large browser font. Letting
+     the name shrink and break fixes that without flex-wrap, which would have
+     re-laid-out the desktop cards: at a 16px root no card row is over-constrained,
+     so this rule changes nothing there. */
+  .card-top > * { min-width: 0; overflow-wrap: anywhere; }
   .tier {
     flex: none; font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.16em;
     /* the tier carries meaning, so it has to clear 4.5:1 like any other label */
