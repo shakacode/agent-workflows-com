@@ -1,5 +1,9 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "include": [".astro/types.d.ts", "**/*"],
+  // `**/*.astro` is not redundant with `**/*`: TypeScript-style include globs only
+  // match known TS/JS extensions, so without it `.astro` files belong to no tsconfig
+  // and the bundler's tsconfig lookup walks past this project into ancestor
+  // directories. See the `vite.resolve.tsconfigPaths` note in astro.config.mjs and #12.
+  "include": [".astro/types.d.ts", "**/*", "**/*.astro"],
   "exclude": ["dist"]
 }
