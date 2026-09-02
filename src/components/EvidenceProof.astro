@@ -32,10 +32,10 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
     <div class="proof-field">
       <dt class="proof-label mono">What happened</dt>
       <dd>
-        Hours before merge, an AI reviewer flagged two real risks on one pull request: a transient
+        Hours before merge, an AI reviewer flagged two real risks on one pull request: a transient{' '}
         <code>429</code> or <code>5xx</code> API failure could be treated like a confirmed delisting
         and delete a healthy provider row, and the final exhausted retry could still sleep up to 60
-        seconds that no later attempt would use. Both findings sat inside a timeline of
+        seconds that no later attempt would use. Both findings sat inside a timeline of{' '}
         <strong>83 conversation items</strong>. The pull request merged with neither one answered or
         resolved. <strong>Detection succeeded. Integration discipline failed.</strong>
       </dd>
@@ -55,12 +55,12 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
     <div class="proof-field">
       <dt class="proof-label mono">Where it stands</dt>
       <dd>
-        The adversarial audit of 30 recent
+        The adversarial audit of 30 recent{' '}
         <a href="https://github.com/shakacode/shakapacker">Shakapacker</a> commits that followed the
         incident found no critical or high-severity defects, and the four focused fixes it did
-        produce are merged upstream: <a href={`${shakapacker}1240`}>fail closed when <code>PATH</code>
-        is unset</a>, <a href={`${shakapacker}1241`}>make the Babel 8 smoke prove transformation</a>,
-        <a href={`${shakapacker}1242`}>actually lint the merge-readiness helper</a>, and
+        produce are merged upstream: <a href={`${shakapacker}1240`}>fail closed when <code>PATH</code>{' '}
+        is unset</a>, <a href={`${shakapacker}1241`}>make the Babel 8 smoke prove transformation</a>,{' '}
+        <a href={`${shakapacker}1242`}>actually lint the merge-readiness helper</a>, and{' '}
         <a href={`${shakapacker}1239`}>correct stale upgrade references</a>.
       </dd>
     </div>
