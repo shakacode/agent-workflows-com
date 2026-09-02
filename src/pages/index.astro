@@ -186,7 +186,7 @@ const pageDescription =
         {skills.map(([tier, name, desc]) => (
           <div class="card">
             <div class="card-top">
-              <span class="k">{name}</span>
+              <h3 class="k">{name}</h3>
               <span class={tier === 'day one' ? 'tier tier-now' : 'tier'}>{tier}</span>
             </div>
             <p>{desc}</p>
@@ -245,15 +245,15 @@ const pageDescription =
       </div>
       <div class="grid stack-grid" style="margin-top:22px">
         <a class="card" href={`${gh}/agent-workflows`}>
-          <span class="k">agent-workflows ↗</span>
+          <h3 class="k">agent-workflows ↗</h3>
           <p>The portable Codex/Claude workflow pack — skills, workflow prompts, and the repo seam contract. MIT.</p>
         </a>
         <a class="card" href={`${gh}/agent-coordination`}>
-          <span class="k">agent-coordination ↗</span>
+          <h3 class="k">agent-coordination ↗</h3>
           <p>Mutual-exclusion claims, TTL heartbeats (live/stale/dead), and batch lanes — over a Cloudflare Worker + D1, or a zero-config local mode. Proven against a contention simulation: two agents, one issue, exactly one PR.</p>
         </a>
         <a class="card" href={`${gh}/agent-coordination-dashboard`}>
-          <span class="k">dashboard ↗</span>
+          <h3 class="k">dashboard ↗</h3>
           <p>A local operator console: a dense, searchable table of every lane and PR — state, liveness, and “wedged” detection — live over the coordination API. Read-only, loopback by default.</p>
         </a>
       </div>
@@ -386,6 +386,9 @@ const pageDescription =
   .stack-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   a.card { transition: border-color .2s, transform .16s; }
   a.card:hover { border-color: color-mix(in srgb, var(--brand) 50%, transparent); transform: translateY(-3px); }
+  @media (prefers-reduced-motion: reduce) {
+    a.card, a.card:hover { transform: none; transition: none; }
+  }
 
   #safety .gatebadge { justify-self: start; }
 

@@ -8,7 +8,9 @@
   --surface: #131a22;
   --ink: #edeae2;
   --ink-dim: #a6b0bb;
-  --ink-faint: #6c7783;
+  /* --ink-faint clears WCAG 1.4.3 on --bg in both themes (5.07:1 dark, 4.94:1
+     light) while staying visibly fainter than --ink-dim (8.90:1 / 7.26:1). */
+  --ink-faint: #78838f;
   --line: rgba(237, 234, 226, 0.10);
   --line-strong: rgba(237, 234, 226, 0.20);
   --brand: #2fb67c;
@@ -32,7 +34,7 @@
     --surface: #ffffff;
     --ink: #14181d;
     --ink-dim: #47525c;
-    --ink-faint: #7b8791;
+    --ink-faint: #616b75;
     --line: rgba(20, 24, 29, 0.10);
     --line-strong: rgba(20, 24, 29, 0.18);
     --brand: #128a5e;
@@ -113,7 +115,10 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 }
 .card h3 { margin-bottom: 8px; }
 .card p { color: var(--ink-dim); font-size: 0.98rem; }
-.card .k { font-family: var(--font-mono); color: var(--brand-ink); font-size: 0.82rem; }
+/* card titles are <h3 class="k"> so they show up in the heading outline; these
+   declarations undo the h1-h3 defaults above so the treatment is unchanged. */
+.card .k { font-family: var(--font-mono); color: var(--brand-ink); font-size: 0.82rem;
+  font-weight: 400; line-height: inherit; letter-spacing: normal; margin: 0; }
 
 .panel {
   background: var(--bg-elev); border: 1px solid var(--line-strong);
@@ -133,6 +138,8 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 @keyframes rise { to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   .stagger > * { opacity: 1; transform: none; animation: none; }
+  /* the hover lift is motion too, and the transition is what animates it */
+  .btn, .btn:hover { transform: none; transition: none; }
 }
 
 .rule-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
@@ -176,7 +183,12 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 
 .site-footer { border-top: 1px solid var(--line); padding: 56px 0 40px; color: var(--ink-dim); }
 .site-footer .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
-.site-footer h4 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 12px; }
+/* h2, not h4: the footer groups are independent navigation sections, so they are
+   peers of the page's content headings, not subsections of whichever h2 came
+   last. As h4 they also skipped a level. Every declaration the h1,h2,h3 and h2
+   display rules would otherwise supply is pinned here to what the UA h4 defaults
+   gave these, so the footer renders identically. */
+.site-footer h2 { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; line-height: inherit; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 12px; }
 .site-footer a { display: block; padding: 5px 0; color: var(--ink-dim); font-size: 0.95rem; }
 .site-footer a:hover { color: var(--brand-ink); }
 .site-footer .fine { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
