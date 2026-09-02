@@ -22,15 +22,15 @@ const study = '/case-studies/30-ai-assisted-commits/';
 const shakapacker = 'https://github.com/shakacode/shakapacker/pull/';
 const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249';
 ---
-<article class="card proof">
-  <div class="proof-head">
-    <span class="proof-tag mono">Case study · August 5, 2026</span>
+<article class="card evidence-card">
+  <div class="evidence-head">
+    <span class="evidence-tag mono">Case study · August 5, 2026</span>
     <h3>The AI reviewer found it. We merged anyway.</h3>
   </div>
 
-  <dl class="proof-fields">
-    <div class="proof-field">
-      <dt class="proof-label mono">What happened</dt>
+  <dl class="evidence-fields">
+    <div class="evidence-field">
+      <dt class="evidence-label mono">What happened</dt>
       <dd>
         Hours before merge, an AI reviewer flagged two real risks on one pull request: a transient{' '}
         <code>429</code> or <code>5xx</code> API failure could be treated like a confirmed delisting
@@ -41,8 +41,8 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
       </dd>
     </div>
 
-    <div class="proof-field">
-      <dt class="proof-label mono">The control it forced</dt>
+    <div class="evidence-field">
+      <dt class="evidence-label mono">The control it forced</dt>
       <dd>
         Make current review findings stateful. Before merge each one needs exactly one
         disposition — fixed and verified, explicitly rejected or accepted with a recorded rationale,
@@ -53,8 +53,8 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
       </dd>
     </div>
 
-    <div class="proof-field">
-      <dt class="proof-label mono">Where it stands</dt>
+    <div class="evidence-field">
+      <dt class="evidence-label mono">Where it stands</dt>
       <dd>
         The adversarial audit of the 30 most recent non-trivial{' '}
         <a href="https://github.com/shakacode/shakapacker">Shakapacker</a> commits that followed the
@@ -66,8 +66,8 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
       </dd>
     </div>
 
-    <div class="proof-field">
-      <dt class="proof-label mono">Still open</dt>
+    <div class="evidence-field">
+      <dt class="evidence-label mono">Still open</dt>
       <dd>
         The gate is not finished. <a href={failClosedIssue}>Fail closed on unsettled configured
         reviews</a> is still an open issue, so today the disposition rule is a practice a human has
@@ -81,36 +81,47 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
     </div>
   </dl>
 
-  <div class="proof-links">
-    <a class="proof-next" href={study}>Read the full case study →</a>
-    <a class="proof-next proof-next-quiet" href="/case-studies/">All case studies →</a>
+  <div class="evidence-links">
+    <a class="evidence-next" href={study}>Read the full case study →</a>
+    <a class="evidence-next evidence-next-quiet" href="/case-studies/">All case studies →</a>
   </div>
 </article>
 
 <style>
   /* Reuses .card and the .mono/label idiom from global.css — same visual
-     system as the adoption ladder above it, no parallel one. */
-  .proof { display: grid; gap: 18px; }
+     system as the adoption ladder above it, no parallel one.
 
-  .proof-head { display: grid; gap: 6px; }
+     Every class here is namespaced `evidence-*` on purpose. index.astro has
+     its own page-scoped `.proof` family for the consulting credential rows
+     (`.proof`, `.proof-panel`, `.proof strong`, `.proof span`), and this card
+     used to call its root `.proof` too. Astro scopes both sides by cid, so the
+     two never actually collided in the built CSS — verified: this root carries
+     only its own cid, and its computed padding stayed at .card's 26px rather
+     than the consulting rule's 20px 8px. But the safety of that depends on
+     Astro's scope-propagation behavior and on those rules staying page-scoped;
+     if either changes, a shared name silently restyles this card. A distinct
+     name costs nothing and removes the question. */
+  .evidence-card { display: grid; gap: 18px; }
+
+  .evidence-head { display: grid; gap: 6px; }
   /* --ink-dim, not --ink-faint: this tag carries the study's date and kind,
      so it clears 4.5:1 in both themes like every other label on the page. */
-  .proof-tag {
+  .evidence-tag {
     color: var(--ink-dim); font-size: 0.72rem; letter-spacing: 0.16em;
     text-transform: uppercase;
   }
-  .proof-head h3 { font-size: 1.18rem; margin-bottom: 0; }
+  .evidence-head h3 { font-size: 1.18rem; margin-bottom: 0; }
 
-  .proof-fields { display: grid; gap: 16px; margin: 0; }
+  .evidence-fields { display: grid; gap: 16px; margin: 0; }
   /* Two columns only where there is room for a readable measure beside the
      label; below that the label stacks above its answer. */
-  .proof-field { display: grid; gap: 6px; }
+  .evidence-field { display: grid; gap: 6px; }
   @media (min-width: 720px) {
-    .proof-field { grid-template-columns: 11rem minmax(0, 1fr); gap: 8px 24px; align-items: baseline; }
+    .evidence-field { grid-template-columns: 11rem minmax(0, 1fr); gap: 8px 24px; align-items: baseline; }
   }
-  .proof-label { color: var(--ink-dim); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; }
-  .proof-field dd { margin: 0; color: var(--ink-dim); font-size: 0.98rem; line-height: 1.6; }
-  .proof-field dd strong { color: var(--ink); font-weight: 600; }
+  .evidence-label { color: var(--ink-dim); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .evidence-field dd { margin: 0; color: var(--ink-dim); font-size: 0.98rem; line-height: 1.6; }
+  .evidence-field dd strong { color: var(--ink); font-weight: 600; }
   /* Mirrors the site's inline-code idiom verbatim from global.css:202-203
      (`.doc-body code` and `.doc-body :not(pre) > code`). That rule is scoped
      to .doc-body so it cannot reach the homepage on its own; copying it —
@@ -118,26 +129,26 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
      across the site. Like the global rule it sets no color, so the chip
      inherits the surrounding dd's --ink-dim. Keep these values in sync if
      global.css:203 ever changes. */
-  .proof-field dd code {
+  .evidence-field dd code {
     font-family: var(--font-mono); font-size: 0.88em;
     background: color-mix(in srgb, var(--surface) 72%, transparent);
     border: 1px solid var(--line); border-radius: 6px; padding: 0.08em 0.4em;
   }
-  .proof-field dd a {
+  .evidence-field dd a {
     color: var(--brand-ink);
     border-bottom: 1px solid color-mix(in srgb, var(--brand) 40%, transparent);
     /* Long link labels wrap mid-word rather than pushing the card wide at 390px. */
     overflow-wrap: anywhere;
   }
-  .proof-field dd a:hover { border-color: var(--brand-ink); }
+  .evidence-field dd a:hover { border-color: var(--brand-ink); }
 
-  .proof-links { display: flex; flex-wrap: wrap; gap: 10px 22px; }
-  .proof-next {
+  .evidence-links { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+  .evidence-next {
     color: var(--brand-ink); font-family: var(--font-mono); font-size: 0.88rem;
     border-bottom: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
     padding-bottom: 1px; transition: border-color .18s;
   }
-  .proof-next:hover { border-color: var(--brand-ink); }
-  .proof-next-quiet { color: var(--ink-dim); border-bottom-color: var(--line-strong); }
-  .proof-next-quiet:hover { border-bottom-color: var(--ink-dim); }
+  .evidence-next:hover { border-color: var(--brand-ink); }
+  .evidence-next-quiet { color: var(--ink-dim); border-bottom-color: var(--line-strong); }
+  .evidence-next-quiet:hover { border-bottom-color: var(--ink-dim); }
 </style>
