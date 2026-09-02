@@ -115,7 +115,10 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 }
 .card h3 { margin-bottom: 8px; }
 .card p { color: var(--ink-dim); font-size: 0.98rem; }
-.card .k { font-family: var(--font-mono); color: var(--brand-ink); font-size: 0.82rem; }
+/* card titles are <h3 class="k"> so they show up in the heading outline; these
+   declarations undo the h1-h3 defaults above so the treatment is unchanged. */
+.card .k { font-family: var(--font-mono); color: var(--brand-ink); font-size: 0.82rem;
+  font-weight: 400; line-height: inherit; letter-spacing: normal; margin: 0; }
 
 .panel {
   background: var(--bg-elev); border: 1px solid var(--line-strong);
@@ -178,7 +181,10 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 
 .site-footer { border-top: 1px solid var(--line); padding: 56px 0 40px; color: var(--ink-dim); }
 .site-footer .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
-.site-footer h4 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 12px; }
+/* h3, not h4: these follow the page's h2 sections with no h3 in between, so h4
+   skipped a level. font-weight/line-height pin what the UA h4 defaults gave
+   these, so the footer renders identically. */
+.site-footer h3 { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; line-height: inherit; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 12px; }
 .site-footer a { display: block; padding: 5px 0; color: var(--ink-dim); font-size: 0.95rem; }
 .site-footer a:hover { color: var(--brand-ink); }
 .site-footer .fine { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
