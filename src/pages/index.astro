@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import AdoptionLadder from '../components/AdoptionLadder.astro';
 import BatchLifecycle from '../components/BatchLifecycle.astro';
 import DistributionLineage from '../components/DistributionLineage.astro';
+import EvidenceProof from '../components/EvidenceProof.astro';
 import Topology from '../components/Topology.astro';
 
 // The plain-language trust model. Each row maps one of the five to a capability
@@ -186,7 +187,7 @@ const pageDescription =
         {skills.map(([tier, name, desc]) => (
           <div class="card">
             <div class="card-top">
-              <span class="k">{name}</span>
+              <h3 class="k">{name}</h3>
               <span class={tier === 'day one' ? 'tier tier-now' : 'tier'}>{tier}</span>
             </div>
             <p>{desc}</p>
@@ -210,11 +211,25 @@ const pageDescription =
     </div>
   </section>
 
+  <!-- EVIDENCE -->
+  <section id="evidence">
+    <div class="wrap section-head">
+      <span class="eyebrow">06 / evidence from real use</span>
+      <h2>What actually went wrong, and what changed because of it.</h2>
+      <p>Claims are cheap; incident records are not. Every number in the card below is traceable to
+        a published case study or to a public issue or pull request you can open right now. One
+        study, shown in full — including the control that still isn’t finished.</p>
+    </div>
+    <div class="wrap">
+      <EvidenceProof />
+    </div>
+  </section>
+
   <!-- SAFETY -->
   <section id="safety">
     <div class="wrap section-head">
       <span class="gatebadge">security preflight</span>
-      <span class="eyebrow" style="margin-top:6px">06 / the safety story</span>
+      <span class="eyebrow" style="margin-top:6px">07 / the safety story</span>
       <h2>Agents a public issue can’t hijack.</h2>
       <p>The real differentiator isn’t speed — it’s that untrusted input, secret access, and
         unattended state-change never meet in one session.</p>
@@ -234,7 +249,7 @@ const pageDescription =
   <!-- THE STACK -->
   <section id="stack">
     <div class="wrap section-head">
-      <span class="eyebrow">07 / the stack</span>
+      <span class="eyebrow">08 / the stack</span>
       <h2>The pack, the backend, and the dashboard.</h2>
       <p>Three focused pieces. The pack is the public process layer; the coordination backend is the
         protocol plane; the dashboard is a separate operator view that reads the same state.</p>
@@ -245,15 +260,15 @@ const pageDescription =
       </div>
       <div class="grid stack-grid" style="margin-top:22px">
         <a class="card" href={`${gh}/agent-workflows`}>
-          <span class="k">agent-workflows ↗</span>
+          <h3 class="k">agent-workflows ↗</h3>
           <p>The portable Codex/Claude workflow pack — skills, workflow prompts, and the repo seam contract. MIT.</p>
         </a>
         <a class="card" href={`${gh}/agent-coordination`}>
-          <span class="k">agent-coordination ↗</span>
+          <h3 class="k">agent-coordination ↗</h3>
           <p>Mutual-exclusion claims, TTL heartbeats (live/stale/dead), and batch lanes — over a Cloudflare Worker + D1, or a zero-config local mode. Proven against a contention simulation: two agents, one issue, exactly one PR.</p>
         </a>
         <a class="card" href={`${gh}/agent-coordination-dashboard`}>
-          <span class="k">dashboard ↗</span>
+          <h3 class="k">dashboard ↗</h3>
           <p>A local operator console: a dense, searchable table of every lane and PR — state, liveness, and “wedged” detection — live over the coordination API. Read-only, loopback by default.</p>
         </a>
       </div>
@@ -264,7 +279,7 @@ const pageDescription =
   <section id="distributions">
     <div class="wrap distribution-layout">
       <div class="distribution-copy">
-        <span class="eyebrow">08 / Git-native customization</span>
+        <span class="eyebrow">09 / Git-native customization</span>
         <h2>Customize freely. Keep the divergence visible.</h2>
         <blockquote>“AI reduces the cost of divergence without hiding divergence.”</blockquote>
         <p class="lead">Agent Workflows is designed for both a trusted upstream and a healthy
@@ -286,7 +301,7 @@ const pageDescription =
   <!-- METHODOLOGY -->
   <section id="methodology">
     <div class="wrap methodology">
-      <span class="eyebrow">09 / methodology</span>
+      <span class="eyebrow">10 / methodology</span>
       <blockquote>“Use AI aggressively, verify the risky parts, document what was learned, and keep shipping.”</blockquote>
       <p class="lead">The playbook is that method, compiled: adversarial review before merge, CI logs
         as evidence rather than decoration, manual QA where behavior can change, and every vague
@@ -299,7 +314,7 @@ const pageDescription =
   <section id="for-teams">
     <div class="wrap consulting">
       <div class="consulting-copy">
-        <span class="eyebrow">10 / for engineering teams</span>
+        <span class="eyebrow">11 / for engineering teams</span>
         <h2>Bring the operating model into your organization.</h2>
         <p class="lead">The open-source pack is the starting point. ShakaCode helps engineering
           teams turn ad-hoc AI coding into a repeatable system: choose the right tools, encode
@@ -392,6 +407,9 @@ const pageDescription =
   .stack-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   a.card { transition: border-color .2s, transform .16s; }
   a.card:hover { border-color: color-mix(in srgb, var(--brand) 50%, transparent); transform: translateY(-3px); }
+  @media (prefers-reduced-motion: reduce) {
+    a.card, a.card:hover { transform: none; transition: none; }
+  }
 
   #safety .gatebadge { justify-self: start; }
 

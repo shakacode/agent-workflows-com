@@ -1,6 +1,22 @@
 ---
-// The batch lifecycle: untrusted GitHub work passes a security-preflight gate
-// (amber), flows through five stages, all backed by the coordination backend.
+// How the work moves: untrusted GitHub work passes a security gate (amber),
+// flows through five stages, all backed by shared coordination.
+//
+// The rail deliberately scopes the coordination promise to one task: the
+// documented guarantee is mutual exclusion on the same target (see "Parallel
+// work" in src/pages/methodology.md), not the absence of merge conflicts
+// between agents working different targets. Do not widen it back.
+//
+// Every visible label here is deliberately plain English. This diagram sits in
+// the hero, above the fold, so it is the first thing a visitor reads; the
+// project's own vocabulary (skill names, coordination internals) is introduced
+// further down the page under #how and #skills, never here.
+//
+// The five stages are the plain-language mirror of the #how list in
+// src/pages/index.astro, position for position: plan-pr-batch -> plan,
+// triage -> split, pr-batch -> run, adversarial-pr-review -> review,
+// post-merge-audit -> audit. Keep the two lists in the same order; a reader
+// scrolling from the hero to #how reads the numbering 1:1.
 //
 // Plain HTML + CSS, not a fixed-viewBox SVG. This diagram lives in the hero's
 // right-hand panel, which is only ~480px wide at desktop and ~236px on a small
@@ -12,13 +28,13 @@
   <div
     class="lc-flow"
     role="img"
-    aria-label="The agent batch lifecycle: GitHub issues and PRs pass a security preflight gate, then flow through plan, triage, pr-batch, review, and audit, all backed by a coordination backend tracking claims, heartbeats, and liveness."
+    aria-label="How the work moves: anything arriving from GitHub issues and pull requests passes a security gate, where untrusted input never becomes instructions, then flows through five stages — plan, split, run, review, and audit — with shared coordination, so no two agents take one task."
   >
     <p class="lc-source">from github issues &amp; prs</p>
 
     <div class="lc-gate">
-      <span class="lc-gate-name">security preflight</span>
-      <span class="lc-gate-sub">untrusted text &#8800; instructions</span>
+      <span class="lc-gate-name">security gate</span>
+      <span class="lc-gate-sub">untrusted input never becomes instructions</span>
     </div>
 
     <span class="lc-arrow" aria-hidden="true">&#8595;</span>
@@ -26,14 +42,14 @@
     <div class="lc-engine">
       <ol class="lc-stages">
         <li><span class="lc-step">01</span><span class="lc-stage">plan</span></li>
-        <li><span class="lc-step">02</span><span class="lc-stage">triage</span></li>
-        <li><span class="lc-step">03</span><span class="lc-stage">pr-batch</span></li>
+        <li><span class="lc-step">02</span><span class="lc-stage">split</span></li>
+        <li><span class="lc-step">03</span><span class="lc-stage">run</span></li>
         <li><span class="lc-step">04</span><span class="lc-stage">review</span></li>
         <li><span class="lc-step">05</span><span class="lc-stage">audit</span></li>
       </ol>
       <p class="lc-rail">
         <span class="lc-rail-lead">backed by</span>
-        coordination backend &#183; claims &#183; heartbeats &#183; liveness
+        shared coordination, so no two agents take one task
       </p>
     </div>
   </div>
@@ -97,9 +113,9 @@
     line-height: 1;
   }
 
-  /* the five stages sit inside the backend box: containment is what says
-     "the coordination backend is what these run on" now that the dashed
-     leader lines are gone. */
+  /* the five stages sit inside the coordination box: containment is what says
+     "shared coordination is what these run on" now that the dashed leader
+     lines are gone. */
   .lc-engine {
     display: grid;
     gap: 11px;
