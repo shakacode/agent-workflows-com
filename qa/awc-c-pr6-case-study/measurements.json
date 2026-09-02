@@ -1,0 +1,402 @@
+{
+  "nav": {
+    "390": {
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "docOverflow": 0,
+      "visibleLinks": [
+        "GitHub ↗"
+      ],
+      "hiddenLinks": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "Distributions",
+        "For teams",
+        "Case studies",
+        "Docs"
+      ],
+      "navRows": 1,
+      "navWrapped": false,
+      "overlaps": [],
+      "brandRight": null,
+      "brandWidth": null,
+      "navLeft": 303,
+      "navRight": 366,
+      "gapBrandToNav": null,
+      "barHeight": 62,
+      "offenders": []
+    },
+    "760": {
+      "clientWidth": 760,
+      "scrollWidth": 760,
+      "docOverflow": 0,
+      "visibleLinks": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ],
+      "hiddenLinks": [
+        "Model",
+        "Distributions",
+        "Case studies"
+      ],
+      "navRows": 1,
+      "navWrapped": false,
+      "overlaps": [],
+      "brandRight": null,
+      "brandWidth": null,
+      "navLeft": 214.8,
+      "navRight": 736,
+      "gapBrandToNav": null,
+      "barHeight": 62,
+      "offenders": []
+    },
+    "850": {
+      "clientWidth": 850,
+      "scrollWidth": 850,
+      "docOverflow": 0,
+      "visibleLinks": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ],
+      "hiddenLinks": [
+        "Model",
+        "Distributions",
+        "Case studies"
+      ],
+      "navRows": 1,
+      "navWrapped": false,
+      "overlaps": [],
+      "brandRight": null,
+      "brandWidth": null,
+      "navLeft": 304.8,
+      "navRight": 826,
+      "gapBrandToNav": null,
+      "barHeight": 62,
+      "offenders": []
+    },
+    "914": {
+      "clientWidth": 914,
+      "scrollWidth": 914,
+      "docOverflow": 0,
+      "visibleLinks": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ],
+      "hiddenLinks": [
+        "Model",
+        "Distributions",
+        "Case studies"
+      ],
+      "navRows": 1,
+      "navWrapped": false,
+      "overlaps": [],
+      "brandRight": null,
+      "brandWidth": null,
+      "navLeft": 368.8,
+      "navRight": 890,
+      "gapBrandToNav": null,
+      "barHeight": 62,
+      "offenders": []
+    },
+    "930": {
+      "clientWidth": 930,
+      "scrollWidth": 930,
+      "docOverflow": 0,
+      "visibleLinks": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ],
+      "hiddenLinks": [
+        "Model",
+        "Distributions",
+        "Case studies"
+      ],
+      "navRows": 1,
+      "navWrapped": false,
+      "overlaps": [],
+      "brandRight": null,
+      "brandWidth": null,
+      "navLeft": 384.8,
+      "navRight": 906,
+      "gapBrandToNav": null,
+      "barHeight": 62,
+      "offenders": []
+    },
+    "1024": {
+      "clientWidth": 1024,
+      "scrollWidth": 1024,
+      "docOverflow": 0,
+      "visibleLinks": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Case studies",
+        "Docs",
+        "GitHub ↗"
+      ],
+      "hiddenLinks": [
+        "Distributions"
+      ],
+      "navRows": 1,
+      "navWrapped": false,
+      "overlaps": [],
+      "brandRight": null,
+      "brandWidth": null,
+      "navLeft": 313,
+      "navRight": 1000,
+      "gapBrandToNav": null,
+      "barHeight": 62,
+      "offenders": []
+    },
+    "1120": {
+      "clientWidth": 1120,
+      "scrollWidth": 1120,
+      "docOverflow": 0,
+      "visibleLinks": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "Distributions",
+        "For teams",
+        "Case studies",
+        "Docs",
+        "GitHub ↗"
+      ],
+      "hiddenLinks": [],
+      "navRows": 1,
+      "navWrapped": false,
+      "overlaps": [],
+      "brandRight": null,
+      "brandWidth": null,
+      "navLeft": 290.6,
+      "navRight": 1096,
+      "gapBrandToNav": null,
+      "barHeight": 62,
+      "offenders": []
+    },
+    "1440": {
+      "clientWidth": 1440,
+      "scrollWidth": 1440,
+      "docOverflow": 0,
+      "visibleLinks": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "Distributions",
+        "For teams",
+        "Case studies",
+        "Docs",
+        "GitHub ↗"
+      ],
+      "hiddenLinks": [],
+      "navRows": 1,
+      "navWrapped": false,
+      "overlaps": [],
+      "brandRight": null,
+      "brandWidth": null,
+      "navLeft": 450.6,
+      "navRight": 1256,
+      "gapBrandToNav": null,
+      "barHeight": 62,
+      "offenders": []
+    }
+  },
+  "images": {
+    "390": {
+      "clientWidth": 390,
+      "docOverflow": 0,
+      "contentColumn": {
+        "left": 0,
+        "right": 390,
+        "width": 390
+      },
+      "images": [
+        {
+          "src": "/images/case-studies/ai-audit/cover.png",
+          "alt": "Review signal collapsed from 83 conversation items to two actionable findings, neither dispositioned before merge",
+          "hasAlt": true,
+          "natural": "1600x900",
+          "rendered": "342x192",
+          "left": 24,
+          "right": 366,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/review-finding-transient-failure.png",
+          "alt": "An AI reviewer warns that a transient API failure can delete a healthy provider row",
+          "hasAlt": true,
+          "natural": "800x545",
+          "rendered": "342x233",
+          "left": 24,
+          "right": 366,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/review-finding-final-retry.png",
+          "alt": "An AI reviewer warns that the final exhausted retry can waste up to 60 seconds",
+          "hasAlt": true,
+          "natural": "800x235",
+          "rendered": "342x100",
+          "left": 24,
+          "right": 366,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/audit-distribution.png",
+          "alt": "Twenty-five of 30 commits were rated clean, one low, four medium, and none high or critical",
+          "hasAlt": true,
+          "natural": "1200x675",
+          "rendered": "342x192",
+          "left": 24,
+          "right": 366,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/commit-noise.png",
+          "alt": "A 154-line commit body was 25.7 times longer than the six changed code lines",
+          "hasAlt": true,
+          "natural": "1200x675",
+          "rendered": "342x192",
+          "left": 24,
+          "right": 366,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/two-controls.png",
+          "alt": "Generation quality and integration discipline converge at a fail-closed merge gate",
+          "hasAlt": true,
+          "natural": "1200x675",
+          "rendered": "342x192",
+          "left": 24,
+          "right": 366,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        }
+      ]
+    },
+    "1440": {
+      "clientWidth": 1440,
+      "docOverflow": 0,
+      "contentColumn": {
+        "left": 340,
+        "right": 1100,
+        "width": 760
+      },
+      "images": [
+        {
+          "src": "/images/case-studies/ai-audit/cover.png",
+          "alt": "Review signal collapsed from 83 conversation items to two actionable findings, neither dispositioned before merge",
+          "hasAlt": true,
+          "natural": "1600x900",
+          "rendered": "712x401",
+          "left": 364,
+          "right": 1076,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/review-finding-transient-failure.png",
+          "alt": "An AI reviewer warns that a transient API failure can delete a healthy provider row",
+          "hasAlt": true,
+          "natural": "800x545",
+          "rendered": "712x485",
+          "left": 364,
+          "right": 1076,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/review-finding-final-retry.png",
+          "alt": "An AI reviewer warns that the final exhausted retry can waste up to 60 seconds",
+          "hasAlt": true,
+          "natural": "800x235",
+          "rendered": "712x209",
+          "left": 364,
+          "right": 1076,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/audit-distribution.png",
+          "alt": "Twenty-five of 30 commits were rated clean, one low, four medium, and none high or critical",
+          "hasAlt": true,
+          "natural": "1200x675",
+          "rendered": "712x401",
+          "left": 364,
+          "right": 1076,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/commit-noise.png",
+          "alt": "A 154-line commit body was 25.7 times longer than the six changed code lines",
+          "hasAlt": true,
+          "natural": "1200x675",
+          "rendered": "712x401",
+          "left": 364,
+          "right": 1076,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        },
+        {
+          "src": "/images/case-studies/ai-audit/two-controls.png",
+          "alt": "Generation quality and integration discipline converge at a fail-closed merge gate",
+          "hasAlt": true,
+          "natural": "1200x675",
+          "rendered": "712x401",
+          "left": 364,
+          "right": 1076,
+          "overflowsViewport": 0,
+          "overflowsColumn": 0,
+          "complete": true
+        }
+      ]
+    }
+  }
+}

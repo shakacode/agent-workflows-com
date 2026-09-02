@@ -1,0 +1,541 @@
+{
+  "390": {
+    "before": {
+      "gap": 20,
+      "brandW": 259,
+      "navW": 63,
+      "wrapW": 390,
+      "sum": 322,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 259,
+      "navW": 63,
+      "wrapW": 390,
+      "sum": 322,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "GitHub ↗"
+      ]
+    }
+  },
+  "720": {
+    "before": {
+      "gap": 264.5,
+      "brandW": 344.5,
+      "navW": 63,
+      "wrapW": 720,
+      "sum": 407.5,
+      "slack": 312.5,
+      "brandLines": 1,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 264.5,
+      "brandW": 344.5,
+      "navW": 63,
+      "wrapW": 720,
+      "sum": 407.5,
+      "slack": 312.5,
+      "brandLines": 1,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "GitHub ↗"
+      ]
+    }
+  },
+  "721": {
+    "before": {
+      "gap": 20,
+      "brandW": 131.8,
+      "navW": 521.2,
+      "wrapW": 721,
+      "sum": 653,
+      "slack": 68,
+      "brandLines": 4,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 131.8,
+      "navW": 521.2,
+      "wrapW": 721,
+      "sum": 653,
+      "slack": 68,
+      "brandLines": 4,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  },
+  "760": {
+    "before": {
+      "gap": 20,
+      "brandW": 170.8,
+      "navW": 521.2,
+      "wrapW": 760,
+      "sum": 692,
+      "slack": 68,
+      "brandLines": 3,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 170.8,
+      "navW": 521.2,
+      "wrapW": 760,
+      "sum": 692,
+      "slack": 68,
+      "brandLines": 3,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  },
+  "850": {
+    "before": {
+      "gap": 20,
+      "brandW": 260.8,
+      "navW": 521.2,
+      "wrapW": 850,
+      "sum": 782,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 260.8,
+      "navW": 521.2,
+      "wrapW": 850,
+      "sum": 782,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  },
+  "914": {
+    "before": {
+      "gap": 20,
+      "brandW": 324.8,
+      "navW": 521.2,
+      "wrapW": 914,
+      "sum": 846,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 324.8,
+      "navW": 521.2,
+      "wrapW": 914,
+      "sum": 846,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  },
+  "930": {
+    "before": {
+      "gap": 20,
+      "brandW": 340.8,
+      "navW": 521.2,
+      "wrapW": 930,
+      "sum": 862,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 340.8,
+      "navW": 521.2,
+      "wrapW": 930,
+      "sum": 862,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  },
+  "999": {
+    "before": {
+      "gap": 85.3,
+      "brandW": 344.5,
+      "navW": 521.2,
+      "wrapW": 999,
+      "sum": 865.7,
+      "slack": 133.3,
+      "brandLines": 1,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 85.3,
+      "brandW": 344.5,
+      "navW": 521.2,
+      "wrapW": 999,
+      "sum": 865.7,
+      "slack": 133.3,
+      "brandLines": 1,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  },
+  "1024": {
+    "before": {
+      "gap": 54.9,
+      "brandW": 344.5,
+      "navW": 576.5,
+      "wrapW": 1024,
+      "sum": 921.1,
+      "slack": 102.9,
+      "brandLines": 1,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 269,
+      "navW": 687,
+      "wrapW": 1024,
+      "sum": 956,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "For teams",
+        "Case studies",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  },
+  "1120": {
+    "before": {
+      "gap": 32.6,
+      "brandW": 344.5,
+      "navW": 694.9,
+      "wrapW": 1120,
+      "sum": 1039.4,
+      "slack": 80.6,
+      "brandLines": 1,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "Distributions",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 246.6,
+      "navW": 805.4,
+      "wrapW": 1120,
+      "sum": 1052,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "Distributions",
+        "For teams",
+        "Case studies",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  },
+  "1440": {
+    "before": {
+      "gap": 32.6,
+      "brandW": 344.5,
+      "navW": 694.9,
+      "wrapW": 1120,
+      "sum": 1039.4,
+      "slack": 80.6,
+      "brandLines": 1,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "Distributions",
+        "For teams",
+        "Docs",
+        "GitHub ↗"
+      ]
+    },
+    "after": {
+      "gap": 20,
+      "brandW": 246.6,
+      "navW": 805.4,
+      "wrapW": 1120,
+      "sum": 1052,
+      "slack": 68,
+      "brandLines": 2,
+      "brandTruncated": false,
+      "navRows": 1,
+      "overlaps": [],
+      "barH": 62,
+      "headerH": 63,
+      "docOverflow": 0,
+      "links": [
+        "Model",
+        "How it works",
+        "Skills",
+        "Safety",
+        "The stack",
+        "Distributions",
+        "For teams",
+        "Case studies",
+        "Docs",
+        "GitHub ↗"
+      ]
+    }
+  }
+}
