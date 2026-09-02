@@ -204,6 +204,20 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .doc-body pre { background: var(--bg-elev); border: 1px solid var(--line-strong); border-radius: 12px; padding: 16px 18px; overflow-x: auto; margin: 1.2em 0; }
 .doc-body pre code { font-size: 0.84rem; line-height: 1.6; }
 .doc-body strong { color: var(--ink); font-weight: 600; }
+
+/* Stable, explicit deep-link targets for docs headings (quickstart.md and
+   friends), independent of Astro's auto-slugged heading ids — those are
+   derived from heading text and drift the moment the wording changes.
+   Markdown has no `{#id}` heading-attribute support here (verified: it renders
+   as literal text), so the anchor is a zero-size element placed just before
+   the heading it names. `scroll-margin-top` keeps the target from landing
+   under the sticky 62px header; the site header only ever reserves that much
+   space, so the offset only needs to clear it plus a little breathing room.
+   The rule also collapses the empty wrapping <p> markdown gives it, so the
+   anchor adds no visible gap above the heading. */
+.qs-anchor { scroll-margin-top: 84px; }
+.doc-body p:has(> .qs-anchor:only-child) { margin: 0; }
+
 .doc-body blockquote {
   margin: 1.4em 0;
   padding: 18px 20px;

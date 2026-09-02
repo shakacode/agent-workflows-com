@@ -15,6 +15,8 @@ bin/install-agent-workflows --host claude   # or --host codex
 
 Codex users can also install it as a native plugin via `.codex-plugin/plugin.json`.
 
+<span id="qs-day-one-skill" class="qs-anchor"></span>
+
 ## 2. Try a day-one skill — no backend, no seam
 
 These skills work immediately, with no coordination backend and no repo seam:
@@ -24,6 +26,8 @@ These skills work immediately, with no coordination backend and no repo seam:
 - `address-review` — triage and resolve PR review comments
 - `adversarial-pr-review` — red-team a PR before merge
 - `update-changelog` — an honest changelog from merged PRs
+
+<span id="qs-repo-seam" class="qs-anchor"></span>
 
 ## 3. Adopt a repo (the seam)
 
@@ -36,6 +40,8 @@ bin/agent-workflow-seam-doctor --init
 ```
 
 See the [adoption guide](https://github.com/shakacode/agent-workflows/blob/main/docs/adoption.md).
+
+<span id="qs-coordinated-batches" class="qs-anchor"></span>
 
 ## 4. Level up: coordinated batches
 
