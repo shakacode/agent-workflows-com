@@ -73,6 +73,10 @@ h3 { font-size: 1.2rem; letter-spacing: -0.005em; }
 p { margin: 0; }
 a { color: inherit; text-decoration: none; }
 
+/* Keyboard focus. Links are undecorated here, so an explicit ring is the only
+   affordance a keyboard user gets; the UA default is not reliable on either theme. */
+:focus-visible { outline: 2px solid var(--brand-ink); outline-offset: 3px; }
+
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 0.74rem;
@@ -153,13 +157,21 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg) 74%, transparent);
   border-bottom: 1px solid var(--line);
 }
-.site-header .bar { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+/* the gap keeps the brandmark and the first nav link from touching when the bar
+   is at its tightest; below that the brandmark wraps, which is the old behavior. */
+.site-header .bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 62px; }
 .brandmark { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.02em; }
 .brandmark b { font-weight: 600; }
 .brandmark .dim { color: var(--ink-faint); }
-.nav { display: flex; align-items: center; gap: 22px; font-family: var(--font-mono); font-size: 0.82rem; }
-.nav a { color: var(--ink-dim); transition: color .18s; }
+.nav { display: flex; align-items: center; gap: 16px; font-family: var(--font-mono); font-size: 0.82rem; }
+/* the bar carries seven section links now — never let a label break mid-phrase */
+.nav a { color: var(--ink-dim); transition: color .18s; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
+/* Nav link priority, lowest first: hide-lg drops soonest, hide-sm last. The
+   1119px step is the .wrap cap — below it the bar loses width while every link
+   is still shown, so the lowest-priority link has to drop across that whole band. */
+@media (max-width: 1119px) { .nav .hide-lg { display: none; } }
+@media (max-width: 999px) { .nav .hide-md { display: none; } }
 @media (max-width: 720px) { .nav .hide-sm { display: none; } }
 
 .site-footer { border-top: 1px solid var(--line); padding: 56px 0 40px; color: var(--ink-dim); }
@@ -170,7 +182,9 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .site-footer .fine { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 @media (max-width: 720px) { .site-footer .cols { grid-template-columns: 1fr 1fr; } }
 
-.diagram-caption { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint); margin-top: 14px; }
+/* --ink-dim, not --ink-faint: this caption sits directly under the hero
+   diagram and has to clear 4.5:1 like the diagram text it explains. */
+.diagram-caption { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-dim); margin-top: 14px; }
 
 /* ===== markdown docs (Doc.astro) ===== */
 .doc { max-width: 760px; margin: 0 auto; padding: clamp(52px, 7vw, 88px) 24px 96px; }
@@ -190,3 +204,26 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .doc-body pre { background: var(--bg-elev); border: 1px solid var(--line-strong); border-radius: 12px; padding: 16px 18px; overflow-x: auto; margin: 1.2em 0; }
 .doc-body pre code { font-size: 0.84rem; line-height: 1.6; }
 .doc-body strong { color: var(--ink); font-weight: 600; }
+
+/* Stable, explicit deep-link targets for docs headings (quickstart.md and
+   friends), independent of Astro's auto-slugged heading ids — those are
+   derived from heading text and drift the moment the wording changes.
+   Markdown has no `{#id}` heading-attribute support here (verified: it renders
+   as literal text), so the anchor is a zero-size element placed just before
+   the heading it names. `scroll-margin-top` keeps the target from landing
+   under the sticky 62px header; the site header only ever reserves that much
+   space, so the offset only needs to clear it plus a little breathing room.
+   The rule also collapses the empty wrapping <p> markdown gives it, so the
+   anchor adds no visible gap above the heading. */
+.qs-anchor { scroll-margin-top: 84px; }
+.doc-body p:has(> .qs-anchor:only-child) { margin: 0; }
+
+.doc-body blockquote {
+  margin: 1.4em 0;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--brand) 35%, var(--line));
+  border-left: 4px solid var(--brand);
+  border-radius: 0 12px 12px 0;
+  background: color-mix(in srgb, var(--surface) 76%, transparent);
+}
+.doc-body blockquote p { margin: 0; color: var(--ink); font-size: 1.14rem; }
