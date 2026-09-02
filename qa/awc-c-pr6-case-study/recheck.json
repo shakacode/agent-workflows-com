@@ -1,0 +1,330 @@
+{
+  "390": {
+    "beforeScroll": {
+      "clientWidth": 390,
+      "docOverflow": 0,
+      "column": 390,
+      "images": [
+        {
+          "f": "cover.png",
+          "attrW": "1600",
+          "attrH": "900",
+          "loading": "eager",
+          "hasAlt": true,
+          "rendered": "342x192",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "1600x900"
+        },
+        {
+          "f": "review-finding-transient-failure.png",
+          "attrW": "800",
+          "attrH": "545",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x233",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "800x545"
+        },
+        {
+          "f": "review-finding-final-retry.png",
+          "attrW": "800",
+          "attrH": "235",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x100",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "800x235"
+        },
+        {
+          "f": "audit-distribution.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x192",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "1200x675"
+        },
+        {
+          "f": "commit-noise.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x192",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        },
+        {
+          "f": "two-controls.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x192",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        }
+      ],
+      "cls": 0,
+      "clsErr": null
+    },
+    "afterScroll": {
+      "clientWidth": 390,
+      "docOverflow": 0,
+      "column": 390,
+      "images": [
+        {
+          "f": "cover.png",
+          "attrW": "1600",
+          "attrH": "900",
+          "loading": "eager",
+          "hasAlt": true,
+          "rendered": "342x192",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "1600x900"
+        },
+        {
+          "f": "review-finding-transient-failure.png",
+          "attrW": "800",
+          "attrH": "545",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x233",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "800x545"
+        },
+        {
+          "f": "review-finding-final-retry.png",
+          "attrW": "800",
+          "attrH": "235",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x100",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "800x235"
+        },
+        {
+          "f": "audit-distribution.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x192",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "1200x675"
+        },
+        {
+          "f": "commit-noise.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x192",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        },
+        {
+          "f": "two-controls.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "342x192",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        }
+      ],
+      "cls": 0,
+      "clsErr": null
+    }
+  },
+  "1440": {
+    "beforeScroll": {
+      "clientWidth": 1440,
+      "docOverflow": 0,
+      "column": 760,
+      "images": [
+        {
+          "f": "cover.png",
+          "attrW": "1600",
+          "attrH": "900",
+          "loading": "eager",
+          "hasAlt": true,
+          "rendered": "712x401",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "1600x900"
+        },
+        {
+          "f": "review-finding-transient-failure.png",
+          "attrW": "800",
+          "attrH": "545",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x485",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "800x545"
+        },
+        {
+          "f": "review-finding-final-retry.png",
+          "attrW": "800",
+          "attrH": "235",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x209",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "800x235"
+        },
+        {
+          "f": "audit-distribution.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x401",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        },
+        {
+          "f": "commit-noise.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x401",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        },
+        {
+          "f": "two-controls.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x401",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        }
+      ],
+      "cls": 0.00021670096021947873,
+      "clsErr": null
+    },
+    "afterScroll": {
+      "clientWidth": 1440,
+      "docOverflow": 0,
+      "column": 760,
+      "images": [
+        {
+          "f": "cover.png",
+          "attrW": "1600",
+          "attrH": "900",
+          "loading": "eager",
+          "hasAlt": true,
+          "rendered": "712x401",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "1600x900"
+        },
+        {
+          "f": "review-finding-transient-failure.png",
+          "attrW": "800",
+          "attrH": "545",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x485",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "800x545"
+        },
+        {
+          "f": "review-finding-final-retry.png",
+          "attrW": "800",
+          "attrH": "235",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x209",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "800x235"
+        },
+        {
+          "f": "audit-distribution.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x401",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": true,
+          "natural": "1200x675"
+        },
+        {
+          "f": "commit-noise.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x401",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        },
+        {
+          "f": "two-controls.png",
+          "attrW": "1200",
+          "attrH": "675",
+          "loading": "lazy",
+          "hasAlt": true,
+          "rendered": "712x401",
+          "overViewport": 0,
+          "overColumn": 0,
+          "complete": false,
+          "natural": "0x0"
+        }
+      ],
+      "cls": 0.00021670096021947873,
+      "clsErr": null
+    }
+  }
+}

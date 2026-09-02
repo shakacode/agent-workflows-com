@@ -108,3 +108,58 @@ Page weight of the six PNGs: **998,797 bytes (975 KiB)**.
 .agents/bin/validate  -> exit 0 (astro build, 10 pages)
 .agents/bin/test      -> exit 0 (build + check-adoption-ladder: OK)
 ```
+
+---
+
+# Follow-up pass — head `e44cb5e42f4f7f1bf6a17d09fc80b44a117348f4`
+
+Commit `e44cb5e` added intrinsic `width`/`height` to all six `<img>` tags in
+`src/pages/case-studies/30-ai-assisted-commits.md` and `loading="lazy"` to the five that sit below
+the fold at both 1440 and 390. The cover stays eager. Nothing else changed — no nav, no brandmark,
+no CSS, no images re-encoded. Raw output: `recheck.json`.
+
+## Rendered geometry unchanged
+
+| viewport | content column | doc h-overflow (before / after full-page scroll) | every image renders |
+|---|---|---|---|
+| 1440 | 760px | 0 / 0 | 712px wide |
+| 390 | 390px | 0 / 0 | 342px wide |
+
+Identical to the pre-change numbers in section 3 above. All six still carry non-empty `alt` and
+neither overflows the viewport nor the content column.
+
+| file | intrinsic attrs | loading | rendered @1440 | rendered @390 |
+|---|---|---|---|---|
+| cover.png | 1600x900 | eager | 712x401 | 342x192 |
+| review-finding-transient-failure.png | 800x545 | lazy | 712x485 | 342x233 |
+| review-finding-final-retry.png | 800x235 | lazy | 712x209 | 342x100 |
+| audit-distribution.png | 1200x675 | lazy | 712x401 | 342x192 |
+| commit-noise.png | 1200x675 | lazy | 712x401 | 342x192 |
+| two-controls.png | 1200x675 | lazy | 712x401 | 342x192 |
+
+Attribute values come from `sips -g pixelWidth -g pixelHeight` on the committed PNGs, so they match
+the real files. `max-width: 100%; height: auto` in the inline style still governs layout; the
+attributes only supply the aspect ratio the browser uses to reserve the box.
+
+## Cumulative layout shift
+
+Measured with a `PerformanceObserver({type:'layout-shift', buffered:true})` installed via
+`Page.addScriptToEvaluateOnNewDocument` before the navigation commits, then scrolling the full
+document in 400px steps to force every lazy image to load, then re-reading the accumulated score.
+Reproduced identically across two runs:
+
+| viewport | CLS after full-page scroll |
+|---|---|
+| 1440 | 0.000217 |
+| 390 | 0 |
+
+Effectively zero — the 1440 figure is a single sub-pixel shift, ~460x under the 0.1 "good"
+threshold, and no image contributed a reflow (rendered sizes are byte-identical to the eager,
+dimensionless measurement above). Lazy loading did not introduce layout instability.
+
+## Validation at this head
+
+```
+.agents/bin/validate  -> exit 0
+.agents/bin/test      -> exit 0 (check-adoption-ladder: OK)
+```
