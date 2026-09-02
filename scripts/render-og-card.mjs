@@ -37,15 +37,32 @@ const RENDER_TIMEOUT_MS = 60_000;
 const repoRoot = resolve(fileURLToPath(import.meta.url), '../..');
 const source = join(repoRoot, 'scripts', 'og-card.html');
 
-const outFlag = process.argv.indexOf('--out');
-const target = outFlag === -1 ? join(repoRoot, 'public', 'og.png') : resolve(process.argv[outFlag + 1] ?? '');
-
 const chrome = process.env.CHROME_BIN || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
+/**
+ * Chrome's throwaway profile directory. Declared up front and cleared by
+ * cleanup() so that every exit path — including die(), which does not run the
+ * finally block — takes the ~3 MB of profile with it.
+ */
+let profile = null;
+
+function cleanup() {
+  if (profile) rmSync(profile, { recursive: true, force: true });
+  profile = null;
+}
+
 function die(message) {
+  cleanup();
   console.error(`render-og-card: ${message}`);
   process.exit(1);
 }
+
+const outFlag = process.argv.indexOf('--out');
+const outArg = outFlag === -1 ? null : process.argv[outFlag + 1];
+if (outFlag !== -1 && (outArg === undefined || outArg.startsWith('--'))) {
+  die('--out needs a path, e.g. --out /tmp/preview.png');
+}
+const target = outFlag === -1 ? join(repoRoot, 'public', 'og.png') : resolve(outArg);
 
 if (!existsSync(source)) die(`missing source artwork: ${source}`);
 if (!existsSync(chrome)) {
@@ -74,7 +91,7 @@ function finishedPng(file) {
   return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20), bytes: buf };
 }
 
-const profile = mkdtempSync(join(tmpdir(), 'og-card-chrome-'));
+profile = mkdtempSync(join(tmpdir(), 'og-card-chrome-'));
 const staged = join(profile, 'og.png');
 const logPath = join(profile, 'chrome.log');
 // Chrome's helper processes inherit our stdio and outlive the browser, so a pipe
@@ -104,9 +121,9 @@ const args = [
 const child = spawn(chrome, args, { stdio: ['ignore', log, log], detached: true });
 child.on('error', (err) => die(`could not run Chrome: ${err.message}`));
 
-let exited = false;
-child.on('exit', () => {
-  exited = true;
+let exited = null;
+child.on('exit', (code, signal) => {
+  exited = { code, signal };
 });
 
 function stopChrome() {
@@ -131,7 +148,13 @@ closeSync(log);
 try {
   if (!png) {
     const tail = existsSync(logPath) ? readFileSync(logPath, 'utf8').trimEnd().split('\n').slice(-12).join('\n') : '';
-    die(`Chrome did not produce a screenshot within ${RENDER_TIMEOUT_MS / 1000}s\n${tail}`);
+    // `exited` is only set by Chrome quitting on its own: stopChrome()'s own exit
+    // event cannot have been delivered yet, so this really does separate a crash
+    // or a bad flag from a browser that hung with the page still loading.
+    const why = exited
+      ? `Chrome exited without producing a screenshot (${exited.signal ? `signal ${exited.signal}` : `code ${exited.code}`})`
+      : `Chrome did not produce a screenshot within ${RENDER_TIMEOUT_MS / 1000}s`;
+    die(`${why}\n${tail}`);
   }
   if (png.width !== OG_WIDTH || png.height !== OG_HEIGHT) {
     die(
@@ -150,5 +173,5 @@ try {
     );
   }
 } finally {
-  rmSync(profile, { recursive: true, force: true });
+  cleanup();
 }

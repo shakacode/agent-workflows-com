@@ -71,6 +71,9 @@
       /* Exactly the OG image box. Chrome screenshots the viewport at this size. */
       .card {
         position: relative;
+        /* never let a narrow browser window shrink the card: opening this file
+           directly must show the same layout Chrome captures */
+        flex: none;
         width: 1200px;
         height: 630px;
         overflow: hidden;
