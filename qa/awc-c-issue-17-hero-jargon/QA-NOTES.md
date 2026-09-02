@@ -1,7 +1,7 @@
 # QA evidence — issue #17, hero diagram plain language
 
 Lane `issue-17-hero-jargon`, batch `awc-c-20260901`.
-PR branch: `awc-c/issue-17-hero-plain-language` @ `aedba56`.
+PR branch: `awc-c/issue-17-hero-plain-language` @ `7667ce4`.
 Only `src/components/BatchLifecycle.astro` changed — text nodes, the `aria-label`,
 and code comments. No CSS rule, colour, spacing or breakpoint was touched.
 
@@ -21,8 +21,18 @@ was modified.
 | `before-390x1400-diagram.png` | 390x1400 | taller mobile capture so the whole diagram is visible before |
 | `after-390x1400-diagram.png` | 390x1400 | same, after |
 
-All captured at `--force-device-scale-factor=2` against `astro preview` on
-127.0.0.1:4321 with headless Chrome 152.
+All captured at `--force-device-scale-factor=2 --force-prefers-reduced-motion`
+against `astro preview` on 127.0.0.1:4321 with headless Chrome 152. The
+reduced-motion flag matters: the hero copy uses a CSS `.stagger` reveal, and
+without it the screenshot races the animation and can catch the left column
+mid-fade. With it, every capture is the settled page, so before and after are
+directly comparable.
+
+The five stage labels are `plan / split / run / review / audit`, the
+plain-language mirror of the `#how` list in `src/pages/index.astro`
+(`plan-pr-batch` -> plan, `triage` -> split, `pr-batch` -> run,
+`adversarial-pr-review` -> review, `post-merge-audit` -> audit), so the hero's
+numbering and `#how`'s numbering line up position for position.
 
 ## Rendered label sizes — before vs after
 
@@ -73,8 +83,25 @@ The single delta is the gate sub-label `untrusted input never becomes
 instructions` taking two lines at 390 where `untrusted text ≠ instructions` took
 one. It already took two lines at 320 before this change, and it stays on one
 line at 768, 1024 and 1440. The replacement rail string was chosen at the same
-length as the one it replaces (52 characters), which is why the rail height is
-unchanged at every width.
+length as the one it replaces (53 characters each), which is why the rail height
+is unchanged at every width.
+
+### Stage box geometry — `.lc-stage` width x height
+
+Measured on `main`, on the first pass (`run` / `check`), and on the shipped
+labels (`split` / `run`). The chips are `flex: 1 1 112px`, so they are sized by
+the flex line, not by their text; renaming a stage moves nothing.
+
+| Width | main (`plan/triage/pr-batch/review/audit`) | first pass (`plan/run/check/review/audit`) | shipped (`plan/split/run/review/audit`) |
+| --- | --- | --- | --- |
+| 320 | 73, 73, 73, 73, 180 | 73, 73, 73, 73, 180 | 73, 73, 73, 73, 180 |
+| 390 | 108, 108, 108, 108, 250 | 108, 108, 108, 108, 250 | 108, 108, 108, 108, 250 |
+| 768 | 96, 96, 96, 96, 96 | 96, 96, 96, 96, 96 | 96, 96, 96, 96, 96 |
+| 1024 | 105, 105, 105, 174, 174 | 105, 105, 105, 174, 174 | 105, 105, 105, 174, 174 |
+| 1440 | 119, 119, 119, 195, 195 | 119, 119, 119, 195, 195 | 119, 119, 119, 195, 195 |
+
+All heights are 20px in every cell. Identical at every width in all three
+revisions — `split` did not change a box.
 
 ## Overflow check
 
@@ -152,7 +179,7 @@ across repos. |
 Get started ↗ | Read the methodology → |
 from github issues & prs |
 security gate | untrusted input never becomes instructions | ↓ |
-01 plan | 02 run | 03 check | 04 review | 05 audit |
+01 plan | 02 split | 03 run | 04 review | 05 audit |
 backed by shared coordination, so parallel agents never collide |
 How the work moves — the amber gate is the differentiator: untrusted input is
 checked before an agent ever acts on it. The same path runs for one lane or many.
@@ -161,3 +188,14 @@ checked before an agent ever acts on it. The same path runs for one lane or many
 Nothing above the fold is project-specific vocabulary any more. The nav labels
 (`The stack`, `Distributions`) are pre-existing site navigation, outside this
 lane's scope.
+
+## Known gaps, deliberately not closed here
+
+- **No regression guard.** Nothing stops a future edit from putting a term back
+  above `#problem`. A `scripts/check-hero-plain-language.mjs` asserting the term
+  list is absent before the anchor is the right fix, but wiring it into
+  `npm test` collides with PR #26's pending `package.json` change, so it is
+  deferred to a follow-up rather than raced here.
+- **`#safety` still says "Security preflight".** The hero now says
+  "security gate" and nothing bridges the two names for a reader who scrolls.
+  That is `src/pages/index.astro`, outside this lane's single-file scope.
