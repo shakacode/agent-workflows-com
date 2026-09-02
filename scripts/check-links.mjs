@@ -15,7 +15,12 @@
 //      stripped from each document before anything else runs, for both id
 //      collection and link extraction — a commented-out element is not
 //      rendered, so its id must not satisfy a live #fragment and its
-//      href/src must not be checked as if it were a real link.
+//      href/src must not be checked as if it were a real link. ids are
+//      collected only from real opening-tag attribute strings (the same
+//      whole-tag tokenizer used for href/src, generalized to every tag
+//      name), not from a raw document-wide text scan — so literal text
+//      like id="ghost" inside prose, a <code> sample, or an inline
+//      <script> can't be mistaken for a real id="..." attribute.
 //   2. Extracts href from <a>/<link>, src from <img>/<script>/<source>/
 //      <video>, and every URL candidate inside a srcset on <img>/<source>
 //      (srcset is parsed candidate-by-candidate per the HTML spec — reading
@@ -47,12 +52,17 @@
 //      so a wrong-case path (e.g. "/DOCS/quickstart/") is reported broken
 //      even on a case-insensitive-but-preserving local filesystem like
 //      macOS's default APFS — matching the case-sensitive filesystem
-//      Cloudflare Pages serves from. If a "#fragment" is present, it
-//      verifies an element with that id (double-quoted, single-quoted, or
-//      unquoted) exists in the resolved target document — same-page
-//      "#fragment" links (including bare "#", which is treated as "top of
-//      this page" rather than a broken link) are checked against the
-//      *source* page's own ids.
+//      Cloudflare Pages serves from — including the root "/", which is
+//      only accepted once dist/index.html is confirmed to actually exist
+//      via that same exact-case check, not assumed unconditionally. If a
+//      "#fragment" is present AND the resolved target is an HTML document,
+//      it verifies an element with that id (double-quoted, single-quoted,
+//      or unquoted) exists in the resolved target — same-page "#fragment"
+//      links (including bare "#", treated as "top of this page" rather
+//      than a broken link) are checked against the *source* page's own
+//      ids. A fragment on a non-HTML target (e.g. "/icons.svg#logo",
+//      "/manual.pdf#page=2") is left unvalidated beyond the file itself
+//      existing — there are no ids to check it against.
 //   5. Reports every broken link as one line, `<source page> -> <href>
 //      (<reason>)`, and exits 1. On success it prints one line with the
 //      page and link counts and exits 0.
@@ -109,19 +119,22 @@ function stripComments(html) {
 
 // --- id="..." lookups for a dist file, cached (many pages share the same ---
 // nav targets, so this avoids re-reading/re-scanning the same file).
+//
+// ids are collected only from real opening-tag attribute strings (via
+// allOpeningTagAttrStrings + getAttrValue below), not from a document-wide
+// text scan — otherwise literal text like `id="ghost"` inside prose,
+// <code>, or an inline <script> would be mistaken for a real id="..."
+// attribute and satisfy a live #fragment that has no matching element.
 const idCache = new Map();
 function idsFor(absFile) {
   if (idCache.has(absFile)) return idCache.get(absFile);
   const ids = new Set();
   if (absFile.endsWith('.html') && existsSync(absFile) && statSync(absFile).isFile()) {
     const html = stripComments(readFileSync(absFile, 'utf8'));
-    // Same double/single/unquoted flexibility as getAttrValue above — an
-    // id='target' or id=target is a real, working fragment target, not a
-    // broken one.
-    const re = /(?:^|\s)id\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'`=<>]+))/gi;
-    let m;
-    while ((m = re.exec(html))) {
-      const id = m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[3];
+    for (const attrsText of allOpeningTagAttrStrings(html)) {
+      // Same double/single/unquoted flexibility as getAttrValue elsewhere —
+      // an id='target' or id=target is a real, working fragment target.
+      const id = getAttrValue(attrsText, 'id');
       if (id) ids.add(id);
     }
   }
@@ -140,6 +153,18 @@ function idsFor(absFile) {
 function tagAttrStrings(html, tagNames) {
   const tagAlt = tagNames.join('|');
   const re = new RegExp(`<(?:${tagAlt})\\b((?:[^>"']|"[^"]*"|'[^']*')*)>`, 'gi');
+  const out = [];
+  let m;
+  while ((m = re.exec(html))) out.push(m[1]);
+  return out;
+}
+
+// Same whole-tag tokenizing as tagAttrStrings, but for EVERY opening tag
+// regardless of name (used for id collection, where an id can legitimately
+// sit on any element — a <div>, a <span>, an <li>, ...). Closing tags
+// ("</div>") don't match, since a tag name must start right after "<".
+function allOpeningTagAttrStrings(html) {
+  const re = /<[a-zA-Z][a-zA-Z0-9-]*\b((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
   const out = [];
   let m;
   while ((m = re.exec(html))) out.push(m[1]);
@@ -309,7 +334,13 @@ function caseSensitiveEntry(relPath) {
 // exact-case via caseSensitiveEntry, not existsSync()/statSync().
 function distFileForSitePath(sitePath) {
   const clean = sitePath.replace(/^\/+/, '');
-  if (clean === '') return 'index.html';
+  if (clean === '') {
+    // The root ("/") maps to dist/index.html, same as any other directory
+    // index — but that file still has to actually exist, checked the same
+    // exact-case way as every other path, not assumed unconditionally.
+    const rootIndex = caseSensitiveEntry('index.html');
+    return rootIndex && rootIndex.isFile ? 'index.html' : null;
+  }
 
   const literal = caseSensitiveEntry(clean);
   if (literal && literal.isFile) return clean;
@@ -362,11 +393,13 @@ for (const absFile of htmlFiles) {
       continue;
     }
 
-    if (fragment) {
-      if (!resolved.endsWith('.html')) {
-        fail(`${relFile} -> ${value} (target "dist/${resolved}" is not an HTML document, so "#${fragment}" cannot be resolved)`);
-        continue;
-      }
+    if (fragment && resolved.endsWith('.html')) {
+      // Only HTML documents have ids to check a fragment against. A
+      // fragment on a non-HTML resource (e.g. "/icons.svg#logo",
+      // "/manual.pdf#page=2") is handled entirely by the browser or a
+      // plugin, not by matching an id="..." — the file existing (already
+      // confirmed above via distFileForSitePath) is all this script can
+      // and should verify.
       const targetAbs = path.join(distDir, resolved);
       if (!idsFor(targetAbs).has(fragment)) {
         fail(`${relFile} -> ${value} (fragment "#${fragment}" has no matching id="${fragment}" in dist/${resolved})`);
