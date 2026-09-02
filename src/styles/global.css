@@ -172,7 +172,10 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .brandmark .dim { color: var(--ink-faint); }
 /* "/ ShakaCode" is decoration and costs ~107px. Below ~1000px the bar needs
    that width for the nav, so the suffix goes; it stays in the DOM because the
-   link's aria-label already carries the full name. */
+   link's aria-label already carries the full name. Seven section links fit
+   beside it: 344.5 + 20 + 694.9 = 1059.4 inside the 1072px .wrap. An eighth
+   link costs 110.5 more and does not, so if one is ever added this media query
+   has to become an unconditional display: none. */
 @media (max-width: 62.5em) { .brandmark .dim { display: none; } }
 /* one step smaller on phones: at 360px the full-size wordmark plus the GitHub
    link is 8px too wide for the row, and this is cheaper than a second row. */
