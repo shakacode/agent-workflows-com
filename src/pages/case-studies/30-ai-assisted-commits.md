@@ -8,7 +8,7 @@ canonicalUrl: https://shakacode.com/blog/audit-30-ai-assisted-commits/
 
 *By Justin Gordon. Cross-published from the [ShakaCode blog](https://shakacode.com/blog/audit-30-ai-assisted-commits/), which is the canonical version.*
 
-<img src="/images/case-studies/ai-audit/cover.png" alt="Review signal collapsed from 83 conversation items to two actionable findings, neither dispositioned before merge" style="max-width: 100%; height: auto;" />
+<img src="/images/case-studies/ai-audit/cover.png" alt="Review signal collapsed from 83 conversation items to two actionable findings, neither dispositioned before merge" width="1600" height="900" style="max-width: 100%; height: auto;" />
 
 The most uncomfortable failure in our AI-assisted workflow was not that an agent wrote bad code.
 
@@ -21,9 +21,9 @@ The PR had six commits, 17 changed files, and **83 conversation items**. Hours b
 
 Both findings were current. Both were unresolved. Both were unanswered when the PR merged.
 
-<img src="/images/case-studies/ai-audit/review-finding-transient-failure.png" alt="An AI reviewer warns that a transient API failure can delete a healthy provider row" style="max-width: 100%; height: auto;" />
+<img src="/images/case-studies/ai-audit/review-finding-transient-failure.png" alt="An AI reviewer warns that a transient API failure can delete a healthy provider row" width="800" height="545" loading="lazy" style="max-width: 100%; height: auto;" />
 
-<img src="/images/case-studies/ai-audit/review-finding-final-retry.png" alt="An AI reviewer warns that the final exhausted retry can waste up to 60 seconds" style="max-width: 100%; height: auto;" />
+<img src="/images/case-studies/ai-audit/review-finding-final-retry.png" alt="An AI reviewer warns that the final exhausted retry can waste up to 60 seconds" width="800" height="235" loading="lazy" style="max-width: 100%; height: auto;" />
 
 *These are the original review comments. Human usernames, avatars, and repository-identifying headers have been cropped; the findings themselves are unchanged.*
 
@@ -55,7 +55,7 @@ The missed-review incident was not our only input. Alexandre audited the 30 most
 
 The audit used one agent per commit. Each agent read surrounding code rather than only the diff, traced behavior across files, and replayed selected claims with tests or primary sources.
 
-<img src="/images/case-studies/ai-audit/audit-distribution.png" alt="Twenty-five of 30 commits were rated clean, one low, four medium, and none high or critical" style="max-width: 100%; height: auto;" />
+<img src="/images/case-studies/ai-audit/audit-distribution.png" alt="Twenty-five of 30 commits were rated clean, one low, four medium, and none high or critical" width="1200" height="675" loading="lazy" style="max-width: 100%; height: auto;" />
 
 The findings were more nuanced than either side of the usual AI argument:
 
@@ -81,7 +81,7 @@ It was permanent prose.
 
 One six-line code change carried a **154-line commit body** containing a decision log, QA evidence, and review receipts.
 
-<img src="/images/case-studies/ai-audit/commit-noise.png" alt="A 154-line commit body was 25.7 times longer than the six changed code lines" style="max-width: 100%; height: auto;" />
+<img src="/images/case-studies/ai-audit/commit-noise.png" alt="A 154-line commit body was 25.7 times longer than the six changed code lines" width="1200" height="675" loading="lazy" style="max-width: 100%; height: auto;" />
 
 The evidence may have been useful while the task was running. Repeating all of it in permanent Git history imposed a cost on every later reader:
 
@@ -137,7 +137,7 @@ This does **not** mean velocity excuses defects. Higher throughput crosses more 
 
 ## The operating model needs two controls
 
-<img src="/images/case-studies/ai-audit/two-controls.png" alt="Generation quality and integration discipline converge at a fail-closed merge gate" style="max-width: 100%; height: auto;" />
+<img src="/images/case-studies/ai-audit/two-controls.png" alt="Generation quality and integration discipline converge at a fail-closed merge gate" width="1200" height="675" loading="lazy" style="max-width: 100%; height: auto;" />
 
 ### Control 1: improve what gets generated
 
