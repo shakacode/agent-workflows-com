@@ -386,6 +386,9 @@ const pageDescription =
   .stack-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   a.card { transition: border-color .2s, transform .16s; }
   a.card:hover { border-color: color-mix(in srgb, var(--brand) 50%, transparent); transform: translateY(-3px); }
+  @media (prefers-reduced-motion: reduce) {
+    a.card, a.card:hover { transform: none; transition: none; }
+  }
 
   #safety .gatebadge { justify-self: start; }
 
