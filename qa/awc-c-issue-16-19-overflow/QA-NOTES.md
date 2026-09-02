@@ -196,3 +196,63 @@ if the two-column layout is wanted down to 320px.
 - `/methodology/` — `h1` overflows by 41.6px at 390px with a 32px root (single unbreakable word).
 - `/docs/architecture/` — `h1` overflows by 25.1px in the same case.
 - `/` — `div.consulting-copy` / `div.panel.proof-panel` by 2.7px in the same case.
+
+---
+
+## Addendum 2 — post-rebase remediation at head `e0b0354`
+
+The branch is rebased onto `main` @ `669f319`, which carries PR #6's "Case studies" link. The nav is
+now ten anchors for real; nothing is injected any more.
+
+### 1. Brandmark suffix off at every width (coordinator decision, reversible)
+
+`.wrap` caps at 1120px, so the bar has 1072px of content box at every width from 1120px up.
+
+| configuration | brandmark | nav | + 20px min gap | fits in 1072px? |
+|---|---|---|---|---|
+| ten anchors, suffix shown (`main` today) | 344.5px | 805.4px | 1169.9px | **no, 97.9px short at every width** |
+| ten anchors, suffix hidden (this PR) | 237.4px | 805.4px | 1062.8px | yes, 29.3px measured gap |
+
+Full width matrix at a 16px root, measured on this head with the real link present:
+
+| viewport | page overflow | brandmark lines | brand↔nav gap | anchors | header height |
+|---|---|---|---|---|---|
+| 1920px | 0 | 1 | 29.3px | 10 | 62px |
+| 1440px | 0 | 1 | 29.3px | 10 | 62px |
+| 1120px | 0 | 1 | 29.3px | 10 | 62px |
+| 1119px | 0 | 1 | 146.6px | 9 | 62px |
+| 1060px | 0 | 1 | 87.6px | 9 | 62px |
+| 1024px | 0 | 1 | 51.6px | 9 | 62px |
+| 1000px | 0 | 1 | 27.6px | 9 | 62px |
+| 940–913px | 0 | 1 | 133.5 → 106.5px | 7 | 62px |
+| 850–721px | 0 | 1 | 193.6 → 64.6px | 5 | 62px |
+| 720–390px | 0 | 1 | 371.6 → 41.6px | 1 | 62px |
+| 375px | 0 | 1 | 44.9px | 1 | 62px |
+| 360px | 0 | 1 | 29.9px | 1 | 62px |
+| 320px, 300px | 0 | 1 | second row | 1 | 63.7px |
+
+Brandmark one line and nav one row at every width from 1000px up; tablet and phone rows are
+unchanged from the original table. `main` at the same widths: brandmark **two lines** at 1920, 1440,
+1120 and 1024 (`before-1440x110-header-ten-anchors.png`, `before-1024x110-header-ten-anchors.png`).
+
+### 2. Deep links under a header that can wrap
+
+The 84px `scroll-margin-top` assumed a fixed 62px header. That was true on `main` — it never wraps,
+it squeezes the brandmark instead, which is the #16 bug — but not once the wrap valve exists. Header
+height measured as a multiple of the root font size, across 7 viewports x 4 root sizes x both
+font-size methods: worst case **5.32x** (127.6px at a 24px root, 161.1px at 32px, 150.8px at 390px/32px).
+
+New rule: `.qs-anchor, main section[id] { scroll-margin-top: max(84px, calc(6rem - 12px)); }` — exactly
+84px at a 16px root, rising with the root font once 6rem passes it.
+
+`/docs/quickstart/#qs-repo-seam`, gap between the heading's top and the sticky header's bottom:
+
+| case | header height | before (main) | after |
+|---|---|---|---|
+| 1440x900 @ 16px root | 63px → 63px | 56.3px clear | **56.3px clear, scrollY 724 — identical** |
+| 768x600 @ 24px root | 63px → 63px | 74px clear | 122px clear |
+| 390x800 @ 32px root | 63px → 150.8px | 91.1px clear | 99.1px clear |
+| 360x800 @ 24px root | 63px → 118.5px | 74.1px clear | 66.1px clear |
+
+Screenshots: `before-deeplink-*.png` / `after-deeplink-*.png`. The homepage `section[id]` targets had
+no offset at all before and now share the rule.
