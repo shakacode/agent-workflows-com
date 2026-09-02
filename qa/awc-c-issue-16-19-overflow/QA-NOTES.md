@@ -143,3 +143,56 @@ before and after, unchanged by this PR. Pre-existing; #19's snippet did not surf
 
 Light theme: layout is identical in both themes (`prefers-color-scheme` only changes tokens, no
 box metrics), so no `-LIGHT` variants were captured.
+
+---
+
+## Addendum — remediation at head `33eaabe`
+
+The first version of the `.card-top` fix used `flex-wrap: wrap`, which also changed the **16px desktop**
+layout: three skill names (`adversarial-pr-review`, `update-changelog`, `post-merge-audit`) stopped
+shrinking and pushed their tier pill onto a second row, growing each card 210.9px → 226.2px and the
+page by ~31px. Replaced with `min-width: 0; overflow-wrap: anywhere` on `.card-top > *` and no
+`flex-wrap`.
+
+Why that is the smaller rule: `.card-top` is a grid item of `.card`, so its min-content sets the card
+row, and `.tier` is `flex: none; white-space: nowrap`. The name's min-content therefore set the whole
+row. `overflow-wrap: anywhere` (unlike `break-word`) reduces min-content sizing, so the name can
+shrink and break. At a 16px root no card row is over-constrained, so nothing is ever squeezed and the
+layout is identical.
+
+### Computed-geometry diff, every element in `<main>`, base `dfdde7e` vs head `33eaabe`
+
+`prefers-reduced-motion: reduce` emulated so the hero stagger animation cannot add sub-pixel noise.
+
+| case | elements differing in `<main>` | page overflow before → after |
+|---|---|---|
+| 1440px @ 16px root | **0** | 0 → 0 |
+| 1120px @ 16px root | **0** | 0 → 0 |
+| 768px @ 16px root | **0** | 0 → 0 |
+| 390px @ 16px root | **0** | 0 → 0 |
+| 768px @ 24px root | **0** | 162px → 0 |
+| 768px @ 32px root | 218 (intended: nav tiers, `.rule-list`) | 415px → 0 |
+| 390px @ 24px root | 356 (intended) | 55px → 0 |
+| 390px @ 32px root | 356 (intended) | 186px → 2.7px |
+| 320px @ 16px root | 356 (intended: 1.7px header row) | 0 → 0 |
+| 300px @ 16px root | 356 (intended: 1.7px header row) | 15.3px → 0 |
+
+At 390px with a 32px root the only remaining offenders are `div.consulting-copy` and
+`div.panel.proof-panel` at 2.7px — pre-existing, unchanged, tracked in #38. Neither `.card-top` nor
+`.rule-list li` overflows.
+
+`before-1440-skills.png` and `after-1440-skills.png` are the `#skills` grid at 1440px / 16px root and
+are **byte-identical** (both `md5 a971869b651d2a0cabbee3a56a258ee7`).
+
+### Footer one-column step
+
+The step is `22.5em` = **360px** at a 16px root, although `main` only overflowed below 320px (15.3px at
+300px). So the footer is deliberately single-column across 320–360px: at 360px the two remaining
+columns are (360 − 48 − 32) / 2 = 140px each, which is too narrow for the link text. Tighten to `20em`
+if the two-column layout is wanted down to 320px.
+
+### Other residuals, pre-existing and identical on `main` (tracked in #38)
+
+- `/methodology/` — `h1` overflows by 41.6px at 390px with a 32px root (single unbreakable word).
+- `/docs/architecture/` — `h1` overflows by 25.1px in the same case.
+- `/` — `div.consulting-copy` / `div.panel.proof-panel` by 2.7px in the same case.
