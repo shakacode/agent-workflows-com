@@ -11,16 +11,24 @@
 //
 // What it does:
 //
-//   1. Walks every dist/**/*.html file.
+//   1. Walks every dist/**/*.html file. <!-- ... --> comment blocks are
+//      stripped from each document before anything else runs, for both id
+//      collection and link extraction — a commented-out element is not
+//      rendered, so its id must not satisfy a live #fragment and its
+//      href/src must not be checked as if it were a real link.
 //   2. Extracts href from <a>/<link>, src from <img>/<script>/<source>/
-//      <video>, and every URL candidate inside a srcset on <img>/<source>.
-//      Like scripts/check-adoption-ladder.mjs, this is regex-based HTML
-//      scanning, not a real parser. Tags are tokenized first (so a raw ">"
-//      inside an earlier quoted attribute value — e.g. a markdown-emitted
-//      title="arrow > here" — doesn't truncate the tag and hide a later
-//      href/src), then the target attribute's value is read whether it's
-//      double-quoted, single-quoted, or bare/unquoted, matching what real
-//      browsers accept.
+//      <video>, and every URL candidate inside a srcset on <img>/<source>
+//      (srcset is parsed candidate-by-candidate per the HTML spec — reading
+//      each URL token up to whitespace, not splitting the whole attribute
+//      on "," — so a data: URL candidate's own internal comma, e.g.
+//      srcset="data:image/png;base64,AAAA 1x", isn't mistaken for a
+//      candidate separator). Like scripts/check-adoption-ladder.mjs, this
+//      is regex-based HTML scanning, not a real parser. Tags are tokenized
+//      first (so a raw ">" inside an earlier quoted attribute value — e.g.
+//      a markdown-emitted title="arrow > here" — doesn't truncate the tag
+//      and hide a later href/src), then the target attribute's value is
+//      read whether it's double-quoted, single-quoted, or bare/unquoted,
+//      matching what real browsers accept.
 //   3. Classifies each value as internal (starts with "/", or is a relative
 //      path such as "foo", "./foo", "../foo") or not. mailto:, tel:,
 //      http(s):, data:, javascript:, any other "scheme:" URL, and
@@ -91,6 +99,14 @@ function walkHtmlFiles(dir) {
 
 const htmlFiles = walkHtmlFiles(distDir);
 
+// Strips <!-- ... --> comment blocks before scanning for ids or
+// link-bearing attributes. A commented-out element is not rendered, so
+// its id must not satisfy a live #fragment and its href/src must not be
+// checked as if it were a real link.
+function stripComments(html) {
+  return html.replace(/<!--[\s\S]*?-->/g, '');
+}
+
 // --- id="..." lookups for a dist file, cached (many pages share the same ---
 // nav targets, so this avoids re-reading/re-scanning the same file).
 const idCache = new Map();
@@ -98,7 +114,7 @@ function idsFor(absFile) {
   if (idCache.has(absFile)) return idCache.get(absFile);
   const ids = new Set();
   if (absFile.endsWith('.html') && existsSync(absFile) && statSync(absFile).isFile()) {
-    const html = readFileSync(absFile, 'utf8');
+    const html = stripComments(readFileSync(absFile, 'utf8'));
     // Same double/single/unquoted flexibility as getAttrValue above — an
     // id='target' or id=target is a real, working fragment target, not a
     // broken one.
@@ -156,6 +172,51 @@ function extractAttr(html, tagNames, attrName) {
   return values;
 }
 
+// Parses a srcset attribute value per the HTML "parse a srcset attribute"
+// algorithm, closely enough for this checker's purposes: naively splitting
+// on "," breaks a data: URL candidate (its own value legitimately contains
+// commas, e.g. `srcset="data:image/png;base64,AAAA 1x"` would otherwise
+// yield a bogus relative candidate "AAAA"). Instead: skip leading
+// whitespace/commas, read the URL token up to the next whitespace (a URL
+// token ending in "," has no descriptor — strip the trailing comma(s) and
+// move on), then skip past that candidate's descriptor up to the next
+// top-level comma (parenthesized descriptors, e.g. future `calc-size()`-
+// style values, are not split on).
+function parseSrcset(value) {
+  const urls = [];
+  const len = value.length;
+  let pos = 0;
+  while (pos < len) {
+    while (pos < len && /[\s,]/.test(value[pos])) pos++;
+    if (pos >= len) break;
+
+    const urlStart = pos;
+    while (pos < len && !/\s/.test(value[pos])) pos++;
+    let url = value.slice(urlStart, pos);
+
+    if (url.endsWith(',')) {
+      url = url.replace(/,+$/, '');
+      if (url) urls.push(url);
+      continue; // trailing comma(s) means no descriptor for this candidate
+    }
+    if (url) urls.push(url);
+
+    while (pos < len && /\s/.test(value[pos])) pos++;
+    let depth = 0;
+    while (pos < len) {
+      const ch = value[pos];
+      if (ch === '(') depth++;
+      else if (ch === ')') depth = Math.max(0, depth - 1);
+      else if (ch === ',' && depth === 0) {
+        pos++;
+        break;
+      }
+      pos++;
+    }
+  }
+  return urls;
+}
+
 // --- Every link-bearing value on one page: href, src, and srcset URLs. ---
 function extractCandidates(html) {
   const values = [
@@ -163,10 +224,7 @@ function extractCandidates(html) {
     ...extractAttr(html, ['img', 'script', 'source', 'video'], 'src'),
   ];
   for (const srcset of extractAttr(html, ['img', 'source'], 'srcset')) {
-    for (const candidate of srcset.split(',')) {
-      const url = candidate.trim().split(/\s+/)[0];
-      if (url) values.push(url);
-    }
+    values.push(...parseSrcset(srcset));
   }
   return values;
 }
@@ -273,7 +331,10 @@ let internalLinkCount = 0;
 
 for (const absFile of htmlFiles) {
   const relFile = path.relative(distDir, absFile).split(path.sep).join('/');
-  const html = readFileSync(absFile, 'utf8');
+  // Comments are stripped before extraction: a commented-out link isn't
+  // rendered, so it shouldn't be checked (matches idsFor's stripComments
+  // above, so a commented-out anchor's id can't satisfy a live #fragment).
+  const html = stripComments(readFileSync(absFile, 'utf8'));
   const siteDir = siteDirFor(relFile);
 
   for (const value of extractCandidates(html)) {
