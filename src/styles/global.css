@@ -8,7 +8,9 @@
   --surface: #131a22;
   --ink: #edeae2;
   --ink-dim: #a6b0bb;
-  --ink-faint: #6c7783;
+  /* --ink-faint clears WCAG 1.4.3 on --bg in both themes (5.07:1 dark, 4.94:1
+     light) while staying visibly fainter than --ink-dim (8.90:1 / 7.26:1). */
+  --ink-faint: #78838f;
   --line: rgba(237, 234, 226, 0.10);
   --line-strong: rgba(237, 234, 226, 0.20);
   --brand: #2fb67c;
@@ -32,7 +34,7 @@
     --surface: #ffffff;
     --ink: #14181d;
     --ink-dim: #47525c;
-    --ink-faint: #7b8791;
+    --ink-faint: #616b75;
     --line: rgba(20, 24, 29, 0.10);
     --line-strong: rgba(20, 24, 29, 0.18);
     --brand: #128a5e;
