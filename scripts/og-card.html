@@ -1,0 +1,175 @@
+<!doctype html>
+<!--
+  Source artwork for public/og.png — the 1200x630 Open Graph / Twitter card.
+
+  Do not hand-edit public/og.png. Edit this file, then regenerate:
+
+      node scripts/render-og-card.mjs
+
+  The card deliberately reuses the live site's brand tokens (src/styles/global.css
+  :root) and the site's own webfonts from node_modules, so the shared-link preview
+  and the page it opens read as one design. Requires `npm install` (the @fontsource
+  packages) and Google Chrome.
+
+  Everything here is self-contained: one file, no build step, no framework. Open it
+  directly in a browser to iterate on the layout at 1:1.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>agents.shakacode.com — Open Graph card</title>
+    <style>
+      /* --- the site's own webfonts, by relative path into node_modules --- */
+      @font-face {
+        font-family: 'Fraunces Variable';
+        font-style: normal;
+        font-weight: 100 900;
+        src: url(../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2)
+          format('woff2-variations');
+      }
+      @font-face {
+        font-family: 'Fraunces Variable';
+        font-style: italic;
+        font-weight: 100 900;
+        src: url(../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-wght-italic.woff2)
+          format('woff2-variations');
+      }
+      @font-face {
+        font-family: 'IBM Plex Sans';
+        font-style: normal;
+        font-weight: 400;
+        src: url(../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2)
+          format('woff2');
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        font-style: normal;
+        font-weight: 500;
+        src: url(../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2)
+          format('woff2');
+      }
+
+      /* --- brand tokens, copied from src/styles/global.css :root (dark) --- */
+      :root {
+        --bg: #0a0c0f;
+        --ink: #edeae2;
+        --ink-dim: #a6b0bb;
+        --ink-faint: #6c7783;
+        --line: rgba(237, 234, 226, 0.10);
+        --brand: #2fb67c;
+        --brand-ink: #7cecbd;
+        --gate: #e0a13a;
+        --font-display: 'Fraunces Variable', Georgia, serif;
+        --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+        --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      }
+
+      * { box-sizing: border-box; margin: 0; }
+      html, body { background: #000; }
+      body { display: flex; }
+
+      /* Exactly the OG image box. Chrome screenshots the viewport at this size. */
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        padding: 74px 80px 62px;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg);
+        /* the site's atmospheric grid + brand glow, scaled up for a 1200px canvas */
+        background-image:
+          radial-gradient(78% 78% at 88% -14%, rgba(47, 182, 124, 0.20), transparent 62%),
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 100% 100%, 60px 60px, 60px 60px;
+        color: var(--ink);
+        font-family: var(--font-body);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* amber gate -> teal: the brandmark's colour order, as a top rule */
+      .card::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto;
+        height: 6px;
+        background: linear-gradient(90deg, var(--gate) 0%, var(--brand) 16%, var(--brand) 52%, rgba(47, 182, 124, 0) 100%);
+      }
+
+      /* --- top: brandmark + eyebrow --- */
+      .top { display: flex; align-items: center; gap: 16px; }
+      .top svg { display: block; flex: none; }
+      .eyebrow {
+        font-family: var(--font-mono);
+        font-weight: 500;
+        font-size: 20px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--brand-ink);
+      }
+
+      /* --- middle: the headline the site now leads with --- */
+      .headline {
+        margin-top: auto;
+        font-family: var(--font-display);
+        font-weight: 460;
+        font-size: 82px;
+        line-height: 1.06;
+        letter-spacing: -0.015em;
+        font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 82;
+      }
+      /* matches .hero-copy h1 em on the homepage */
+      .headline em { font-style: italic; color: var(--brand-ink); }
+
+      .lead {
+        margin-top: 26px;
+        font-size: 27px;
+        line-height: 1.45;
+        color: var(--ink-dim);
+      }
+
+      /* --- bottom rail --- */
+      .rail {
+        margin-top: auto;
+        padding-top: 26px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-family: var(--font-mono);
+        font-weight: 500;
+        font-size: 17px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .rail .five { color: var(--ink-faint); }
+      .rail .five b { color: var(--brand-ink); font-weight: 500; }
+      .rail .site { color: var(--ink-dim); letter-spacing: 0.08em; text-transform: none; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="top">
+        <!-- the site header brandmark, from src/layouts/Base.astro -->
+        <svg width="40" height="40" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="7" fill="var(--brand)" opacity="0.14" />
+          <rect x="6" y="9" width="4.5" height="14" rx="2.25" fill="var(--gate)" />
+          <rect x="13.75" y="9" width="4.5" height="14" rx="2.25" fill="var(--brand)" />
+          <rect x="21.5" y="9" width="4.5" height="14" rx="2.25" fill="var(--brand)" />
+        </svg>
+        <span class="eyebrow">ShakaCode Agent Workflows</span>
+      </div>
+
+      <!-- Line breaks are explicit so the render is identical every time. -->
+      <h1 class="headline">The engineering system<br />around your <em>coding agents</em>.</h1>
+      <p class="lead">Your agent writes the code. This is everything around it.</p>
+
+      <div class="rail">
+        <span class="five"><b>Context</b> · <b>Scope</b> · <b>Validation</b> · <b>Evidence</b> · <b>Review</b></span>
+        <span class="site">agents.shakacode.com</span>
+      </div>
+    </div>
+  </body>
+</html>
