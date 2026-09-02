@@ -1,6 +1,14 @@
 # QA evidence — issue #15 accessibility debt (lane `issue-15-a11y`, batch awc-c-20260901)
 
-Branch under test: `awc-c/issue-15-a11y-debt` @ `8d91ceb`. Baseline: `main` @ `dfdde7e`.
+Branch under test: `awc-c/issue-15-a11y-debt` @ `e0d9c53`. Baseline: `main` @ `dfdde7e`.
+
+Revised after review: the footer column titles are `<h2>`, not `<h3>` as at `8d91ceb`.
+Both the independent checker and the Codex reviewer asked for this, so the footer
+groups are peers of the page's content headings rather than subsections of
+whichever `<h2>` came last, and so `/docs/` no longer skips `h1 -> h3`. The
+rendered output is byte-identical to `8d91ceb` — all eight screenshots below
+compare equal byte for byte across the two heads — so only the outline and the
+footer title's tag name changed.
 
 Method: `npm run build` + `astro preview --host 127.0.0.1 --port 4315`, then headless
 Chrome over the DevTools protocol. `Emulation.setEmulatedMedia` supplies
@@ -53,14 +61,26 @@ h2  The pack, the backend, and the dashboard.
 h3    agent-workflows / agent-coordination / dashboard                      (3 stack cards)
 h2  Customize freely. Keep the divergence visible.
 h2  Bring the operating model into your organization.
-h3    The stack / Learn / ShakaCode                                         (3 footer columns)
+h2  The stack / Learn / ShakaCode                                           (3 footer columns)
 ```
 
-All eight built pages were re-checked for level skips against `dist/`. Seven are
-clean. `docs/index.html` still skips (see the PR's Scope notes): that page's body is
-an `<h1>` plus a link list with no `<h2>`, so the footer heading follows the `<h1>`.
-This lane improved it from `h1 -> h4` to `h1 -> h3`; removing it needs a content
-change in `src/pages/docs/index.md`, outside this lane's owned paths.
+All eight built pages were re-checked for level skips against `dist/`. **All eight
+are clean**, including `docs/index.html`, whose body is an `<h1>` plus a link list
+with no `<h2>`: with `<h2>` footer titles its sequence is `1 2 2 2`, so the residual
+`h1 -> h3` skip that `8d91ceb` still had is gone without adding a placeholder
+heading to any page.
+
+```
+ok   docs/architecture/index.html      12222222
+ok   docs/distributions/index.html     122223322222
+ok   docs/index.html                   1222
+ok   docs/quickstart/index.html        12222222
+ok   docs/terminology/index.html       123333332333333332333333233333233333333333222
+ok   docs/throughput/index.html        12233333322222
+ok   index.html                        122223333333333233332233322222
+ok   methodology/index.html            12222222222
+ALL 8 PAGES CLEAN
+```
 
 ## Rendered treatment — unchanged where it matters
 
@@ -68,7 +88,7 @@ Computed style + page-space rect, dark theme, before -> after:
 
 | element | before | after |
 | --- | --- | --- |
-| footer column title | `H4` mono 11.52px w700 lh 19.008px ls 2.0736px uppercase, rect 415x19 | `H3` mono 11.52px w700 lh 19.008px ls 2.0736px uppercase, rect 415x19 |
+| footer column title | `H4` mono 11.52px w700 lh 19.008px ls 2.0736px uppercase, rect 415x19 | `H2` mono 11.52px w700 lh 19.008px ls 2.0736px uppercase, rect 415x19 |
 | skill card title | `SPAN` mono 13.12px w400 lh 21.648px, block, rect 47x22 | `H3` mono 13.12px w400 lh 21.648px, block, rect 47x22 |
 | skill card box | 252x211 @ y 4042 | 252x211 @ y 4042 |
 | stack card title | `SPAN` mono 13.12px w400 lh 21.648px, **inline**, rect 134x17 | `H3` mono 13.12px w400 lh 21.648px, **block**, rect 289x22 |
@@ -96,8 +116,11 @@ lift was still animating under `reduce`.)
 
 `before-`/`after-1440x900-<region>-<THEME>.png` for `header`, `footer`, `skills`,
 `stack` in `DARK` and `LIGHT`. 1440px wide, clipped to the region's page-space rect.
+The `after-` shots were re-captured at `e0d9c53` and compare byte-identical to the
+ones captured at `8d91ceb`, which is the evidence that moving the footer titles
+from `h3` to `h2` changed nothing on screen.
 
-## Validation at `8d91ceb`
+## Validation at `e0d9c53`
 
 - `npm run build` (`.agents/bin/validate`) — pass, 8 pages.
 - `npm test` (`.agents/bin/test`) — pass, `check-adoption-ladder: OK`.
