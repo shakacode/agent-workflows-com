@@ -10,12 +10,14 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  canonicalUrl?: string;
 }
 const {
   title = 'ShakaCode Agent Workflows — run AI coding agents in fleets, safely',
   description = 'Open-source workflows and practical consulting for teams planning, batching, reviewing, and auditing AI coding-agent work safely at scale.',
+  canonicalUrl,
 } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonical = canonicalUrl ? new URL(canonicalUrl) : new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
 ---
 <!doctype html>
@@ -60,6 +62,7 @@ const ogImage = new URL('/og.png', Astro.site);
           <a class="hide-sm hide-tab" href="/#stack">The stack</a>
           <a class="hide-sm hide-lg" href="/#distributions">Distributions</a>
           <a class="hide-sm" href="/#for-teams">For teams</a>
+          <a class="hide-sm hide-md" href="/case-studies/">Case studies</a>
           <a class="hide-sm" href="/docs/">Docs</a>
           <a href="https://github.com/shakacode/agent-workflows">GitHub&nbsp;↗</a>
         </nav>
@@ -87,6 +90,7 @@ const ogImage = new URL('/og.png', Astro.site);
             <a href="/docs/architecture/">Architecture</a>
             <a href="/docs/distributions/">Distributions</a>
             <a href="/methodology/">Methodology</a>
+            <a href="/case-studies/">Case studies</a>
           </div>
           <div>
             <h4>ShakaCode</h4>

@@ -5,6 +5,7 @@ const { frontmatter } = Astro.props;
 <Base
   title={`${frontmatter.title} — Agent Workflow Playbook`}
   description={frontmatter.description}
+  canonicalUrl={frontmatter.canonicalUrl}
 >
   <article class="doc">
     <span class="eyebrow">{frontmatter.eyebrow ?? 'Docs'}</span>
