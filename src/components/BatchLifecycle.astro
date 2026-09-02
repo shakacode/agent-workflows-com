@@ -2,6 +2,11 @@
 // How the work moves: untrusted GitHub work passes a security gate (amber),
 // flows through five stages, all backed by shared coordination.
 //
+// The rail deliberately scopes the coordination promise to one task: the
+// documented guarantee is mutual exclusion on the same target (see "Parallel
+// work" in src/pages/methodology.md), not the absence of merge conflicts
+// between agents working different targets. Do not widen it back.
+//
 // Every visible label here is deliberately plain English. This diagram sits in
 // the hero, above the fold, so it is the first thing a visitor reads; the
 // project's own vocabulary (skill names, coordination internals) is introduced
@@ -23,7 +28,7 @@
   <div
     class="lc-flow"
     role="img"
-    aria-label="How the work moves: anything arriving from GitHub issues and pull requests passes a security gate, where untrusted input never becomes instructions, then flows through five stages — plan, split, run, review, and audit — with shared coordination, so parallel agents never collide."
+    aria-label="How the work moves: anything arriving from GitHub issues and pull requests passes a security gate, where untrusted input never becomes instructions, then flows through five stages — plan, split, run, review, and audit — with shared coordination, so no two agents take one task."
   >
     <p class="lc-source">from github issues &amp; prs</p>
 
@@ -44,7 +49,7 @@
       </ol>
       <p class="lc-rail">
         <span class="lc-rail-lead">backed by</span>
-        shared coordination, so parallel agents never collide
+        shared coordination, so no two agents take one task
       </p>
     </div>
   </div>
