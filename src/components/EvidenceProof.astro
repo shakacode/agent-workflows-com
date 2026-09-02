@@ -1,0 +1,154 @@
+---
+// One proof card for the homepage "evidence from real use" section (issue #10).
+//
+// The card contract — the five fields issue #10 asks for, in this order:
+//   1. the observed event or failure          -> "What happened"
+//   2. the control or workflow change it drove -> "The control it forced"
+//   3. the current result or status            -> "Where it stands"
+//   4. an honest limitation or open item       -> "Still open"
+//   5. a link to durable public evidence       -> the card footer links
+//
+// Sourcing rule for this file: every quantitative or efficacy claim below is
+// traceable to the published case study at /case-studies/30-ai-assisted-commits/
+// (canonical: https://shakacode.com/blog/audit-30-ai-assisted-commits/) or to a
+// public issue/pull request linked inline. Nothing here is estimated,
+// aggregated, or reconstructed from private work. The PR that added this
+// section carries the claim-to-source table.
+//
+// Deliberately model-agnostic: the study could not attribute the incorrect
+// security-advisory citation to any model, so this card makes no claim about
+// which agent produces better or worse output.
+const study = '/case-studies/30-ai-assisted-commits/';
+const shakapacker = 'https://github.com/shakacode/shakapacker/pull/';
+const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249';
+---
+<article class="card evidence-card">
+  <div class="evidence-head">
+    <span class="evidence-tag mono">Case study · August 5, 2026</span>
+    <h3>The AI reviewer found it. We merged anyway.</h3>
+  </div>
+
+  <dl class="evidence-fields">
+    <div class="evidence-field">
+      <dt class="evidence-label mono">What happened</dt>
+      <dd>
+        Hours before merge, an AI reviewer flagged two real risks on one pull request: a transient{' '}
+        <code>429</code> or <code>5xx</code> API failure could be treated like a confirmed delisting
+        and delete a healthy provider row, and the final exhausted retry could still sleep up to 60
+        seconds that no later attempt would use. Both findings sat inside a timeline of{' '}
+        <strong>83 conversation items</strong>. The pull request merged with neither one answered or
+        resolved. <strong>Detection succeeded. Integration discipline failed.</strong>
+      </dd>
+    </div>
+
+    <div class="evidence-field">
+      <dt class="evidence-label mono">The control it forced</dt>
+      <dd>
+        Make current review findings stateful. Before merge each one needs exactly one
+        disposition — fixed and verified, explicitly rejected or accepted with a recorded rationale,
+        or converted into an owned follow-up with a defined trigger — and until then the merge gate
+        should fail closed. That is the rule the incident forced; enforcing it automatically is
+        still open work, below. A green check means a process finished; it is not evidence that
+        anything was dispositioned.
+      </dd>
+    </div>
+
+    <div class="evidence-field">
+      <dt class="evidence-label mono">Where it stands</dt>
+      <dd>
+        The adversarial audit of the 30 most recent non-trivial{' '}
+        <a href="https://github.com/shakacode/shakapacker">Shakapacker</a> commits that followed the
+        incident found no critical or high-severity defects, and the four focused fixes it did
+        produce are merged upstream: <a href={`${shakapacker}1240`}>fail closed when <code>PATH</code>{' '}
+        is unset</a>, <a href={`${shakapacker}1241`}>make the Babel 8 smoke prove transformation</a>,{' '}
+        <a href={`${shakapacker}1242`}>actually lint the merge-readiness helper</a>, and{' '}
+        <a href={`${shakapacker}1239`}>correct stale upgrade references</a>.
+      </dd>
+    </div>
+
+    <div class="evidence-field">
+      <dt class="evidence-label mono">Still open</dt>
+      <dd>
+        The gate is not finished. <a href={failClosedIssue}>Fail closed on unsettled configured
+        reviews</a> is still an open issue, so today the disposition rule is a practice a human has
+        to hold, not something the system enforces. The study is also honest about a second limit:
+        a commit message cited a GitHub security advisory unrelated to the dependency being changed,
+        putting an incorrect security claim into permanent history — and that could not be
+        attributed to any model, because the change came from an outside pull request with no
+        recorded Claude or Codex provenance. Without model, reasoning level, workflow version, and
+        gate configuration, “which agent produces more slop” is an anecdote, not a measurement.
+      </dd>
+    </div>
+  </dl>
+
+  <div class="evidence-links">
+    <a class="evidence-next" href={study}>Read the full case study →</a>
+    <a class="evidence-next evidence-next-quiet" href="/case-studies/">All case studies →</a>
+  </div>
+</article>
+
+<style>
+  /* Reuses .card and the .mono/label idiom from global.css — same visual
+     system as the adoption ladder above it, no parallel one.
+
+     Every class here is namespaced `evidence-*` on purpose. index.astro has
+     its own page-scoped `.proof` family for the consulting credential rows
+     (`.proof`, `.proof-panel`, `.proof strong`, `.proof span`), and this card
+     used to call its root `.proof` too. Astro scopes both sides by cid, so the
+     two never actually collided in the built CSS — verified: this root carries
+     only its own cid, and its computed padding stayed at .card's 26px rather
+     than the consulting rule's 20px 8px. But the safety of that depends on
+     Astro's scope-propagation behavior and on those rules staying page-scoped;
+     if either changes, a shared name silently restyles this card. A distinct
+     name costs nothing and removes the question. */
+  .evidence-card { display: grid; gap: 18px; }
+
+  .evidence-head { display: grid; gap: 6px; }
+  /* --ink-dim, not --ink-faint: this tag carries the study's date and kind,
+     so it clears 4.5:1 in both themes like every other label on the page. */
+  .evidence-tag {
+    color: var(--ink-dim); font-size: 0.72rem; letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .evidence-head h3 { font-size: 1.18rem; margin-bottom: 0; }
+
+  .evidence-fields { display: grid; gap: 16px; margin: 0; }
+  /* Two columns only where there is room for a readable measure beside the
+     label; below that the label stacks above its answer. */
+  .evidence-field { display: grid; gap: 6px; }
+  @media (min-width: 720px) {
+    .evidence-field { grid-template-columns: 11rem minmax(0, 1fr); gap: 8px 24px; align-items: baseline; }
+  }
+  .evidence-label { color: var(--ink-dim); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .evidence-field dd { margin: 0; color: var(--ink-dim); font-size: 0.98rem; line-height: 1.6; }
+  .evidence-field dd strong { color: var(--ink); font-weight: 600; }
+  /* Mirrors the site's inline-code idiom verbatim from global.css:202-203
+     (`.doc-body code` and `.doc-body :not(pre) > code`). That rule is scoped
+     to .doc-body so it cannot reach the homepage on its own; copying it —
+     rather than inventing a second chip recipe — keeps one inline-code look
+     across the site. Like the global rule it sets no color, so the chip
+     inherits the surrounding dd's --ink-dim. Keep these values in sync if
+     global.css:203 ever changes. */
+  .evidence-field dd code {
+    font-family: var(--font-mono); font-size: 0.88em;
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    border: 1px solid var(--line); border-radius: 6px; padding: 0.08em 0.4em;
+  }
+  .evidence-field dd a {
+    color: var(--brand-ink);
+    border-bottom: 1px solid color-mix(in srgb, var(--brand) 40%, transparent);
+    /* Long link labels wrap mid-word rather than pushing the card wide at 390px. */
+    overflow-wrap: anywhere;
+  }
+  .evidence-field dd a:hover { border-color: var(--brand-ink); }
+
+  .evidence-links { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+  .evidence-next {
+    color: var(--brand-ink); font-family: var(--font-mono); font-size: 0.88rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+    padding-bottom: 1px; transition: border-color .18s;
+  }
+  .evidence-next:hover { border-color: var(--brand-ink); }
+  .evidence-next-quiet { color: var(--ink-dim); border-bottom-color: var(--line-strong); }
+  .evidence-next-quiet:hover { border-bottom-color: var(--ink-dim); }
+</style>
