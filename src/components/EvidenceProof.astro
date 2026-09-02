@@ -44,18 +44,19 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
     <div class="proof-field">
       <dt class="proof-label mono">The control it forced</dt>
       <dd>
-        Current review findings have to be stateful. Before merge, each one gets exactly one
+        Make current review findings stateful. Before merge each one needs exactly one
         disposition — fixed and verified, explicitly rejected or accepted with a recorded rationale,
         or converted into an owned follow-up with a defined trigger — and until then the merge gate
-        fails closed. A green check means a process finished; it is not evidence that anything was
-        dispositioned.
+        should fail closed. That is the rule the incident forced; enforcing it automatically is
+        still open work, below. A green check means a process finished; it is not evidence that
+        anything was dispositioned.
       </dd>
     </div>
 
     <div class="proof-field">
       <dt class="proof-label mono">Where it stands</dt>
       <dd>
-        The adversarial audit of 30 recent{' '}
+        The adversarial audit of the 30 most recent non-trivial{' '}
         <a href="https://github.com/shakacode/shakapacker">Shakapacker</a> commits that followed the
         incident found no critical or high-severity defects, and the four focused fixes it did
         produce are merged upstream: <a href={`${shakapacker}1240`}>fail closed when <code>PATH</code>{' '}
@@ -71,9 +72,10 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
         The gate is not finished. <a href={failClosedIssue}>Fail closed on unsettled configured
         reviews</a> is still an open issue, so today the disposition rule is a practice a human has
         to hold, not something the system enforces. The study is also honest about a second limit:
-        its worst artifact — an incorrect security-advisory citation in permanent commit history —
-        could not be attributed to any model, because the change arrived from an outside pull
-        request with no recorded provenance. Without model, reasoning level, workflow version, and
+        a commit message cited a GitHub security advisory unrelated to the dependency being changed,
+        putting an incorrect security claim into permanent history — and that could not be
+        attributed to any model, because the change came from an outside pull request with no
+        recorded Claude or Codex provenance. Without model, reasoning level, workflow version, and
         gate configuration, “which agent produces more slop” is an anecdote, not a measurement.
       </dd>
     </div>
@@ -109,10 +111,17 @@ const failClosedIssue = 'https://github.com/shakacode/agent-workflows/issues/249
   .proof-label { color: var(--ink-dim); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; }
   .proof-field dd { margin: 0; color: var(--ink-dim); font-size: 0.98rem; line-height: 1.6; }
   .proof-field dd strong { color: var(--ink); font-weight: 600; }
+  /* Mirrors the site's inline-code idiom verbatim from global.css:202-203
+     (`.doc-body code` and `.doc-body :not(pre) > code`). That rule is scoped
+     to .doc-body so it cannot reach the homepage on its own; copying it —
+     rather than inventing a second chip recipe — keeps one inline-code look
+     across the site. Like the global rule it sets no color, so the chip
+     inherits the surrounding dd's --ink-dim. Keep these values in sync if
+     global.css:203 ever changes. */
   .proof-field dd code {
     font-family: var(--font-mono); font-size: 0.88em;
-    color: var(--ink); background: color-mix(in srgb, var(--ink) 8%, transparent);
-    border-radius: 4px; padding: 0.1em 0.35em;
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    border: 1px solid var(--line); border-radius: 6px; padding: 0.08em 0.4em;
   }
   .proof-field dd a {
     color: var(--brand-ink);
