@@ -6,6 +6,10 @@ Landing page and simple docs for the ShakaCode agent stack:
 - [agent-coordination](https://github.com/shakacode/agent-coordination) — coordination backend (claims, heartbeats, liveness)
 - [agent-coordination-dashboard](https://github.com/shakacode/agent-coordination-dashboard) — operator dashboard
 
+[![ShakaCode Agent Workflows — Run AI coding agents in fleets, safely](https://agents.shakacode.com/og.png)](https://agents.shakacode.com)
+
+**[Documentation →](https://agents.shakacode.com)**
+
 Built with [Astro](https://astro.build). Deploys to Cloudflare Pages at
 [agents.shakacode.com](https://agents.shakacode.com).
 
