@@ -11,3 +11,5 @@ ci_parity_environment: n/a
 hosted_ci_trigger: n/a
 ci_change_detector: n/a
 repo_prefix: AWC
+trusted_actions:
+  - actions/github-script
