@@ -8,7 +8,10 @@ changelog: n/a
 benchmark_labels: n/a
 merge_ledger: n/a
 ci_parity_environment: n/a
+# CI runs automatically on pull requests and pushes to main; workflow_dispatch
+# also permits manual runs. No separate CI request command is configured.
 hosted_ci_trigger: n/a
+# Every change runs the full test seam; no change detector is configured.
 ci_change_detector: n/a
 repo_prefix: AWC
 trusted_actions:
