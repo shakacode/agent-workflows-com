@@ -52,10 +52,10 @@ records this tradeoff. At its September 6 status update, a proposed two-round co
 brake and five-PR adoption pilot were still unshipped. That historical proposal is not a
 claim of measured improvement or a universal two-review limit.
 
-## Seed files preserve attention across repositories
+## Seam files preserve attention across repositories
 
 Verification choices become easier to carry between projects when their policies have
-consistent homes. Small seed files establish that organization at adoption time:
+consistent homes. Small seam files establish that organization at adoption time:
 
 - `AGENTS.md` points humans and agents to the repository’s workflow configuration.
 - `.agents/bin/` holds wrappers for the repository’s real setup, validation, and test commands.
@@ -66,7 +66,7 @@ contract, so moving between repositories does not require rediscovering where co
 and policies live. The prototype can declare a simple build check while another repo
 requires integration tests. Consistent organization does not mean identical policies.
 
-Seed files are a starting point to review and maintain, not proof that a command works
+Seam files are a starting point to review and maintain, not proof that a command works
 or a substitute for current task ownership and status. Keep repository-specific facts in
 the repository and shared procedure in the pack. Start with the
 [adoption guide](/docs/quickstart/#qs-repo-seam) when repeated context gathering becomes a cost.
