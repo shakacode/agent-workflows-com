@@ -1,0 +1,75 @@
+---
+const stages = [
+  {
+    title: 'Just for me',
+    consequence: 'I can recreate it.',
+    example: 'A disposable personal experiment',
+    practice: 'Chat, try it, iterate. No workflow pack or formal test suite required.',
+  },
+  {
+    title: 'Friends or coworkers',
+    consequence: 'Others lose time.',
+    example: 'A shared tool with saved work',
+    practice: 'Check important user journeys, protect saved data, and have a recovery path.',
+  },
+  {
+    title: 'Customers depend on it',
+    consequence: 'Failures damage trust.',
+    example: 'An application people rely on',
+    practice: 'Automate critical checks. Add targeted review, monitoring, and rollback.',
+  },
+  {
+    title: 'Critical service',
+    consequence: 'Minutes cause major losses.',
+    example: 'An outage can cost thousands a minute',
+    practice: 'Set reliability targets. Stage releases, test failures, and practice recovery.',
+  },
+];
+---
+<figure class="spectrum" aria-label="Verification grows with the consequences of failure">
+  <div class="spectrum-direction">
+    <span>Easy to recover</span>
+    <span aria-hidden="true">→</span>
+    <span>Costly to fail</span>
+  </div>
+  <ol class="spectrum-stages" role="list">
+    {stages.map((stage, i) => (
+      <li class="card spectrum-stage">
+        <div class="spectrum-meter" aria-hidden="true">
+          {[0, 1, 2, 3].map((segment) => <span class:list={{ filled: segment <= i }} />)}
+        </div>
+        <h3>{stage.title}</h3>
+        <p class="spectrum-consequence">{stage.consequence}</p>
+        <p class="spectrum-example">{stage.example}</p>
+        <p class="spectrum-practice">{stage.practice}</p>
+      </li>
+    ))}
+  </ol>
+  <figcaption>
+    Illustrative situations, not mandatory levels. A five-person payroll tool can need stronger
+    safeguards than a popular disposable toy. Data sensitivity, recovery difficulty, and the
+    change itself matter as much as audience size.
+  </figcaption>
+</figure>
+
+<style>
+  .spectrum { margin: 0; }
+  .spectrum-direction { display: flex; align-items: center; gap: 16px; color: var(--brand-ink); font-family: var(--font-mono); font-size: 0.82rem; margin-bottom: 20px; }
+  .spectrum-direction > :nth-child(2) { flex: 1; text-align: right; border-bottom: 1px solid var(--brand); }
+  .spectrum-stages { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; list-style: none; padding: 0; margin: 0; }
+  .spectrum-stage { display: flex; flex-direction: column; gap: 12px; padding: 22px; min-width: 0; }
+  .spectrum-meter { display: flex; gap: 5px; margin-bottom: 10px; }
+  .spectrum-meter span { height: 5px; flex: 1; background: var(--line-strong); border-radius: 2px; }
+  .spectrum-meter .filled { background: var(--brand); }
+  .spectrum-stage h3 { font-size: 1.3rem; margin: 0; }
+  .spectrum-stage .spectrum-consequence { color: var(--brand-ink); font-weight: 600; }
+  .spectrum-stage .spectrum-example { font-size: 0.88rem; }
+  .spectrum-practice { border-top: 1px solid var(--line-strong); padding-top: 14px; margin-top: auto; }
+  figcaption { color: var(--ink-dim); margin-top: 20px; max-width: 85ch; font-size: 0.95rem; }
+  @media (max-width: 960px) { .spectrum-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) {
+    .spectrum-stages { grid-template-columns: 1fr; }
+    .spectrum-direction { flex-wrap: wrap; }
+    .spectrum-direction > :nth-child(2) { flex: none; border: 0; transform: rotate(90deg); }
+  }
+</style>

@@ -9,6 +9,69 @@ Distilled from a working session between Justin Gordon and Robert on how we actu
 AI coding agents. The short version: **use AI aggressively, verify the risky parts,
 document what was learned, and keep shipping.**
 
+## Balance verification with delivery
+
+Start with **what happens if this breaks?** A disposable app for yourself may need no
+formal process: describe it, try it, and iterate. Using it is already a lightweight check.
+You do not need a workflow pack to find out whether an idea is useful.
+
+As dependence grows, add safeguards that address the consequences:
+
+- **Friends or coworkers:** check important user journeys, protect saved data, and have a recovery path.
+- **Customers depend on it:** automate critical behavior checks, review risky changes, monitor failures, and prepare rollback.
+- **Critical service:** set reliability targets, stage releases, test failure modes, and practice recovery.
+
+These are examples, not user-count thresholds. A five-person payroll tool can carry more
+risk than a popular disposable toy. Sensitive data and irreversible actions raise the
+stakes even for a personal app. Within one system, button copy and permission changes
+also deserve different checks. [See the verification spectrum](/#verification).
+
+Think in terms of **development + verification + expected failure cost + cost of delay**.
+This is a decision aid, not a precise calculator. Ask which failure the next check could
+catch, how likely and costly it would be, and whether the result would change the release
+decision. Include human attention, flaky tests, and repeated review cycles in the cost.
+
+Reducing exposure can help too: ship a smaller change, release to a limited audience,
+and make recovery easier. Tests before release cannot replace monitoring and recovery
+afterward. Google’s [Embracing Risk](https://sre.google/sre-book/embracing-risk/) discusses
+why reliability investment should match the service’s needs and account for opportunity cost.
+
+## Give verification a stopping rule
+
+Before work starts, name the behavior to deliver, the evidence needed to accept it, and
+the failures that must block release. Finish when that evidence is sufficient, required
+checks pass, and remaining risks have an explicit disposition. An additional suggestion
+is an observation to evaluate, not an automatic requirement.
+
+If repair and review keep generating more work, pause the loop and decide whether the
+next change addresses a real defect or expands the design. A pause is not permission to
+ship an unresolved substantive defect or bypass a required security, review, or CI gate.
+
+Our [September 5 backlog recovery plan](https://github.com/shakacode/agent-workflows/blob/7a5018e6433c656e7946af7ab9ac4236b88be190/docs/plans/2026-09-05-backlog-recovery-plan.md)
+records this tradeoff. At its September 6 status update, a proposed two-round continuation
+brake and five-PR adoption pilot were still unshipped. That historical proposal is not a
+claim of measured improvement or a universal two-review limit.
+
+## Seam files preserve attention across repositories
+
+Verification choices become easier to carry between projects when their policies have
+consistent homes. Small seam files establish that organization at adoption time:
+
+- `AGENTS.md` points humans and agents to the repository’s workflow configuration.
+- `.agents/bin/` holds wrappers for the repository’s real setup, validation, and test commands.
+- `.agents/agent-workflow.yml` holds repository-owned non-command policy.
+
+This is the [repo seam](/docs/architecture/#the-repo-seam). Shared skills read the local
+contract, so moving between repositories does not require rediscovering where commands
+and policies live. The prototype can declare a simple build check while another repo
+requires integration tests. Consistent organization does not mean identical policies.
+
+Seam files are a starting point to review and maintain, not proof that a command works
+or a substitute for current task ownership and status. Keep repository-specific facts in
+the repository and shared procedure in the pack. Start with the
+[adoption guide](/docs/quickstart/#qs-repo-seam) when repeated context gathering becomes a cost.
+A coordination backend is a separate choice for concurrent work.
+
 ## Mindset
 
 Treat the agent as a continuous research, review, testing, and documentation partner —
@@ -20,10 +83,10 @@ quickly.
 
 ## The core loop: plan → batch → review → audit
 
-Shape the work first (`plan-pr-batch`, `triage`, `spec`), run it as coordinated lanes
-(`pr-batch`), review every change adversarially, and audit the merged batch
-(`post-merge-audit`). The loop is deliberately gated: nothing lands just because an agent
-said it was done.
+For coordinated production work, shape the work first (`plan-pr-batch`, `triage`, `spec`),
+run it as coordinated lanes (`pr-batch`), review the changes, and audit the merged batch
+(`post-merge-audit`). Use standalone skills for a single task and select review depth by
+risk. Follow the repository’s required gates; an agent saying “done” is not acceptance evidence.
 
 ## Adversarial review before merge
 
@@ -51,8 +114,8 @@ checklist, a docs update, or a domain-expert handoff.
 
 Don't let vague blockers stay vague. Capture the symptom, have the agent research likely
 causes from repo context, decide whether it's a real bug, a docs gap, or expected
-behavior, and file a self-contained issue or a docs PR — so context lands where someone
-can act on it.
+behavior. File a self-contained issue or docs PR when the impact warrants more work.
+Keep optional observations in the original discussion unless there is a reason to schedule them.
 
 ## Anti-patterns to avoid
 
