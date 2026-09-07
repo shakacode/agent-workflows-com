@@ -31,6 +31,29 @@ npm run dev
 npm run build   # outputs to dist/
 ```
 
+## Checks
+
+```bash
+npm test   # builds the site, then runs both offline checkers
+```
+
+The adoption-ladder checker verifies the homepage ladder's required content and
+links against the built Quickstart. The internal-link checker verifies local
+page and asset references, including HTML fragment targets, across `dist/`.
+Both checks run offline; they do not validate external URLs over the network.
+
+To run the checkers individually, build fresh output first:
+
+```bash
+npm run build
+npm run check:adoption-ladder
+npm run check:links
+```
+
+Hosted CI runs `.agents/bin/setup` (`npm ci`) and `.agents/bin/test` (`npm test`)
+on every pull request and push to `main`. Manual runs are also available through
+`workflow_dispatch` in the [deployment workflow](.github/workflows/deploy.yml).
+
 ## Deploy
 
 Cloudflare Pages project: `agent-workflows-com`.
