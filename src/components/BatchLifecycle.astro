@@ -3,7 +3,7 @@
 // flows through five stages, all backed by shared coordination.
 //
 // The rail deliberately scopes the coordination promise to one task: the
-// documented guarantee is mutual exclusion on the same target (see "Parallel
+// documented claim boundary is ownership on the same target (see "Parallel
 // work" in src/pages/methodology.md), not the absence of merge conflicts
 // between agents working different targets. Do not widen it back.
 //
@@ -28,13 +28,13 @@
   <div
     class="lc-flow"
     role="img"
-    aria-label="How the work moves: anything arriving from GitHub issues and pull requests passes a security gate, where untrusted input never becomes instructions, then flows through five stages — plan, split, run, review, and audit — with shared coordination, so no two agents take one task."
+    aria-label="How the work moves: check GitHub issues and pull requests for known risks, then plan, split, run, review, and audit, with shared claims to coordinate task ownership."
   >
     <p class="lc-source">from github issues &amp; prs</p>
 
     <div class="lc-gate">
       <span class="lc-gate-name">security gate</span>
-      <span class="lc-gate-sub">untrusted input never becomes instructions</span>
+      <span class="lc-gate-sub">check public input for known risks</span>
     </div>
 
     <span class="lc-arrow" aria-hidden="true">&#8595;</span>
@@ -49,7 +49,7 @@
       </ol>
       <p class="lc-rail">
         <span class="lc-rail-lead">backed by</span>
-        shared coordination, so no two agents take one task
+        shared claims to coordinate task ownership
       </p>
     </div>
   </div>

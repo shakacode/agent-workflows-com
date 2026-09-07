@@ -18,7 +18,7 @@ pack: its versioned skills, workflow rules, and technical docs define what agent
 - [Astra and model routing](/docs/astra/) — the advisory pilot, portable fallbacks, and evaluation guidance.
 - [Git-native distributions and customization](/docs/distributions/) — the target model for
   trusted Upstream Releases, explicit forks, and contribution back.
-- [Trust &amp; preflight](https://github.com/shakacode/agent-workflows/blob/main/docs/trust-and-preflight.md) — why a public issue can't prompt-inject your agent.
+- [Trust &amp; preflight](https://github.com/shakacode/agent-workflows/blob/main/docs/trust-and-preflight.md) — public-input risks, trust configuration, and preflight limits.
 - [Security posture](https://github.com/shakacode/agent-workflows/blob/main/docs/security-posture.md) — the Rule of Two and the trust model.
 - [Seam design](https://github.com/shakacode/agent-workflows/blob/main/docs/seam-design.md) — how a repo adopts the pack.
 - [Coordination protocol by curl](https://github.com/shakacode/agent-coordination/blob/main/docs/protocol-curl.md) — the HTTP state API by hand.
