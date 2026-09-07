@@ -72,6 +72,25 @@ the repository and shared procedure in the pack. Start with the
 [adoption guide](/docs/quickstart/#qs-repo-seam) when repeated context gathering becomes a cost.
 A coordination backend is a separate choice for concurrent work.
 
+## Measure before extracting more
+
+Keep the skill entrypoint focused on mode selection and required boundaries.
+Load detailed references when the selected route needs them. Use tested helpers
+for repeatable operations whose inputs, outputs, and failure cases can be defined.
+The [update-changelog example](/docs/architecture/#example-update-changelog)
+shows a measured reduction in static instruction bytes with unchanged helper code.
+
+Further extraction should follow measured task outcomes. Compare the same tasks
+and acceptance criteria before and after a change. Record model and reasoning
+settings, host, workflow revision, loaded references, tool access, and repository
+state. Check completion, missed requirements, review corrections, and human
+intervention alongside observed token use, elapsed time, and cost where available.
+Report missing measurements and variation across repeated runs.
+
+Keep an extraction when that evidence supports it. Rework it if agents miss a
+reference, lose an authority check, or require more repair. Smaller instructions
+alone do not show that tasks became faster, cheaper, or more correct.
+
 ## Mindset
 
 Treat the agent as a continuous research, review, testing, and documentation partner —
@@ -106,8 +125,12 @@ commands, or screenshots.
 ## Parallel work
 
 Keep several things moving while slow operations run — CI, review apps, AI reviews.
-Coordinate multiple agents with explicit claims and lanes so two workers never collide on
-the same target, and hand off cleanly across machines. Idle time is for the next PR's QA
+Use explicit claims and lanes to coordinate ownership, and hand off cleanly across
+machines. The [claim protocol](https://github.com/shakacode/agent-coordination#cli)
+refuses a competing claim while the existing holder is protected by its liveness
+or lease state. Workers must use the same backend and canonical repository/target
+identity and respect a refusal. Claims do not prevent overlapping edits on different
+targets or actions outside the protocol. Idle time is for the next PR's QA
 checklist, a docs update, or a domain-expert handoff.
 
 ## Convert confusion into issues and docs

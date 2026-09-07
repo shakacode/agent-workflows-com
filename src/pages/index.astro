@@ -13,8 +13,8 @@ import VerificationSpectrum from '../components/VerificationSpectrum.astro';
 const trust = [
   [
     'Context',
-    'The agent starts from your repo’s real facts, not a guess.',
-    'every repo declares its own base branch, setup, and validation commands in a small ' +
+    'Give the agent your repo’s declared commands and policy.',
+    'adopting repos declare their base branch, setup, and validation commands in a small ' +
       '`.agents/` directory, and shared skills read them — so a portable workflow runs your ' +
       'commands instead of inventing them.',
   ],
@@ -28,26 +28,26 @@ const trust = [
   ],
   [
     'Validation',
-    '“Done” means your repo’s own gate passed, on the commit you are about to merge.',
+    'Require current-commit validation before accepting “done”.',
     '`.agents/bin/validate` is the pre-push gate, and review reads check status at the pull ' +
       'request’s current head SHA — not an older, greener run.',
   ],
   [
     'Evidence',
-    'Every claim ships with the command and the output behind it.',
+    'Require commands and results behind verification claims.',
     'lanes attach a QA evidence block to the PR — exact commands, exact results — and treat ' +
       'CI logs as evidence rather than decoration. “The agent said it tested” is not proof.',
   ],
   [
     'Review',
-    'A second agent tries to prove the first one wrong. A human still decides.',
+    'Use independent review and explicit merge authority.',
     'an independent checker QAs the maker’s work, `adversarial-pr-review` red-teams the diff ' +
       'for what is wrong rather than summarizing it, and unresolved review threads are ' +
-      'triaged before anything is called merge-ready.',
+      'triaged before work is called merge-ready. Merge authority follows your repo policy.',
   ],
 ];
 
-// Ten of the 34 skills in the pack (which also ships 7 workflow prompts).
+// Selected skills from the pack; the upstream catalog is the current inventory.
 // "day one" marks the set documented as working with no coordination backend
 // and no repo seam.
 const skills = [
@@ -72,10 +72,10 @@ const stages = [
 ];
 
 const safety = [
-  ['Security preflight', 'Untrusted GitHub text — issues, PRs, comments, review bodies, diffs — is treated as data, never instructions, until a maintainer has verified the author, scope, and trust boundary.'],
-  ['The Rule of Two', 'A least-privilege boundary from the “lethal trifecta”: untrusted input, secret access, and unattended state-change are never allowed to meet in one session.'],
-  ['Operator hard-stops', 'Risky steps — deploys, secret handling, token provisioning, machine flips — stop and hand off to you instead of improvising.'],
-  ['Trust-gated actors', 'A fail-closed allowlist decides who can steer a batch; everyone else is metadata-only. Tighten it with strict-trust, or waive a specific risk per target.'],
+  ['Security preflight', 'The workflow requires treating public GitHub text as data until its author, scope, and trust boundary are verified. The scanner flags known risks; a clean result does not establish trust.'],
+  ['The Rule of Two', 'The security policy prohibits combining untrusted input, sensitive access, and unattended state change or disclosure. Configure host permissions and credentials to enforce that boundary.'],
+  ['Operator hard-stops', 'The workflow requires explicit authority for consequential actions such as deploys, secret handling, and token provisioning. Missing authority calls for an operator handoff.'],
+  ['Trust-gated actors', 'Trust configuration identifies actors whose input may be actionable. Actor findings are advisory by default; strict-trust makes them launch blockers. An exact-target risk acknowledgement does not grant blanket trust.'],
 ];
 
 const gh = 'https://github.com/shakacode';
@@ -104,7 +104,7 @@ const pageDescription =
       </div>
       <div class="panel hero-panel">
         <BatchLifecycle />
-        <p class="diagram-caption">How the work moves — the amber gate is the differentiator: untrusted input is checked before an agent ever acts on it. The same path runs for one lane or many.</p>
+        <p class="diagram-caption">How the work moves — the security preflight checks public input for known risks. Agents still need permission boundaries and must follow the workflow for one lane or many.</p>
       </div>
     </div>
   </section>
@@ -138,8 +138,7 @@ const pageDescription =
       <p>Once others depend on your app, even one agent on one pull request has this problem. It hands you something plausible,
         and you are left reconstructing what it read, what it was allowed to change, what it
         actually ran, and what any of that proves. Agent Workflows makes those answers explicit
-        from your first PR — one agent, one repo, nothing to host. Because they are explicit, the
-        same steps keep holding when you scale to many agents across many repositories.</p>
+        from your first PR — one agent, one repo, nothing to host. Use those same questions when you scale to many agents across many repositories.</p>
     </div>
   </section>
 
@@ -179,9 +178,8 @@ const pageDescription =
         the prompts, the gates. Each adopting repo keeps its real commands in a small
         <code class="mono">.agents/</code> <em>seam</em> — the directory from the model above — so
         shared workflows resolve every repo’s base branch, validation, CI triggers, and review
-        gates without copying, and then drifting, a full config tree into every checkout. The same
-        pack runs on Codex Desktop and Claude Code Desktop with <em>identical skill text</em>;
-        host-specific verbs map at runtime.</p>
+        gates without copying, and then drifting, a full config tree into every checkout. The pack supports Codex and Claude Code from shared skill sources, with
+        host-specific installation and invocation guidance.</p>
       <p>Small seam files give humans and agents a familiar place to look across repositories:
         <code class="mono">AGENTS.md</code> points to each repo’s commands and policies.
         The organization stays consistent; the rules stay local. A prototype and a production
@@ -207,7 +205,8 @@ const pageDescription =
     <div class="wrap section-head">
       <span class="eyebrow">04 / what you get</span>
       <h2>A skill for every step of the loop.</h2>
-      <p>Thirty-four portable skills and seven workflow prompts for Codex and Claude Code. The
+      <p>Portable skills and workflow prompts for Codex and Claude Code. Browse the
+        <a href={`${gh}/agent-workflows#skill-inventory`}>current skill catalog</a>. The
         ones marked <strong>day one</strong> work the moment you install them — no coordination
         backend, no repo seam. Ten of them:</p>
     </div>
@@ -231,7 +230,7 @@ const pageDescription =
     <div class="wrap section-head">
       <span class="eyebrow">05 / adoption</span>
       <h2>Adopt only as much machinery as the work requires.</h2>
-      <p>The pack works the same way at every scale — what changes is how much of it you turn on.
+      <p>Choose how much of the pack to adopt for your work.
         Three levels, each solving a real problem on its own, each optional until you actually hit
         it.</p>
     </div>
@@ -259,9 +258,11 @@ const pageDescription =
     <div class="wrap section-head">
       <span class="gatebadge">security preflight</span>
       <span class="eyebrow" style="margin-top:6px">07 / the safety story</span>
-      <h2>Agents a public issue can’t hijack.</h2>
-      <p>The real differentiator isn’t speed — it’s that untrusted input, secret access, and
-        unattended state-change never meet in one session.</p>
+      <h2>Bound the risk from public input.</h2>
+      <p>The workflow calls for keeping untrusted input, sensitive access, and unattended
+        state change from meeting in one session. Enforcing that policy requires
+        configured host permissions; the scanner alone is not a security boundary.
+        <a href={`${gh}/agent-workflows/blob/main/docs/security-posture.md`}>Read the security policy and preflight limits →</a></p>
     </div>
     <div class="wrap">
       <ul class="rule-list">
@@ -294,7 +295,7 @@ const pageDescription =
         </a>
         <a class="card" href={`${gh}/agent-coordination`}>
           <h3 class="k">agent-coordination ↗</h3>
-          <p>Mutual-exclusion claims, TTL heartbeats (live/stale/dead), and batch lanes — over a Cloudflare Worker + D1, or a zero-config local mode. Proven against a contention simulation: two agents, one issue, exactly one PR.</p>
+          <p>Mutual-exclusion claims, TTL heartbeats (live/stale/dead), and batch lanes — over a Cloudflare Worker + D1, or a zero-config local mode. The scripted contention test checks that competing workers on one target produce one winner and one branch. Claims depend on workers using the same backend and target identity.</p>
         </a>
         <a class="card" href={`${gh}/agent-coordination-dashboard`}>
           <h3 class="k">dashboard ↗</h3>
