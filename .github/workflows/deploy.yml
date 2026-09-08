@@ -55,13 +55,13 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages project create agent-workflows-com --production-branch=main
 
-      # push to main  -> head_ref is empty -> deploys to the production branch.
-      # pull_request   -> deploys a PREVIEW under the PR branch name; gitHubToken
-      #                   surfaces it as a GitHub deployment with the preview URL.
+      # PR previews use pr-<number> aliases so contributor-controlled branch names
+      # never enter Wrangler's command parser. Other events deploy to main.
+      # gitHubToken surfaces the preview URL as a GitHub deployment.
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          command: pages deploy dist --project-name=agent-workflows-com --branch=${{ github.head_ref || 'main' }}
+          command: pages deploy dist --project-name=agent-workflows-com --branch=${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
