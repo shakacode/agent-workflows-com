@@ -62,6 +62,30 @@ Use the installed recovery workflow and report evidence and next action.
 Recovery does not require a new goal, new control tower, or replacement task.
 One existing task can coordinate recovery on a machine that has no tower.
 
+## Verify that every selected task recovers
+
+“Ready to restart” only means a task has prepared to stop. The coordinator still
+owns the return trip: send an explicit recovery message after the restart and
+verify each task's response and next action. A queued message or an idle task
+does not prove recovery.
+
+Give each restart an identifier and keep recovery acknowledgments in the existing
+fleet record. Match the recipient task ID to the identity inside its handoff and
+the handoff filename. Correct a mismatched path; never append one task's evidence
+to another task's checkpoint. An acknowledgment for an older restart cannot
+close the current one.
+
+Distinguish a hold introduced for this restart from a pause that already existed.
+Authorized recovery clears the temporary restart hold after verification; older
+pauses and expired work limits stay in effect. A delayed preparation message
+must not put an already-recovered task back to sleep.
+
+Track each task as resumed, already complete, intentionally still paused, or
+needing attention. For every missing acknowledgment, retain an owner and exact
+next action. Do not call the fleet recovered while a selected task has silently
+remained paused. Automatic recovery requires a verified continuation mechanism;
+otherwise the handoff must name who sends the recovery message.
+
 ## Record progress before shutdown
 
 Use existing task transcripts and workflow records throughout ordinary work.
