@@ -87,9 +87,10 @@ happens exactly once.
 
 ## Usage limits and account changes
 
-Reaching a usage limit is different from quitting the app. Consult the current
-[OpenAI usage guidance](https://developers.openai.com/codex/pricing/) before
-deciding whether to wait for active work to settle. Recovery instructions should
+Reaching a usage limit is different from quitting the app. OpenAI says an
+active turn can continue after reaching usage limits, subject to fair use.
+That does not guarantee completion of every goal, queued turn or future worker.
+See the current [OpenAI usage guidance](https://developers.openai.com/codex/pricing/#what-happens-when-you-hit-usage-limits). Recovery instructions should
 not buy credits, change models, or extend a task's budget without authorization.
 
 Treat switching accounts as an access and recovery boundary. Verify the intended
