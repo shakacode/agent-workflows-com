@@ -16,3 +16,12 @@ is absent means that capability is n/a in this repository.
 | `ci-detect` | CI change detector | n/a |
 
 Non-command policy lives in [`../agent-workflow.yml`](../agent-workflow.yml).
+
+The [deployment workflow](../../.github/workflows/deploy.yml) runs on every pull
+request and push to `main`, and supports manual runs through `workflow_dispatch`.
+Its `test` job calls `setup` and `test` from this directory; `deploy` waits for
+that job to pass. There are no path filters: every change runs the full test seam.
+
+`hosted_ci_trigger: n/a` means no separate CI request command is configured;
+hosted CI still runs automatically. `ci_change_detector: n/a` and the absent
+`ci-detect` script mean no change detector is configured.
