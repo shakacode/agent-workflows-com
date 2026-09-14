@@ -10,7 +10,8 @@ if (!checkout || !/^[0-9a-f]{40}$/.test(revision ?? '') || extra.length) {
   process.exit(1);
 }
 
-const guides = ['getting-started', 'working-with-your-agent', 'verification'];
+const guides = ['getting-started', 'working-with-your-agent', 'verification',
+  'usage-reporting', 'packaging', 'host-support'];
 const routes = new Map(guides.map((name) => [`docs/${name}.md`, `/docs/v2/${name}/`]));
 const sourceBase = `https://github.com/shakacode/agent-workflows-v2/blob/${revision}/`;
 const destination = new URL('../src/pages/docs/v2/', import.meta.url);
@@ -60,9 +61,14 @@ description: ${JSON.stringify(description)}
 
 [V2 pilot overview](/docs/v2/)
 
-> Canonical guide snapshot from [source revision ${revision.slice(0, 7)}](${sourceBase}${sourcePath}).
+${rewriteLinks(body)}
+<details>
+<summary>About this guide</summary>
 
-${rewriteLinks(body)}`];
+Maintained in the V2 repository. This page uses [source revision ${revision.slice(0, 7)}](${sourceBase}${sourcePath}).
+
+</details>
+`];
 });
 
 mkdirSync(destination, { recursive: true });

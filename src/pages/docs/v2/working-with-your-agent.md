@@ -9,8 +9,6 @@ description: "Give the agent the outcome you want and any limits that matter. A 
 
 [V2 pilot overview](/docs/v2/)
 
-> Canonical guide snapshot from [source revision a4590ef](https://github.com/shakacode/agent-workflows-v2/blob/a4590efdb03ffb908a34bfdedb859e8844aaa757/docs/working-with-your-agent.md).
-
 Give the agent the outcome you want and any limits that matter. A task description,
 GitHub issue, or existing tracker link is enough to start. You should not need to
 learn the agent's internal process to get a useful pull request.
@@ -136,5 +134,12 @@ needs a human estimate; elapsed timestamps cannot establish it.
 Check that the outcome is understandable without expanding evidence, that needed
 questions arrived in time, and that available model/token records can still be
 found. Compare similar accepted changes using the
-[pilot's success criteria](https://github.com/shakacode/agent-workflows-v2/blob/a4590efdb03ffb908a34bfdedb859e8844aaa757/docs/pilot-plan.md#success-evidence-and-commit-attribution).
+[pilot's success criteria](https://github.com/shakacode/agent-workflows-v2/blob/8f69552b34d8802cddc012f347735fb29dcbfc33/docs/pilot-plan.md#success-evidence-and-commit-attribution).
 No new survey, communication score, or reporting gate is required.
+
+<details>
+<summary>About this guide</summary>
+
+Maintained in the V2 repository. This page uses [source revision 8f69552](https://github.com/shakacode/agent-workflows-v2/blob/8f69552b34d8802cddc012f347735fb29dcbfc33/docs/working-with-your-agent.md).
+
+</details>

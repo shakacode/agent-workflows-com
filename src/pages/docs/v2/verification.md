@@ -9,8 +9,6 @@ description: "A useful PR proves the behavior and shows what changed. The agent 
 
 [V2 pilot overview](/docs/v2/)
 
-> Canonical guide snapshot from [source revision a4590ef](https://github.com/shakacode/agent-workflows-v2/blob/a4590efdb03ffb908a34bfdedb859e8844aaa757/docs/verification.md).
-
 A useful PR proves the behavior and shows what changed. The agent uses your
 repository's existing test commands, app startup instructions, and browser tools.
 Keep those choices in your `AGENTS.md` seam; V2 does not introduce a test framework
@@ -70,3 +68,10 @@ recording of the menu opening and closing.
 Screenshots and video complement automated tests. They do not replace required
 GitHub checks or grant merge permission. No evidence manifest, new storage service,
 recording daemon, or separate approval step is required.
+
+<details>
+<summary>About this guide</summary>
+
+Maintained in the V2 repository. This page uses [source revision 8f69552](https://github.com/shakacode/agent-workflows-v2/blob/8f69552b34d8802cddc012f347735fb29dcbfc33/docs/verification.md).
+
+</details>

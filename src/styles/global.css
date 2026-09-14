@@ -247,6 +247,10 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .doc-body pre { background: var(--bg-elev); border: 1px solid var(--line-strong); border-radius: 12px; padding: 16px 18px; overflow-x: auto; margin: 1.2em 0; }
 .doc-body pre code { font-size: 0.84rem; line-height: 1.6; }
 .doc-body strong { color: var(--ink); font-weight: 600; }
+.doc-body table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin: 1.2em 0; }
+.doc-body th, .doc-body td { min-width: 12rem; padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.doc-body th:first-child, .doc-body td:first-child { min-width: 9rem; }
+.doc-body th { color: var(--ink); background: var(--bg-elev); }
 
 /* Stable, explicit deep-link targets for docs headings (quickstart.md and
    friends), independent of Astro's auto-slugged heading ids — those are

@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import AdoptionLadder from '../components/AdoptionLadder.astro';
-import BatchLifecycle from '../components/BatchLifecycle.astro';
 import DistributionLineage from '../components/DistributionLineage.astro';
 import EvidenceProof from '../components/EvidenceProof.astro';
 import Topology from '../components/Topology.astro';
@@ -80,37 +79,41 @@ const safety = [
 
 const gh = 'https://github.com/shakacode';
 
-const pageTitle = 'Agent Workflows — the engineering system around your coding agents';
+const pageTitle = 'Agent Workflows — one task to a verified pull request';
 const pageDescription =
-  'Open-source workflows that make context, scope, validation, evidence, and human review ' +
-  'explicit for AI coding agents — on your next pull request, and across coordinated fleets. ' +
-  'Plus practical adoption help from ShakaCode.';
+  'Give your agent a task. Get a verified pull request and a clear explanation. ' +
+  'Try the Codex-first V2 pilot, with your repository’s commands and your merge choice.';
 ---
 <Base title={pageTitle} description={pageDescription}>
   <!-- HERO -->
   <section class="hero" style="border-top:none">
     <div class="wrap">
       <div class="stagger hero-copy">
-        <span class="eyebrow">Open source · Codex + Claude Code</span>
-        <h1>The engineering system around your <em>coding agents</em>.</h1>
-        <p class="lead">Your agent writes the code. This is everything around it — the context it
-          starts from, the scope it may touch, the checks it must pass, the evidence it leaves,
-          and the human review that lands it. Choose the safeguards your app needs, from a shared
-          tool to a critical service.</p>
-        <p><strong>New: V2 pilot.</strong> One task, a verified PR, and a clear explanation.
-          Start with the ordinary workflow.</p>
+        <span class="eyebrow">V2 pilot · Codex first</span>
+        <h1>One task. One verified <em>pull request</em>.</h1>
+        <p class="lead">Give your agent an issue or a task. It uses your repository’s commands,
+          tests the change, and explains the result. You choose whether it asks before
+          merging or merges when the required checks and approvals pass.</p>
         <div class="cta">
-          <a class="btn btn-primary" href="/docs/v2/">Explore the V2 pilot →</a>
-          <a class="btn btn-ghost" href={`${gh}/agent-workflows`}>V1 workflow pack ↗</a>
-          <a class="btn btn-ghost" href="/methodology/">Read the methodology →</a>
+          <a class="btn btn-primary" href="/docs/v2/">Try the V2 pilot →</a>
+          <a class="btn btn-ghost" href="/docs/#v1-and-advanced-workflows">V1 and advanced workflows →</a>
         </div>
       </div>
       <div class="panel hero-panel">
-        <BatchLifecycle />
-        <p class="diagram-caption">How the work moves — the security preflight checks public input for known risks. Agents still need permission boundaries and must follow the workflow for one lane or many.</p>
+        <span class="eyebrow">One owner · Your repository’s rules</span>
+        <ol class="pilot-steps">
+          <li><strong>Describe the work</strong><span>Use an issue, a task link, or a short explanation.</span></li>
+          <li><strong>Implement and verify</strong><span>The agent asks consequential questions and runs your checks.</span></li>
+          <li><strong>Understand the PR</strong><span>A clear walkthrough, screenshots when useful, and expandable evidence.</span></li>
+          <li><strong>Ask or Auto</strong><span>Merge within your authority after GitHub’s required gates pass.</span></li>
+        </ol>
+        <p class="diagram-caption">Coordination for multiple writers is a separate advanced capability.</p>
       </div>
     </div>
   </section>
+
+  <p class="wrap legacy-note">The sections below describe the broader V1 pack and its optional coordination tools.
+    The <a href="/docs/v2/">V2 guide</a> covers the new ordinary workflow.</p>
 
   <!-- VERIFICATION SPECTRUM -->
   <section id="verification">
@@ -391,6 +394,12 @@ const pageDescription =
   .hero-copy .lead { max-width: 52ch; }
   .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
   .hero-panel { padding: clamp(18px, 3vw, 34px); }
+  .pilot-steps { margin: 20px 0 0; padding-left: 22px; }
+  .pilot-steps li { padding: 12px 0 12px 8px; border-bottom: 1px solid var(--line); }
+  .pilot-steps li::marker { color: var(--brand-ink); font-family: var(--font-mono); }
+  .pilot-steps strong, .pilot-steps span { display: block; }
+  .pilot-steps span { color: var(--ink-dim); margin-top: 5px; }
+  .legacy-note { color: var(--ink-dim); padding-bottom: 28px; }
 
   /* On a phone the hero has to fit both CTAs above the fold — tighten the
      leading, the gaps and the top padding rather than cutting the message. */

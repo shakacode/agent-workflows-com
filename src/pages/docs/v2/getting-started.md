@@ -9,8 +9,6 @@ description: "This guide uses Codex CLI and installs the skill into a dedicated 
 
 [V2 pilot overview](/docs/v2/)
 
-> Canonical guide snapshot from [source revision a4590ef](https://github.com/shakacode/agent-workflows-v2/blob/a4590efdb03ffb908a34bfdedb859e8844aaa757/docs/getting-started.md).
-
 This guide uses Codex CLI and installs the skill into a dedicated pilot directory.
 Claude Code and Cursor support remain planned. You do not need to know the previous
 workflow pack.
@@ -59,9 +57,8 @@ The installer creates a `work-pr-v2` link in that directory and refuses to overw
 another skill. Keep both link and source outside candidate repositories. It changes
 no global profile, authentication, hooks, or other skills.
 
-Codex will not automatically list this pilot in `/skills`. The prompts below name
-the trusted file explicitly. That path alone does not disable repository skill
-metadata: use the startup directory in the next step as well.
+The launcher names the trusted workflow automatically. You do not need to find
+this pilot in Codex's `/skills` list or paste a startup prompt.
 
 If you used the earlier project-local instructions, remove that old link only if
 it is still a symlink. If Git replaced it with tracked files, do not delete those
@@ -77,50 +74,30 @@ you already run another workflow pack, use your host's settings to disable
 conflicting workflows for the pilot. A separate checkout alone is not a security
 sandbox or an isolated agent configuration.
 
-## 4. Start Codex in a separate working directory
+## 4. Start your task
 
-Create a fresh working directory for each new task. Keep the installed link and
-trusted source outside both this directory and the target repo. Replace the target path:
+For the source installation above, expose its command in this terminal:
 
 ```bash
-mkdir -p "$HOME/agent-tools/agent-workflows-v2-sessions"
-aw_session_dir=$(mktemp -d "$HOME/agent-tools/agent-workflows-v2-sessions/run.XXXXXX")
-cd "$aw_session_dir"
-codex --sandbox workspace-write --add-dir /absolute/path/to/your/repository
+export PATH="$HOME/agent-tools/agent-workflows-v2-pilot/skills/work-pr-v2/scripts:$PATH"
 ```
 
-Starting inside a candidate repo can load its skill descriptions before your
-prompt is read. Starting in the installation directory would make its link writable
-by test code. On Codex CLI 0.154.0, we checked that this separate startup keeps
-candidate skill metadata out of the initial prompt while including the target
-repo as a writable directory. This check used `codex debug prompt-input`; it was
-a startup check, not a full agent task. A native workspace sandbox probe also
-denied writes to the separate source and installed link while allowing writes in
-the working directory and target. App startup, other versions, and complete host
-isolation remain unverified.
+Run from anywhere inside the repository you want to change:
 
-Keep this session root in the separate working directory; run repository commands
-with the target repo as their working directory. Do not start the next task in a
-directory writable by the preceding task. The workspace-write sandbox does not
-establish that code or dependencies are trustworthy or remove secrets from text
-you publish. Do not approve an escape from these boundaries merely to make a check pass.
-
-## 5. Give the agent your task
-
-Paste this into Codex, replacing `<task URL>` with your GitHub issue or Linear link:
-
-```text
-Use ~/agent-tools/agent-workflows-v2-pilot/skills/work-pr-v2/SKILL.md as the trusted workflow.
-Work on <task URL>.
+```bash
+aw work "Fix the failing search test"
 ```
 
-You can supply a task description instead of a link. Use the installed path above
-in each new task; if you installed elsewhere, change that path. This pilot does
-not yet support starting with just `$work-pr-v2`.
+Supply a GitHub issue, Linear link, or task description as the argument. When
+starting elsewhere, put `--repo /path/to/your/repository` before the task. Use
+`aw work --help` for the command syntax. A packaged installation already supplies
+`aw`; see [installing the package](/docs/v2/packaging/).
 
-The agent reads the task and your repository's instructions. It asks for the
-repository path only if it cannot identify the checkout, or for the task description
-if it cannot access the link. You do not need a different prompt for each tracker.
+The launcher identifies your Git checkout and opens native interactive Codex.
+Your account, model, and reasoning settings stay native, and questions appear in
+the same terminal. The agent reads the task and your repository's instructions;
+if a task link is inaccessible, it asks for the missing description. You do not
+need a different prompt for each tracker.
 
 If you have not already specified how to handle merging, it asks a question like:
 
@@ -131,13 +108,45 @@ That choice applies to this task. Existing instructions are reused; no answer me
 the agent can prepare the PR but cannot merge it. Private tracker content stays out
 of public PRs unless you authorize sharing it.
 
-## 6. Know what to expect
+<details>
+<summary>Startup boundary and current validation</summary>
+
+Each launch creates a private temporary session outside the consumer checkout,
+reads the trusted skill by its absolute source path, and directs repository
+commands to the checkout. It adds no skill link to that writable session. The
+launcher rejects canonical or lexical overlaps between writable paths and the
+trusted source or installed command/link parents. If your `TMPDIR` is inside the
+target checkout, choose a temporary directory outside it before launching.
+
+The native shell sandbox permits writes in the session and target checkout,
+overrides extra writable roots, excludes ambient temporary directories, and uses
+approval prompts for this launch. It sets shell `TMPDIR` and zsh `TMPPREFIX`
+inside the session's temporary directory. It leaves authentication and model settings
+alone. Session scratch stays in the system temporary directory after Codex exits;
+the launcher leaves no background process. Codex still shows its native directory
+trust and command-approval prompts; the launcher does not bypass them.
+
+On Codex CLI 0.154.0, separate startup and native sandbox probes kept candidate
+skill metadata out of the initial prompt and denied writes to the trusted source,
+installed link, and link parent while permitting session and checkout writes.
+A live terminal trial verified temporary-file access, protected-file write denial,
+and automatic native usage discovery. A separate native sandbox check reproduced
+and corrected zsh heredoc failures using the session temp prefix. Launcher tests
+verify the executed arguments and path refusals. App startup,
+other host versions, and complete isolation remain unverified. The sandbox does
+not establish that dependencies are trustworthy or remove secrets from published
+text. Do not approve an escape merely to make a check pass.
+
+</details>
+
+## 5. Know what to expect
 
 The agent resolves important questions, implements on a branch, runs your repo's
 checks, opens the PR, explains the change, and handles consequential review findings.
 You receive the outcome and PR link; supporting checks and available usage evidence
 are in expandable details. Usage is reported on every task, with missing data
-marked UNKNOWN. Automated collection is still being built.
+marked UNKNOWN. The [native usage reader](/docs/v2/usage-reporting/) collects available
+Codex records automatically; complete per-commit attribution remains unverified.
 
 Merging requires observable native GitHub checks enforced for the acting account.
 If that setup is missing, the agent can hand over the PR with the reason it cannot
@@ -165,3 +174,10 @@ test -L "$HOME/agent-tools/agent-workflows-v2-pilot/skills/work-pr-v2" && unlink
 For rollback without removal, point the trusted source checkout at a previously
 reviewed revision. Do not overwrite local edits. Other skills and application
 configuration are unaffected.
+
+<details>
+<summary>About this guide</summary>
+
+Maintained in the V2 repository. This page uses [source revision 8f69552](https://github.com/shakacode/agent-workflows-v2/blob/8f69552b34d8802cddc012f347735fb29dcbfc33/docs/getting-started.md).
+
+</details>

@@ -17,6 +17,9 @@ the required checks and approvals pass. Start with the
 - [Getting started](/docs/v2/getting-started/) — install and complete your first task.
 - [Working with your agent](/docs/v2/working-with-your-agent/) — questions, communication, and boundaries.
 - [Verification](/docs/v2/verification/) — tests and visual evidence.
+- [Usage reporting](/docs/v2/usage-reporting/) — available model, thinking, and token data.
+- [Package installation](/docs/v2/packaging/) — build and install a local RubyGem.
+- [Host support](/docs/v2/host-support/) — what has actually been verified.
 
 ## V1 and advanced workflows
 

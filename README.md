@@ -1,6 +1,8 @@
 # agent-workflows-com
 
-Landing page and simple docs for the ShakaCode agent stack:
+Documentation for the ordinary V2 workflow and the broader ShakaCode agent stack:
+
+- [agent-workflows-v2](https://github.com/shakacode/agent-workflows-v2) — one task, a verified PR, and a clear explanation
 
 - [agent-workflows](https://github.com/shakacode/agent-workflows) — the portable playbook/pack for running Codex and Claude Code across repos
 - [agent-coordination](https://github.com/shakacode/agent-coordination) — coordination backend (claims, heartbeats, liveness)
@@ -41,7 +43,7 @@ The adoption-ladder checker verifies the homepage ladder's required content and
 links against the built Quickstart. The internal-link checker verifies local
 page and asset references, including HTML fragment targets, across `dist/`.
 The V2 navigation checker verifies that homepage and docs readers can reach the
-pilot guide, three local canonical guides, and the existing V1 Quickstart.
+pilot guide, six local canonical guides, and the existing V1 Quickstart.
 These checks run offline; they do not validate external URLs over the network.
 
 To run the checkers individually, build fresh output first:
@@ -60,17 +62,17 @@ on every pull request and push to `main`. Manual runs are also available through
 ## Refresh the canonical V2 guides
 
 The generated Markdown in `src/pages/docs/v2/` is a snapshot of
-`docs/getting-started.md`, `docs/working-with-your-agent.md`, and
-`docs/verification.md` from
-[`shakacode/agent-workflows-v2` at `a4590efdb03ffb908a34bfdedb859e8844aaa757`](https://github.com/shakacode/agent-workflows-v2/tree/a4590efdb03ffb908a34bfdedb859e8844aaa757/docs).
+`docs/getting-started.md`, `docs/working-with-your-agent.md`, `docs/verification.md`,
+`docs/usage-reporting.md`, `docs/packaging.md`, and `docs/host-support.md` from
+[`shakacode/agent-workflows-v2` at `8f69552b34d8802cddc012f347735fb29dcbfc33`](https://github.com/shakacode/agent-workflows-v2/tree/8f69552b34d8802cddc012f347735fb29dcbfc33/docs).
 Edit the canonical source upstream, then refresh from a trusted local checkout:
 
 ```bash
-npm run sync:v2-docs -- /path/to/agent-workflows-v2 a4590efdb03ffb908a34bfdedb859e8844aaa757
+npm run sync:v2-docs -- /path/to/agent-workflows-v2 8f69552b34d8802cddc012f347735fb29dcbfc33
 ```
 
 For a newer reviewed revision, replace the full commit SHA in the command and
-update the snapshot reference above. The command reads only those three files
+update the snapshot reference above. The command reads only those six files
 with `git show`, moves their titles into the existing Doc layout's frontmatter,
 adds immutable source attribution, and rewrites relative Markdown links. Links
 between imported guides stay local; links to other source files retain their

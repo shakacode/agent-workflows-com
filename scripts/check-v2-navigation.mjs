@@ -27,7 +27,7 @@ assert.ok(guide.includes('<h1'), 'The V2 route must render a document');
 const guideLinks = links(guide);
 // Catch an entrance that still sends readers away, a missing/empty guide,
 // or a broken onward path after importing canonical Markdown.
-for (const name of ['getting-started', 'working-with-your-agent', 'verification']) {
+for (const name of ['getting-started', 'working-with-your-agent', 'verification', 'usage-reporting', 'packaging', 'host-support']) {
   const route = `/docs/v2/${name}/`;
   assert.ok(guideLinks.includes(route), `The V2 entrance must link to local ${name}`);
   const document = region(page(route.slice(1)), 'main');
@@ -43,4 +43,4 @@ assert.ok(guideLinks.includes('/docs/v2/getting-started/#upgrade-or-remove'),
   'The V2 entrance must link directly to the local upgrade instructions');
 assert.ok(guideLinks.includes('/docs/quickstart/'), 'V1 installation must remain reachable from V2');
 assert.ok(region(page('docs/quickstart/'), 'main').includes('<h1'), 'V1 Quickstart must still render');
-console.log('check-v2-navigation: OK — homepage and docs → V2 → three local canonical guides and V1');
+console.log('check-v2-navigation: OK — homepage and docs → V2 → six local canonical guides and V1');
