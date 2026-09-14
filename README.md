@@ -41,7 +41,7 @@ The adoption-ladder checker verifies the homepage ladder's required content and
 links against the built Quickstart. The internal-link checker verifies local
 page and asset references, including HTML fragment targets, across `dist/`.
 The V2 navigation checker verifies that homepage and docs readers can reach the
-pilot guide, its maintained source guides, and the existing V1 Quickstart.
+pilot guide, three local canonical guides, and the existing V1 Quickstart.
 These checks run offline; they do not validate external URLs over the network.
 
 To run the checkers individually, build fresh output first:
@@ -56,6 +56,31 @@ npm run check:v2-navigation
 Hosted CI runs `.agents/bin/setup` (`npm ci`) and `.agents/bin/test` (`npm test`)
 on every pull request and push to `main`. Manual runs are also available through
 `workflow_dispatch` in the [deployment workflow](.github/workflows/deploy.yml).
+
+## Refresh the canonical V2 guides
+
+The generated Markdown in `src/pages/docs/v2/` is a snapshot of
+`docs/getting-started.md`, `docs/working-with-your-agent.md`, and
+`docs/verification.md` from
+[`shakacode/agent-workflows-v2` at `a4590efdb03ffb908a34bfdedb859e8844aaa757`](https://github.com/shakacode/agent-workflows-v2/tree/a4590efdb03ffb908a34bfdedb859e8844aaa757/docs).
+Edit the canonical source upstream, then refresh from a trusted local checkout:
+
+```bash
+npm run sync:v2-docs -- /path/to/agent-workflows-v2 a4590efdb03ffb908a34bfdedb859e8844aaa757
+```
+
+For a newer reviewed revision, replace the full commit SHA in the command and
+update the snapshot reference above. The command reads only those three files
+with `git show`, moves their titles into the existing Doc layout's frontmatter,
+adds immutable source attribution, and rewrites relative Markdown links. Links
+between imported guides stay local; links to other source files retain their
+fragments and point to that same upstream revision. Other external links remain
+unchanged. Guide prose comes from upstream; do not edit the generated pages.
+
+Review the generated diff and run `.agents/bin/validate` and `.agents/bin/test`.
+The snapshot is checked in: builds and tests use it offline without fetching or
+requiring the source checkout. Sync is an explicit maintainer command, never a
+build step.
 
 ## Deploy
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Built-output link contract: catch an orphaned V2 guide or a V2 entrance
-// that sends readers back into V1. Browser checks cover visibility and focus.
+// that sends readers to GitHub instead of a local canonical guide.
+// Browser checks cover visibility and focus.
 // Like the other offline checks, run after Astro builds dist/.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -24,10 +25,22 @@ for (const route of ['', 'docs/']) {
 const guide = region(page('docs/v2/'), 'main');
 assert.ok(guide.includes('<h1'), 'The V2 route must render a document');
 const guideLinks = links(guide);
-for (const name of ['getting-started', 'working-with-your-agent']) {
-  assert.ok(guideLinks.includes(`https://github.com/shakacode/agent-workflows-v2/blob/main/docs/${name}.md`),
-    `The V2 guide must lead to its maintained ${name} source guide`);
+// Catch an entrance that still sends readers away, a missing/empty guide,
+// or a broken onward path after importing canonical Markdown.
+for (const name of ['getting-started', 'working-with-your-agent', 'verification']) {
+  const route = `/docs/v2/${name}/`;
+  assert.ok(guideLinks.includes(route), `The V2 entrance must link to local ${name}`);
+  const document = region(page(route.slice(1)), 'main');
+  assert.ok(document.includes('<h1') && document.includes('<h2'),
+    `${route} must render the guide, including its sections`);
+  assert.ok(links(region(page(route.slice(1)), 'nav')).includes('/docs/v2/'),
+    `${route} must retain primary navigation back to V2`);
 }
+assert.ok(links(region(page('docs/v2/getting-started/'), 'main'))
+  .includes('/docs/v2/working-with-your-agent/'),
+  'Installation readers must be able to continue to working with their agent locally');
+assert.ok(guideLinks.includes('/docs/v2/getting-started/#upgrade-or-remove'),
+  'The V2 entrance must link directly to the local upgrade instructions');
 assert.ok(guideLinks.includes('/docs/quickstart/'), 'V1 installation must remain reachable from V2');
 assert.ok(region(page('docs/quickstart/'), 'main').includes('<h1'), 'V1 Quickstart must still render');
-console.log('check-v2-navigation: OK — homepage and docs → V2 → source guides and V1');
+console.log('check-v2-navigation: OK — homepage and docs → V2 → three local canonical guides and V1');

@@ -14,6 +14,10 @@ and a PR walkthrough. Choose whether the agent asks before merging or merges aft
 the required checks and approvals pass. Start with the
 [V2 guide](/docs/v2/) for installation, questions, evidence, and current limitations.
 
+- [Getting started](/docs/v2/getting-started/) — install and complete your first task.
+- [Working with your agent](/docs/v2/working-with-your-agent/) — questions, communication, and boundaries.
+- [Verification](/docs/v2/verification/) — tests and visual evidence.
+
 ## V1 and advanced workflows
 
 The existing V1 pack remains available for standalone skills and advanced
