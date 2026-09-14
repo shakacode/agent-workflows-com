@@ -5,7 +5,19 @@ eyebrow: Docs
 description: Documentation for the ShakaCode agent stack.
 ---
 
-This site is the public, plain-language guide. The
+## Start with the V2 pilot
+
+[Give your agent a task. Get a verified PR and a clear explanation.](/docs/v2/)
+
+The V2 pilot guides one ordinary change from task to implementation, verification,
+and a PR walkthrough. Choose whether the agent asks before merging or merges after
+the required checks and approvals pass. Start with the
+[V2 guide](/docs/v2/) for installation, questions, evidence, and current limitations.
+
+## V1 and advanced workflows
+
+The existing V1 pack remains available for standalone skills and advanced
+multi-agent coordination. This site is its public, plain-language guide. The
 [agent-workflows repository](https://github.com/shakacode/agent-workflows) is the normative source
 pack: its versioned skills, workflow rules, and technical docs define what agents actually run.
 

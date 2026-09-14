@@ -34,13 +34,15 @@ npm run build   # outputs to dist/
 ## Checks
 
 ```bash
-npm test   # builds the site, then runs both offline checkers
+npm test   # builds the site, then runs the offline checkers
 ```
 
 The adoption-ladder checker verifies the homepage ladder's required content and
 links against the built Quickstart. The internal-link checker verifies local
 page and asset references, including HTML fragment targets, across `dist/`.
-Both checks run offline; they do not validate external URLs over the network.
+The V2 navigation checker verifies that homepage and docs readers can reach the
+pilot guide, its maintained source guides, and the existing V1 Quickstart.
+These checks run offline; they do not validate external URLs over the network.
 
 To run the checkers individually, build fresh output first:
 
@@ -48,6 +50,7 @@ To run the checkers individually, build fresh output first:
 npm run build
 npm run check:adoption-ladder
 npm run check:links
+npm run check:v2-navigation
 ```
 
 Hosted CI runs `.agents/bin/setup` (`npm ci`) and `.agents/bin/test` (`npm test`)
