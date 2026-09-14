@@ -30,6 +30,9 @@ const guideLinks = links(guide);
 for (const name of ['getting-started', 'working-with-your-agent', 'verification', 'usage-reporting', 'packaging', 'host-support']) {
   const route = `/docs/v2/${name}/`;
   assert.ok(guideLinks.includes(route), `The V2 entrance must link to local ${name}`);
+  const description = page(route.slice(1)).match(/<meta name="description" content="([^"]*)"/)?.[1];
+  assert.ok(description && !/\*\*|`|\]\(/.test(description),
+    `${route} must expose a plain-text search/social description`);
   const document = region(page(route.slice(1)), 'main');
   assert.ok(document.includes('<h1') && document.includes('<h2'),
     `${route} must render the guide, including its sections`);

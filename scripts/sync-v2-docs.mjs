@@ -10,9 +10,16 @@ if (!checkout || !/^[0-9a-f]{40}$/.test(revision ?? '') || extra.length) {
   process.exit(1);
 }
 
-const guides = ['getting-started', 'working-with-your-agent', 'verification',
-  'usage-reporting', 'packaging', 'host-support'];
-const routes = new Map(guides.map((name) => [`docs/${name}.md`, `/docs/v2/${name}/`]));
+// Site metadata is plain text; guide prose remains canonical Markdown.
+const guides = new Map([
+  ['getting-started', 'Install the V2 pilot and complete your first task with Codex.'],
+  ['working-with-your-agent', 'Understand agent questions, PR explanations, and your merge choices.'],
+  ['verification', 'Verify behavior with focused tests, screenshots, and useful recordings.'],
+  ['usage-reporting', 'Read available model, thinking, and token evidence without inventing missing costs.'],
+  ['packaging', 'Build, install, upgrade, and remove the local V2 RubyGem.'],
+  ['host-support', 'See which Codex, Claude Code, and Cursor capabilities have been verified.'],
+]);
+const routes = new Map([...guides.keys()].map((name) => [`docs/${name}.md`, `/docs/v2/${name}/`]));
 const sourceBase = `https://github.com/shakacode/agent-workflows-v2/blob/${revision}/`;
 const destination = new URL('../src/pages/docs/v2/', import.meta.url);
 
@@ -43,13 +50,12 @@ function rewriteLinks(markdown) {
 }
 
 // Read and prepare the whole allowlist before writing any generated page.
-const pages = guides.map((name) => {
+const pages = [...guides].map(([name, description]) => {
   const sourcePath = `docs/${name}.md`;
   const markdown = execFileSync('git', ['-C', checkout, 'show', `${revision}:${sourcePath}`], { encoding: 'utf8' });
   const heading = markdown.match(/^# (.+)\r?\n\r?\n/);
   if (!heading) throw new Error(`${sourcePath}: expected a leading Markdown title`);
   const body = markdown.slice(heading[0].length);
-  const description = body.split(/\r?\n\r?\n/)[0].replace(/\r?\n/g, ' ');
   return [name, `---
 layout: ../../../layouts/Doc.astro
 title: ${JSON.stringify(heading[1])}
