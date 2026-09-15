@@ -13,8 +13,8 @@ interface Props {
   canonicalUrl?: string;
 }
 const {
-  title = 'ShakaCode Agent Workflows — run AI coding agents in fleets, safely',
-  description = 'Open-source workflows and practical consulting for teams planning, batching, reviewing, and auditing AI coding-agent work safely at scale.',
+  title = 'ShakaCode Workflows — portable skills for AI-assisted development',
+  description = 'Turn an issue into a tested, reviewed pull request with clear communication and less developer effort.',
   canonicalUrl,
 } = Astro.props;
 const canonical = canonicalUrl ? new URL(canonicalUrl) : new URL(Astro.url.pathname, Astro.site);
@@ -38,33 +38,33 @@ const ogImage = new URL('/og.png', Astro.site);
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Dark ShakaCode Agent Workflows card with the headline ‘The engineering system around your coding agents.’, the line ‘Your agent writes the code. This is everything around it.’, and a footer rail reading Context, Scope, Validation, Evidence, Review." />
+    <meta property="og:image:alt" content="ShakaCode Workflows: portable skills for AI-assisted development. One task, one verified pull request." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
     <header class="site-header">
       <div class="wrap bar">
-        <a class="brandmark" href="/" aria-label="Agent Workflow Playbook home">
+        <a class="brandmark" href="/" aria-label="ShakaCode Workflows home">
           <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
             <rect width="32" height="32" rx="7" fill="var(--brand)" opacity="0.14" />
             <rect x="6" y="9" width="4.5" height="14" rx="2.25" fill="var(--gate)" />
             <rect x="13.75" y="9" width="4.5" height="14" rx="2.25" fill="var(--brand)" />
             <rect x="21.5" y="9" width="4.5" height="14" rx="2.25" fill="var(--brand)" />
           </svg>
-          <span><b>Agent Workflow Playbook</b> <span class="dim">/ ShakaCode</span></span>
+          <span><b>ShakaCode Workflows</b></span>
         </a>
         <nav class="nav" aria-label="Primary">
-          <a class="hide-sm hide-md" href="/#model">Model</a>
+          <a href="/docs/v2/">Start here</a>
           <a class="hide-sm" href="/#how">How it works</a>
           <a class="hide-sm hide-tab" href="/#skills">Skills</a>
           <a class="hide-sm" href="/#safety">Safety</a>
-          <a class="hide-sm hide-tab" href="/#stack">The stack</a>
+          <a class="hide-sm hide-tab" href="/#stack">Stack</a>
           <a class="hide-sm hide-lg" href="/#distributions">Distributions</a>
           <a class="hide-sm" href="/#for-teams">For teams</a>
           <a class="hide-sm hide-md" href="/case-studies/">Case studies</a>
           <a class="hide-sm" href="/docs/">Docs</a>
-          <a href="https://github.com/shakacode/agent-workflows">GitHub&nbsp;↗</a>
+          <a class="hide-sm" href="https://github.com/shakacode/workflows">GitHub&nbsp;↗</a>
         </nav>
       </div>
     </header>
@@ -77,16 +77,18 @@ const ogImage = new URL('/og.png', Astro.site);
       <div class="wrap">
         <div class="cols">
           <div>
-            <h2>The stack</h2>
-            <a href="https://github.com/shakacode/agent-workflows">agent-workflows — the pack</a>
+            <h2>Workflows</h2>
+            <a href="https://github.com/shakacode/workflows">ShakaCode Workflows — source</a>
+            <a href="https://github.com/shakacode/agent-workflows">V1 — legacy pack</a>
             <a href="https://github.com/shakacode/agent-coordination">agent-coordination — backend</a>
             <a href="https://github.com/shakacode/agent-coordination-dashboard">dashboard — operator view</a>
           </div>
           <div>
             <h2>Learn</h2>
+            <a href="/docs/v2/">Work one PR</a>
             <a href="/docs/throughput/">Throughput-first objective</a>
             <a href="/docs/terminology/">Terminology</a>
-            <a href="/docs/quickstart/">Quickstart</a>
+            <a href="/docs/quickstart/">V1 Quickstart</a>
             <a href="/docs/architecture/">Architecture</a>
             <a href="/docs/distributions/">Distributions</a>
             <a href="/methodology/">Methodology</a>

@@ -5,7 +5,26 @@ eyebrow: Docs
 description: Documentation for the ShakaCode agent stack.
 ---
 
-This site is the public, plain-language guide. The
+## Start with ShakaCode Workflows
+
+[Give your agent a task. Get a verified PR and a clear explanation.](/docs/v2/)
+
+ShakaCode Workflows guides one ordinary change from task to implementation, verification,
+and a PR walkthrough. Choose whether the agent asks before merging or merges after
+the required checks and approvals pass. Start with the
+[ShakaCode Workflows guide](/docs/v2/) for installation, questions, evidence, and current limitations.
+
+- [Getting started](/docs/v2/getting-started/) — install and complete your first task.
+- [Working with your agent](/docs/v2/working-with-your-agent/) — questions, communication, and boundaries.
+- [Verification](/docs/v2/verification/) — tests and visual evidence.
+- [Usage reporting](/docs/v2/usage-reporting/) — available model, thinking, and token data.
+- [Package installation](/docs/v2/packaging/) — build and install a local RubyGem.
+- [Host support](/docs/v2/host-support/) — what has actually been verified.
+
+## V1 and advanced workflows
+
+The existing V1 pack remains available for standalone skills and advanced
+multi-agent coordination. This site is its public, plain-language guide. The
 [agent-workflows repository](https://github.com/shakacode/agent-workflows) is the normative source
 pack: its versioned skills, workflow rules, and technical docs define what agents actually run.
 
