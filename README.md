@@ -1,19 +1,19 @@
-# agent-workflows-com
+# ShakaCode Workflows website
 
 Documentation for the ordinary V2 workflow and the broader ShakaCode agent stack:
 
-- [agent-workflows-v2](https://github.com/shakacode/agent-workflows-v2) — one task, a verified PR, and a clear explanation
+- [agent-workflows-v2](https://github.com/shakacode/workflows) — one task, a verified PR, and a clear explanation
 
 - [agent-workflows](https://github.com/shakacode/agent-workflows) — the portable playbook/pack for running Codex and Claude Code across repos
 - [agent-coordination](https://github.com/shakacode/agent-coordination) — coordination backend (claims, heartbeats, liveness)
 - [agent-coordination-dashboard](https://github.com/shakacode/agent-coordination-dashboard) — operator dashboard
 
-[![ShakaCode Agent Workflows — Run AI coding agents in fleets, safely](https://agents.shakacode.com/og.png)](https://agents.shakacode.com)
+[![ShakaCode Workflows — portable skills for AI-assisted development](https://workflows.shakacode.com/og.png)](https://workflows.shakacode.com)
 
-**[Documentation →](https://agents.shakacode.com)**
+**[Documentation →](https://workflows.shakacode.com)**
 
 Built with [Astro](https://astro.build). Deploys to Cloudflare Pages at
-[agents.shakacode.com](https://agents.shakacode.com).
+[workflows.shakacode.com](https://workflows.shakacode.com).
 
 Design source: [`docs/landing-page-design.md`](https://github.com/shakacode/agent-workflows/blob/main/docs/landing-page-design.md) in agent-workflows.
 
@@ -64,11 +64,11 @@ on every pull request and push to `main`. Manual runs are also available through
 The generated Markdown in `src/pages/docs/v2/` is a snapshot of
 `docs/getting-started.md`, `docs/working-with-your-agent.md`, `docs/verification.md`,
 `docs/usage-reporting.md`, `docs/packaging.md`, and `docs/host-support.md` from
-[`shakacode/agent-workflows-v2` at `8f69552b34d8802cddc012f347735fb29dcbfc33`](https://github.com/shakacode/agent-workflows-v2/tree/8f69552b34d8802cddc012f347735fb29dcbfc33/docs).
+[`shakacode/workflows` at `d47e423d50170da37888b043a41ba8a3a51050ad`](https://github.com/shakacode/workflows/tree/d47e423d50170da37888b043a41ba8a3a51050ad/docs).
 Edit the canonical source upstream, then refresh from a trusted local checkout:
 
 ```bash
-npm run sync:v2-docs -- /path/to/agent-workflows-v2 8f69552b34d8802cddc012f347735fb29dcbfc33
+npm run sync:v2-docs -- /path/to/agent-workflows-v2 d47e423d50170da37888b043a41ba8a3a51050ad
 ```
 
 For a newer reviewed revision, replace the full commit SHA in the command and
@@ -91,4 +91,4 @@ Cloudflare Pages project: `agent-workflows-com`.
 - Build command: `npm run build`
 - Output directory: `dist`
 - Production branch: `main`
-- Custom domain: `agents.shakacode.com`
+- Custom domain: `workflows.shakacode.com`

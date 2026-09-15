@@ -5,14 +5,14 @@ eyebrow: Docs
 description: Documentation for the ShakaCode agent stack.
 ---
 
-## Start with the V2 pilot
+## Start with ShakaCode Workflows
 
 [Give your agent a task. Get a verified PR and a clear explanation.](/docs/v2/)
 
-The V2 pilot guides one ordinary change from task to implementation, verification,
+ShakaCode Workflows guides one ordinary change from task to implementation, verification,
 and a PR walkthrough. Choose whether the agent asks before merging or merges after
 the required checks and approvals pass. Start with the
-[V2 guide](/docs/v2/) for installation, questions, evidence, and current limitations.
+[ShakaCode Workflows guide](/docs/v2/) for installation, questions, evidence, and current limitations.
 
 - [Getting started](/docs/v2/getting-started/) — install and complete your first task.
 - [Working with your agent](/docs/v2/working-with-your-agent/) — questions, communication, and boundaries.

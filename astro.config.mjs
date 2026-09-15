@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://agents.shakacode.com',
+  site: 'https://workflows.shakacode.com',
   vite: {
     resolve: {
       // Vite ships `resolve.tsconfigPaths` off by default; Astro opts it on in
