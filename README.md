@@ -1,8 +1,8 @@
 # ShakaCode Workflows website
 
-Documentation for the ordinary V2 workflow and the broader ShakaCode agent stack:
+Documentation for ShakaCode Workflows, with the older agent stack retained for reference:
 
-- [agent-workflows-v2](https://github.com/shakacode/workflows) — one task, a verified PR, and a clear explanation
+- [ShakaCode Workflows](https://github.com/shakacode/workflows) — one task, a verified PR, and a clear explanation
 
 - [agent-workflows](https://github.com/shakacode/agent-workflows) — the portable playbook/pack for running Codex and Claude Code across repos
 - [agent-coordination](https://github.com/shakacode/agent-coordination) — coordination backend (claims, heartbeats, liveness)
