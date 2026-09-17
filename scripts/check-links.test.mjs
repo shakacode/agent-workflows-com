@@ -87,6 +87,37 @@ test('a comment opener inside a script body does not hide later links', () => {
   assert.match(result.output, /\/missing\//);
 });
 
+test('a script tag inside textarea or title text does not hide later links', () => {
+  const result = check({
+    'index.html': page('<textarea><script></textarea><a href="/missing-a/">x</a><script>ok()</script>'),
+    'title.html': page('<title><script></title><a href="/missing-b/">x</a><script>ok()</script>'),
+  });
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /\/missing-a\//);
+  assert.match(result.output, /\/missing-b\//);
+});
+
+test('tag-shaped text inside an attribute value does not hide later links', () => {
+  const result = check({
+    'index.html': page('<div data-example="<script>"></div><a href="/missing-a/">x</a><script>ok()</script>'),
+    'comment.html': page('<div title="<!--"></div><a href="/missing-b/">x</a><!-- end -->'),
+  });
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /\/missing-a\//);
+  assert.match(result.output, /\/missing-b\//);
+});
+
+test('a link-shaped string inside textarea or title text is not checked', () => {
+  const result = check({ 'index.html': page('<title><a href="/missing/"></title><textarea><img src="/nope.png"></textarea>') });
+  assert.equal(result.status, 0, result.output);
+});
+
+test('a custom element whose name starts with a text-only tag is still markup', () => {
+  const result = check({ 'index.html': page('<title-card><a href="/missing/">x</a></title-card>') });
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /\/missing\//);
+});
+
 // #40 item 2: a query-only link stays on the current document.
 test('a query-only fragment on a non-index page checks that page', () => {
   const result = check({

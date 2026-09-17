@@ -14,11 +14,14 @@
 //
 // What it does:
 //
-//   1. Walks every dist/**/*.html file. <!-- ... --> comment blocks are
-//      stripped from each document before anything else runs, for both id
-//      collection and link extraction — a commented-out element is not
-//      rendered, so its id must not satisfy a live #fragment and its
-//      href/src must not be checked as if it were a real link. ids are
+//   1. Walks every dist/**/*.html file. Before anything else runs, for both
+//      id collection and link extraction, it strips <!-- ... --> comments and
+//      the bodies of text-only elements (<script>, <style>, <textarea>,
+//      <title>, and similar), in one left-to-right scan that also consumes
+//      whole tags, so a "<" inside a comment, attribute value, or element body
+//      never starts markup. A commented-out element is not rendered, and a
+//      tag-shaped string inside a script is not an element, so neither can
+//      satisfy a live #fragment or be checked as if it were a real link. ids are
 //      collected only from real opening-tag attribute strings (the same
 //      whole-tag tokenizer used for href/src, generalized to every tag
 //      name), not from a raw document-wide text scan — so literal text
@@ -112,17 +115,35 @@ function walkHtmlFiles(dir) {
 
 const htmlFiles = walkHtmlFiles(distDir);
 
+// Attribute text inside one tag. Quoted spans may hold ">" and "<", so this is
+// shared by every tag tokenizer below rather than copied into each.
+const ATTRS = String.raw`(?:[^>"']|"[^"]*"|'[^']*')*`;
+
+// Elements whose bodies are text, never markup: raw text (script, style, xmp,
+// iframe, noembed, noframes) and escapable raw text (textarea, title). The
+// name must end at whitespace, "/" or ">", so <title-card> stays markup.
+const TEXT_ONLY_ELEMENTS = 'script|style|xmp|iframe|noembed|noframes|textarea|title';
+
 // Strips what a browser never parses as markup before scanning for ids or
-// link-bearing attributes. A <!-- ... --> comment block is not rendered, so
-// its id must not satisfy a live #fragment and its href/src must not be
-// checked. <script> and <style> bodies are raw text, so a tag-shaped string
-// inside them is not an element; their opening tags stay, so a <script src>
-// is still checked. One left-to-right pass lets whichever construct starts
-// first win, as the browser's tokenizer does: "<script>" mentioned inside a
-// comment is comment text, and "<!--" inside a script body is script text.
-const UNRENDERED_RE = /<!--[\s\S]*?-->|(<(script|style)\b(?:[^>"']|"[^"]*"|'[^']*')*>)[\s\S]*?<\/\2\s*>/gi;
+// link-bearing attributes. A <!-- ... --> comment is not rendered, so its id
+// must not satisfy a live #fragment and its href/src must not be checked. A
+// text-only element's body is not an element either; its opening tag stays,
+// so a <script src> is still checked.
+//
+// One left-to-right scan consumes every token that can contain "<" -- a
+// comment, a text-only element, or a whole tag with its quoted attributes --
+// so a "<" inside any of them never starts another match. "<script>" in a
+// comment, a textarea, or an attribute value is text, and so is "<!--" in a
+// script body, matching the browser's tokenizer.
+const UNRENDERED_RE = new RegExp(
+  String.raw`<!--[\s\S]*?-->|(<(${TEXT_ONLY_ELEMENTS})(?=[\s/>])${ATTRS}>)[\s\S]*?<\/\2\s*>|<[a-zA-Z][a-zA-Z0-9-]*\b${ATTRS}>`,
+  'gi'
+);
 function stripUnrenderedMarkup(html) {
-  return html.replace(UNRENDERED_RE, (match, openingTag, tagName) => (openingTag ? `${openingTag}</${tagName}>` : ''));
+  return html.replace(UNRENDERED_RE, (match, openingTag, tagName) => {
+    if (openingTag) return `${openingTag}</${tagName}>`;
+    return match.startsWith('<!--') ? '' : match;
+  });
 }
 
 // --- id="..." lookups for a dist file, cached (many pages share the same ---
@@ -160,7 +181,7 @@ function idsFor(absFile) {
 // ">", then parse individual attributes out of the captured attribute text.
 function tagAttrStrings(html, tagNames) {
   const tagAlt = tagNames.join('|');
-  const re = new RegExp(`<(?:${tagAlt})\\b((?:[^>"']|"[^"]*"|'[^']*')*)>`, 'gi');
+  const re = new RegExp(`<(?:${tagAlt})\\b(${ATTRS})>`, 'gi');
   const out = [];
   let m;
   while ((m = re.exec(html))) out.push(m[1]);
@@ -172,7 +193,7 @@ function tagAttrStrings(html, tagNames) {
 // sit on any element — a <div>, a <span>, an <li>, ...). Closing tags
 // ("</div>") don't match, since a tag name must start right after "<".
 function allOpeningTagAttrStrings(html) {
-  const re = /<[a-zA-Z][a-zA-Z0-9-]*\b((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
+  const re = new RegExp(String.raw`<[a-zA-Z][a-zA-Z0-9-]*\b(${ATTRS})>`, 'g');
   const out = [];
   let m;
   while ((m = re.exec(html))) out.push(m[1]);

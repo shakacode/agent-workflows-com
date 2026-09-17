@@ -34,7 +34,7 @@ npm run build   # outputs to dist/
 ## Checks
 
 ```bash
-npm test   # builds the site, runs both offline checkers, then the link checker's fixture tests
+npm test   # runs the link checker's fixture tests, builds the site, then runs both offline checkers
 ```
 
 The adoption-ladder checker verifies the homepage ladder's required content and

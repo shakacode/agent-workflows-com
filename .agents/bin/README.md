@@ -9,7 +9,7 @@ is absent means that capability is n/a in this repository.
 | --- | --- | --- |
 | `setup` | Install dependencies | `npm ci` |
 | `validate` | Pre-push gate | `npm run build`, then the offline homepage-adoption-ladder drift check (`scripts/check-adoption-ladder.mjs`) |
-| `test` | Run tests | `npm run build`, then the offline homepage-adoption-ladder drift check (`scripts/check-adoption-ladder.mjs`), then the offline internal-link check (`scripts/check-links.mjs`), then its fixture tests (`scripts/check-links.test.mjs`) |
+| `test` | Run tests | the link checker's fixture tests (`scripts/check-links.test.mjs`), then `npm run build`, then the offline homepage-adoption-ladder drift check (`scripts/check-adoption-ladder.mjs`), then the offline internal-link check (`scripts/check-links.mjs`) |
 | `lint` | Lint / format | n/a |
 | `build` | Build / type-check | n/a |
 | `docs` | Docs checks | n/a |
