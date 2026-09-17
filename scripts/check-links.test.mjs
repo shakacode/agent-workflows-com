@@ -107,6 +107,16 @@ test('tag-shaped text inside an attribute value does not hide later links', () =
   assert.match(result.output, /\/missing-b\//);
 });
 
+test('an end tag with a solidus or attributes still closes a text-only element', () => {
+  const result = check({
+    'index.html': page('<script>x</script data-x><a href="/missing-a/">x</a><script>y</script>'),
+    'solidus.html': page('<style>a{}</style/><a href="/missing-b/">x</a><style>b{}</style>'),
+  });
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /\/missing-a\//);
+  assert.match(result.output, /\/missing-b\//);
+});
+
 test('a link-shaped string inside textarea or title text is not checked', () => {
   const result = check({ 'index.html': page('<title><a href="/missing/"></title><textarea><img src="/nope.png"></textarea>') });
   assert.equal(result.status, 0, result.output);

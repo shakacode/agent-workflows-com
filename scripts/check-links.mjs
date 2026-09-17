@@ -134,9 +134,10 @@ const TEXT_ONLY_ELEMENTS = 'script|style|xmp|iframe|noembed|noframes|textarea|ti
 // comment, a text-only element, or a whole tag with its quoted attributes --
 // so a "<" inside any of them never starts another match. "<script>" in a
 // comment, a textarea, or an attribute value is text, and so is "<!--" in a
-// script body, matching the browser's tokenizer.
+// script body, matching the browser's tokenizer. The closing tag follows the
+// same name rule and may carry a solidus or attributes, as in </script/>.
 const UNRENDERED_RE = new RegExp(
-  String.raw`<!--[\s\S]*?-->|(<(${TEXT_ONLY_ELEMENTS})(?=[\s/>])${ATTRS}>)[\s\S]*?<\/\2\s*>|<[a-zA-Z][a-zA-Z0-9-]*\b${ATTRS}>`,
+  String.raw`<!--[\s\S]*?-->|(<(${TEXT_ONLY_ELEMENTS})(?=[\s/>])${ATTRS}>)[\s\S]*?<\/\2(?=[\s/>])${ATTRS}>|<[a-zA-Z][a-zA-Z0-9-]*\b${ATTRS}>`,
   'gi'
 );
 function stripUnrenderedMarkup(html) {
