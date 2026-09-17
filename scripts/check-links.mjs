@@ -121,7 +121,8 @@ const ATTRS = String.raw`(?:[^>"']|"[^"]*"|'[^']*')*`;
 
 // Elements whose bodies are text, never markup: raw text (script, style, xmp,
 // iframe, noembed, noframes) and escapable raw text (textarea, title). The
-// name must end at whitespace, "/" or ">", so <title-card> stays markup.
+// name must end at ASCII whitespace, "/" or ">", as the HTML tokenizer requires,
+// so <title-card> and a name followed by a non-breaking space stay markup.
 const TEXT_ONLY_ELEMENTS = 'script|style|xmp|iframe|noembed|noframes|textarea|title';
 
 // Strips what a browser never parses as markup before scanning for ids or
@@ -137,7 +138,7 @@ const TEXT_ONLY_ELEMENTS = 'script|style|xmp|iframe|noembed|noframes|textarea|ti
 // script body, matching the browser's tokenizer. The closing tag follows the
 // same name rule and may carry a solidus or attributes, as in </script/>.
 const UNRENDERED_RE = new RegExp(
-  String.raw`<!--[\s\S]*?-->|(<(${TEXT_ONLY_ELEMENTS})(?=[\s/>])${ATTRS}>)[\s\S]*?<\/\2(?=[\s/>])${ATTRS}>|<[a-zA-Z][a-zA-Z0-9-]*\b${ATTRS}>`,
+  String.raw`<!--[\s\S]*?-->|(<(${TEXT_ONLY_ELEMENTS})(?=[\t\n\f\r />])${ATTRS}>)[\s\S]*?<\/\2(?=[\t\n\f\r />])${ATTRS}>|<[a-zA-Z][a-zA-Z0-9-]*\b${ATTRS}>`,
   'gi'
 );
 function stripUnrenderedMarkup(html) {

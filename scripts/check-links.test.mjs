@@ -117,6 +117,12 @@ test('an end tag with a solidus or attributes still closes a text-only element',
   assert.match(result.output, /\/missing-b\//);
 });
 
+test('a non-ASCII space after a text-only tag name makes an ordinary element', () => {
+  const result = check({ 'index.html': page('<script\u00A0><a href="/missing/">x</a></script>') });
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /\/missing\//);
+});
+
 test('a link-shaped string inside textarea or title text is not checked', () => {
   const result = check({ 'index.html': page('<title><a href="/missing/"></title><textarea><img src="/nope.png"></textarea>') });
   assert.equal(result.status, 0, result.output);
