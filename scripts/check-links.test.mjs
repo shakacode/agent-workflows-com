@@ -70,6 +70,23 @@ test('the src on a script opening tag is still checked', () => {
   assert.match(result.output, /\/missing\.js/);
 });
 
+// Comments and raw-text bodies are read left to right, whichever starts first.
+test('a script tag mentioned inside a comment does not hide later links', () => {
+  const result = check({
+    'index.html': page('<!-- example <script> --><a href="/missing/">x</a><script>ok()</script>'),
+  });
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /\/missing\//);
+});
+
+test('a comment opener inside a script body does not hide later links', () => {
+  const result = check({
+    'index.html': page('<script>const s = "<!--";</script><a href="/missing/">x</a><!-- end -->'),
+  });
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /\/missing\//);
+});
+
 // #40 item 2: a query-only link stays on the current document.
 test('a query-only fragment on a non-index page checks that page', () => {
   const result = check({

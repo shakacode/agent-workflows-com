@@ -113,16 +113,16 @@ function walkHtmlFiles(dir) {
 const htmlFiles = walkHtmlFiles(distDir);
 
 // Strips what a browser never parses as markup before scanning for ids or
-// link-bearing attributes. <script> and <style> bodies are raw text, so a
-// tag-shaped string inside them is not an element; their opening tags stay,
-// so a <script src> is still checked. Then <!-- ... --> comment blocks go: a
-// commented-out element is not rendered, so its id must not satisfy a live
-// #fragment and its href/src must not be checked as if it were a real link.
-// Raw-text bodies are stripped first because "<!--" inside a script is text.
+// link-bearing attributes. A <!-- ... --> comment block is not rendered, so
+// its id must not satisfy a live #fragment and its href/src must not be
+// checked. <script> and <style> bodies are raw text, so a tag-shaped string
+// inside them is not an element; their opening tags stay, so a <script src>
+// is still checked. One left-to-right pass lets whichever construct starts
+// first win, as the browser's tokenizer does: "<script>" mentioned inside a
+// comment is comment text, and "<!--" inside a script body is script text.
+const UNRENDERED_RE = /<!--[\s\S]*?-->|(<(script|style)\b(?:[^>"']|"[^"]*"|'[^']*')*>)[\s\S]*?<\/\2\s*>/gi;
 function stripUnrenderedMarkup(html) {
-  return html
-    .replace(/(<(script|style)\b(?:[^>"']|"[^"]*"|'[^']*')*>)[\s\S]*?<\/\2\s*>/gi, '$1</$2>')
-    .replace(/<!--[\s\S]*?-->/g, '');
+  return html.replace(UNRENDERED_RE, (match, openingTag, tagName) => (openingTag ? `${openingTag}</${tagName}>` : ''));
 }
 
 // --- id="..." lookups for a dist file, cached (many pages share the same ---
