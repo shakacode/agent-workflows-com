@@ -9,6 +9,9 @@
 //
 //   npm run build && node scripts/check-links.mjs
 //
+// An optional directory argument checks that built output instead of dist/;
+// scripts/check-links.test.mjs uses it to run the checker against fixtures.
+//
 // What it does:
 //
 //   1. Walks every dist/**/*.html file. <!-- ... --> comment blocks are
@@ -78,11 +81,11 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const distDir = path.join(repoRoot, 'dist');
+const distDir = path.resolve(process.argv[2] ?? path.join(repoRoot, 'dist'));
 
 if (!existsSync(distDir)) {
   console.error(
-    'check-links: dist/ not found. This check runs against the built site ' +
+    `check-links: ${distDir} not found. This check runs against the built site ` +
       '— run `npm run build` (or `.agents/bin/validate`) first.'
   );
   process.exit(1);
@@ -109,12 +112,17 @@ function walkHtmlFiles(dir) {
 
 const htmlFiles = walkHtmlFiles(distDir);
 
-// Strips <!-- ... --> comment blocks before scanning for ids or
-// link-bearing attributes. A commented-out element is not rendered, so
-// its id must not satisfy a live #fragment and its href/src must not be
-// checked as if it were a real link.
-function stripComments(html) {
-  return html.replace(/<!--[\s\S]*?-->/g, '');
+// Strips what a browser never parses as markup before scanning for ids or
+// link-bearing attributes. <script> and <style> bodies are raw text, so a
+// tag-shaped string inside them is not an element; their opening tags stay,
+// so a <script src> is still checked. Then <!-- ... --> comment blocks go: a
+// commented-out element is not rendered, so its id must not satisfy a live
+// #fragment and its href/src must not be checked as if it were a real link.
+// Raw-text bodies are stripped first because "<!--" inside a script is text.
+function stripUnrenderedMarkup(html) {
+  return html
+    .replace(/(<(script|style)\b(?:[^>"']|"[^"]*"|'[^']*')*>)[\s\S]*?<\/\2\s*>/gi, '$1</$2>')
+    .replace(/<!--[\s\S]*?-->/g, '');
 }
 
 // --- id="..." lookups for a dist file, cached (many pages share the same ---
@@ -130,7 +138,7 @@ function idsFor(absFile) {
   if (idCache.has(absFile)) return idCache.get(absFile);
   const ids = new Set();
   if (absFile.endsWith('.html') && existsSync(absFile) && statSync(absFile).isFile()) {
-    const html = stripComments(readFileSync(absFile, 'utf8'));
+    const html = stripUnrenderedMarkup(readFileSync(absFile, 'utf8'));
     for (const attrsText of allOpeningTagAttrStrings(html)) {
       // Same double/single/unquoted flexibility as getAttrValue elsewhere —
       // an id='target' or id=target is a real, working fragment target.
@@ -251,7 +259,9 @@ function extractCandidates(html) {
   for (const srcset of extractAttr(html, ['img', 'source'], 'srcset')) {
     values.push(...parseSrcset(srcset));
   }
-  return values;
+  // URL attributes ignore surrounding ASCII whitespace, so href=" /docs/ "
+  // is the site-absolute /docs/, not a relative path.
+  return values.map((value) => value.replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/g, ''));
 }
 
 // Explicit schemes this checker deliberately never follows (it must not
@@ -342,8 +352,11 @@ function distFileForSitePath(sitePath) {
     return rootIndex && rootIndex.isFile ? 'index.html' : null;
   }
 
-  const literal = caseSensitiveEntry(clean);
-  if (literal && literal.isFile) return clean;
+  // A trailing slash names a directory: "/favicon.svg/" is not the file.
+  if (!clean.endsWith('/')) {
+    const literal = caseSensitiveEntry(clean);
+    if (literal && literal.isFile) return clean;
+  }
 
   const asDirIndex = clean.endsWith('/') ? `${clean}index.html` : `${clean}/index.html`;
   const dirIndex = caseSensitiveEntry(asDirIndex);
@@ -363,9 +376,9 @@ let internalLinkCount = 0;
 for (const absFile of htmlFiles) {
   const relFile = path.relative(distDir, absFile).split(path.sep).join('/');
   // Comments are stripped before extraction: a commented-out link isn't
-  // rendered, so it shouldn't be checked (matches idsFor's stripComments
+  // rendered, so it shouldn't be checked (matches idsFor's stripUnrenderedMarkup
   // above, so a commented-out anchor's id can't satisfy a live #fragment).
-  const html = stripComments(readFileSync(absFile, 'utf8'));
+  const html = stripUnrenderedMarkup(readFileSync(absFile, 'utf8'));
   const siteDir = siteDirFor(relFile);
 
   for (const value of extractCandidates(html)) {
@@ -386,7 +399,9 @@ for (const absFile of htmlFiles) {
 
     const { pathPart, fragment } = splitQueryAndFragment(value);
     const siteAbsPath = path.posix.normalize(pathPart.startsWith('/') ? pathPart : path.posix.join(siteDir, pathPart));
-    const resolved = distFileForSitePath(siteAbsPath);
+    // A query-only link ("?mode=x#section") stays on the current document,
+    // which for an output like dist/docs.html is not its directory index.
+    const resolved = pathPart === '' ? relFile : distFileForSitePath(siteAbsPath);
 
     if (resolved === null) {
       fail(`${relFile} -> ${value} (no matching file in dist/ for "${siteAbsPath}")`);
