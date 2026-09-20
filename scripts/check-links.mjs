@@ -9,13 +9,19 @@
 //
 //   npm run build && node scripts/check-links.mjs
 //
+// An optional directory argument checks that built output instead of dist/;
+// scripts/check-links.test.mjs uses it to run the checker against fixtures.
+//
 // What it does:
 //
-//   1. Walks every dist/**/*.html file. <!-- ... --> comment blocks are
-//      stripped from each document before anything else runs, for both id
-//      collection and link extraction — a commented-out element is not
-//      rendered, so its id must not satisfy a live #fragment and its
-//      href/src must not be checked as if it were a real link. ids are
+//   1. Walks every dist/**/*.html file. Before anything else runs, for both
+//      id collection and link extraction, it strips <!-- ... --> comments and
+//      the bodies of text-only elements (<script>, <style>, <textarea>,
+//      <title>, and similar), in one left-to-right scan that also consumes
+//      whole tags, so a "<" inside a comment, attribute value, or element body
+//      never starts markup. A commented-out element is not rendered, and a
+//      tag-shaped string inside a script is not an element, so neither can
+//      satisfy a live #fragment or be checked as if it were a real link. ids are
 //      collected only from real opening-tag attribute strings (the same
 //      whole-tag tokenizer used for href/src, generalized to every tag
 //      name), not from a raw document-wide text scan — so literal text
@@ -78,11 +84,11 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const distDir = path.join(repoRoot, 'dist');
+const distDir = path.resolve(process.argv[2] ?? path.join(repoRoot, 'dist'));
 
 if (!existsSync(distDir)) {
   console.error(
-    'check-links: dist/ not found. This check runs against the built site ' +
+    `check-links: ${distDir} not found. This check runs against the built site ` +
       '— run `npm run build` (or `.agents/bin/validate`) first.'
   );
   process.exit(1);
@@ -109,12 +115,38 @@ function walkHtmlFiles(dir) {
 
 const htmlFiles = walkHtmlFiles(distDir);
 
-// Strips <!-- ... --> comment blocks before scanning for ids or
-// link-bearing attributes. A commented-out element is not rendered, so
-// its id must not satisfy a live #fragment and its href/src must not be
-// checked as if it were a real link.
-function stripComments(html) {
-  return html.replace(/<!--[\s\S]*?-->/g, '');
+// Attribute text inside one tag. Quoted spans may hold ">" and "<", so this is
+// shared by every tag tokenizer below rather than copied into each.
+const ATTRS = String.raw`(?:[^>"']|"[^"]*"|'[^']*')*`;
+
+// Elements whose bodies are text, never markup: raw text (script, style, xmp,
+// iframe, noembed, noframes) and escapable raw text (textarea, title). The
+// name must end at ASCII whitespace, "/" or ">", as the HTML tokenizer requires,
+// so <title-card> and a name followed by a non-breaking space stay markup.
+const TEXT_ONLY_ELEMENTS = 'script|style|xmp|iframe|noembed|noframes|textarea|title';
+
+// Strips what a browser never parses as markup before scanning for ids or
+// link-bearing attributes. A <!-- ... --> comment is not rendered, so its id
+// must not satisfy a live #fragment and its href/src must not be checked. A
+// text-only element's body is not an element either; its opening tag stays,
+// so a <script src> is still checked.
+//
+// One left-to-right scan consumes every token that can contain "<" -- a
+// comment, a text-only element, or a whole opening or closing tag with its
+// quoted attributes --
+// so a "<" inside any of them never starts another match. "<script>" in a
+// comment, a textarea, or an attribute value is text, and so is "<!--" in a
+// script body, matching the browser's tokenizer. The closing tag follows the
+// same name rule and may carry a solidus or attributes, as in </script/>.
+const UNRENDERED_RE = new RegExp(
+  String.raw`<!--[\s\S]*?-->|(<(${TEXT_ONLY_ELEMENTS})(?=[\t\n\f\r />])${ATTRS}>)[\s\S]*?<\/\2(?=[\t\n\f\r />])${ATTRS}>|<\/?[a-zA-Z][a-zA-Z0-9-]*\b${ATTRS}>`,
+  'gi'
+);
+function stripUnrenderedMarkup(html) {
+  return html.replace(UNRENDERED_RE, (match, openingTag, tagName) => {
+    if (openingTag) return `${openingTag}</${tagName}>`;
+    return match.startsWith('<!--') ? '' : match;
+  });
 }
 
 // --- id="..." lookups for a dist file, cached (many pages share the same ---
@@ -130,7 +162,7 @@ function idsFor(absFile) {
   if (idCache.has(absFile)) return idCache.get(absFile);
   const ids = new Set();
   if (absFile.endsWith('.html') && existsSync(absFile) && statSync(absFile).isFile()) {
-    const html = stripComments(readFileSync(absFile, 'utf8'));
+    const html = stripUnrenderedMarkup(readFileSync(absFile, 'utf8'));
     for (const attrsText of allOpeningTagAttrStrings(html)) {
       // Same double/single/unquoted flexibility as getAttrValue elsewhere —
       // an id='target' or id=target is a real, working fragment target.
@@ -152,7 +184,7 @@ function idsFor(absFile) {
 // ">", then parse individual attributes out of the captured attribute text.
 function tagAttrStrings(html, tagNames) {
   const tagAlt = tagNames.join('|');
-  const re = new RegExp(`<(?:${tagAlt})\\b((?:[^>"']|"[^"]*"|'[^']*')*)>`, 'gi');
+  const re = new RegExp(`<(?:${tagAlt})\\b(${ATTRS})>`, 'gi');
   const out = [];
   let m;
   while ((m = re.exec(html))) out.push(m[1]);
@@ -164,7 +196,7 @@ function tagAttrStrings(html, tagNames) {
 // sit on any element — a <div>, a <span>, an <li>, ...). Closing tags
 // ("</div>") don't match, since a tag name must start right after "<".
 function allOpeningTagAttrStrings(html) {
-  const re = /<[a-zA-Z][a-zA-Z0-9-]*\b((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
+  const re = new RegExp(String.raw`<[a-zA-Z][a-zA-Z0-9-]*\b(${ATTRS})>`, 'g');
   const out = [];
   let m;
   while ((m = re.exec(html))) out.push(m[1]);
@@ -251,7 +283,9 @@ function extractCandidates(html) {
   for (const srcset of extractAttr(html, ['img', 'source'], 'srcset')) {
     values.push(...parseSrcset(srcset));
   }
-  return values;
+  // URL attributes ignore surrounding ASCII whitespace, so href=" /docs/ "
+  // is the site-absolute /docs/, not a relative path.
+  return values.map((value) => value.replace(/^[\t\n\f\r ]+|[\t\n\f\r ]+$/g, ''));
 }
 
 // Explicit schemes this checker deliberately never follows (it must not
@@ -342,8 +376,11 @@ function distFileForSitePath(sitePath) {
     return rootIndex && rootIndex.isFile ? 'index.html' : null;
   }
 
-  const literal = caseSensitiveEntry(clean);
-  if (literal && literal.isFile) return clean;
+  // A trailing slash names a directory: "/favicon.svg/" is not the file.
+  if (!clean.endsWith('/')) {
+    const literal = caseSensitiveEntry(clean);
+    if (literal && literal.isFile) return clean;
+  }
 
   const asDirIndex = clean.endsWith('/') ? `${clean}index.html` : `${clean}/index.html`;
   const dirIndex = caseSensitiveEntry(asDirIndex);
@@ -363,9 +400,9 @@ let internalLinkCount = 0;
 for (const absFile of htmlFiles) {
   const relFile = path.relative(distDir, absFile).split(path.sep).join('/');
   // Comments are stripped before extraction: a commented-out link isn't
-  // rendered, so it shouldn't be checked (matches idsFor's stripComments
+  // rendered, so it shouldn't be checked (matches idsFor's stripUnrenderedMarkup
   // above, so a commented-out anchor's id can't satisfy a live #fragment).
-  const html = stripComments(readFileSync(absFile, 'utf8'));
+  const html = stripUnrenderedMarkup(readFileSync(absFile, 'utf8'));
   const siteDir = siteDirFor(relFile);
 
   for (const value of extractCandidates(html)) {
@@ -386,7 +423,9 @@ for (const absFile of htmlFiles) {
 
     const { pathPart, fragment } = splitQueryAndFragment(value);
     const siteAbsPath = path.posix.normalize(pathPart.startsWith('/') ? pathPart : path.posix.join(siteDir, pathPart));
-    const resolved = distFileForSitePath(siteAbsPath);
+    // A query-only link ("?mode=x#section") stays on the current document,
+    // which for an output like dist/docs.html is not its directory index.
+    const resolved = pathPart === '' ? relFile : distFileForSitePath(siteAbsPath);
 
     if (resolved === null) {
       fail(`${relFile} -> ${value} (no matching file in dist/ for "${siteAbsPath}")`);

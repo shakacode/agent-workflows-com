@@ -34,7 +34,7 @@ npm run build   # outputs to dist/
 ## Checks
 
 ```bash
-npm test   # builds the site, then runs both offline checkers
+npm test   # runs the link checker's fixture tests, builds the site, then runs both offline checkers
 ```
 
 The adoption-ladder checker verifies the homepage ladder's required content and
@@ -48,6 +48,13 @@ To run the checkers individually, build fresh output first:
 npm run build
 npm run check:adoption-ladder
 npm run check:links
+```
+
+The link checker's fixture tests need no build; they run the checker against
+small generated sites:
+
+```bash
+npm run test:links
 ```
 
 Hosted CI runs `.agents/bin/setup` (`npm ci`) and `.agents/bin/test` (`npm test`)
