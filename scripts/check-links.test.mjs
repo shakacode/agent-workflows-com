@@ -123,6 +123,14 @@ test('a non-ASCII space after a text-only tag name makes an ordinary element', (
   assert.match(result.output, /\/missing\//);
 });
 
+test('tag-shaped text inside a closing tag attribute does not hide later links', () => {
+  const result = check({
+    'index.html': page('</div data-example="<script>"><a href="/missing/">x</a><script>ok()</script>'),
+  });
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /\/missing\//);
+});
+
 test('a link-shaped string inside textarea or title text is not checked', () => {
   const result = check({ 'index.html': page('<title><a href="/missing/"></title><textarea><img src="/nope.png"></textarea>') });
   assert.equal(result.status, 0, result.output);
