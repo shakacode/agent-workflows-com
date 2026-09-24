@@ -161,6 +161,16 @@ section { padding: clamp(64px, 9vw, 118px) 0; border-top: 1px solid var(--line);
 .gatebadge::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--gate); }
 
 /* header + footer */
+.successor-banner {
+  margin: 0;
+  padding-block: 10px;
+  background: color-mix(in srgb, var(--brand) 16%, var(--bg));
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+.successor-banner .wrap { display: block; }
+.successor-banner a { color: var(--brand-ink); font-weight: 600; white-space: nowrap; }
 .site-header {
   position: sticky; top: 0; z-index: 20;
   backdrop-filter: blur(12px);
