@@ -1,5 +1,11 @@
 # agent-workflows-com
 
+> [!IMPORTANT]
+> Agent Workflows is now **[Shaka](https://github.com/shakacode/shaka)**. This site is
+> being replaced by a new Shaka docs site built in
+> [shakacode/shaka-shakacode-com](https://github.com/shakacode/shaka-shakacode-com),
+> and this repository will be archived after the switchover.
+
 Landing page and simple docs for the ShakaCode agent stack:
 
 - [agent-workflows](https://github.com/shakacode/agent-workflows) — the portable playbook/pack for running Codex and Claude Code across repos
