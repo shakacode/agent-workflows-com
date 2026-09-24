@@ -1,10 +1,10 @@
 # agent-workflows-com
 
 > [!IMPORTANT]
-> Agent Workflows is now **[Shaka](https://github.com/shakacode/shaka)**. This site is
-> being replaced by a new Shaka docs site built in
-> [shakacode/shaka-shakacode-com](https://github.com/shakacode/shaka-shakacode-com),
-> and this repository will be archived after the switchover.
+> Agent Workflows is now **[Shaka](https://github.com/shakacode/shaka)**, documented at
+> [shaka.shakacode.com](https://shaka.shakacode.com) (source:
+> [shakacode/shaka-shakacode-com](https://github.com/shakacode/shaka-shakacode-com)).
+> This site will redirect there, and this repository will be archived.
 
 Landing page and simple docs for the ShakaCode agent stack:
 
