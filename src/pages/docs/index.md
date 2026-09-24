@@ -15,6 +15,7 @@ pack: its versioned skills, workflow rules, and technical docs define what agent
   objective.
 - [Quickstart](/docs/quickstart/) — install the pack and run your first skill in minutes.
 - [Architecture](/docs/architecture/) — the pack, the seam, and the coordination backend.
+- [Stopping and restarting](/docs/restarts/) — optional preparation and recovery after interruption.
 - [Astra and model routing](/docs/astra/) — the advisory pilot, portable fallbacks, and evaluation guidance.
 - [Git-native distributions and customization](/docs/distributions/) — the target model for
   trusted Upstream Releases, explicit forks, and contribution back.
