@@ -4,7 +4,8 @@
 > Agent Workflows is now **[Shaka](https://github.com/shakacode/shaka)**, documented at
 > [shaka.shakacode.com](https://shaka.shakacode.com) (source:
 > [shakacode/shaka-shakacode-com](https://github.com/shakacode/shaka-shakacode-com)).
-> This site will redirect there, and this repository will be archived.
+> After switchover, this site redirects there. The repository remains as
+> historical source and will be archived after its open work is triaged.
 
 Landing page and simple docs for the ShakaCode agent stack:
 
@@ -12,12 +13,10 @@ Landing page and simple docs for the ShakaCode agent stack:
 - [agent-coordination](https://github.com/shakacode/agent-coordination) — coordination backend (claims, heartbeats, liveness)
 - [agent-coordination-dashboard](https://github.com/shakacode/agent-coordination-dashboard) — operator dashboard
 
-[![ShakaCode Agent Workflows — Run AI coding agents in fleets, safely](https://agents.shakacode.com/og.png)](https://agents.shakacode.com)
+**[Current Shaka documentation →](https://shaka.shakacode.com)**
 
-**[Documentation →](https://agents.shakacode.com)**
-
-Built with [Astro](https://astro.build). Deploys to Cloudflare Pages at
-[agents.shakacode.com](https://agents.shakacode.com).
+Built with [Astro](https://astro.build). The Cloudflare Pages project serves
+permanent redirects from the legacy domains to Shaka.
 
 Design source: [`docs/landing-page-design.md`](https://github.com/shakacode/agent-workflows/blob/main/docs/landing-page-design.md) in agent-workflows.
 
