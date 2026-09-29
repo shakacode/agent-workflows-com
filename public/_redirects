@@ -14,5 +14,7 @@
 /docs/throughput/ https://shaka.shakacode.com/principles 301
 /docs/throughput https://shaka.shakacode.com/principles 301
 /docs https://shaka.shakacode.com/docs 301
+/docs/architecture/ https://shaka.shakacode.com/docs/architecture 301
+/docs/architecture https://shaka.shakacode.com/docs/architecture 301
 /docs/* https://shaka.shakacode.com/docs 301
 /* https://shaka.shakacode.com/ 301
