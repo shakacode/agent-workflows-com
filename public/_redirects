@@ -1,0 +1,20 @@
+# Agent Workflows is retired; this site forwards to Shaka's docs site.
+# Cloudflare Pages uses the first matching rule.
+/og.png https://shaka.shakacode.com/img/brand/og-card.png 301
+/favicon.svg https://shaka.shakacode.com/img/brand/mark.svg 301
+/images/case-studies/ai-audit/* https://shaka.shakacode.com/img/case-studies/ai-audit/:splat 301
+/case-studies https://shaka.shakacode.com/case-studies 301
+/case-studies/* https://shaka.shakacode.com/case-studies/:splat 301
+/methodology/ https://shaka.shakacode.com/methodology 301
+/methodology https://shaka.shakacode.com/methodology 301
+/docs/quickstart/ https://shaka.shakacode.com/docs/getting-started 301
+/docs/quickstart https://shaka.shakacode.com/docs/getting-started 301
+/docs/terminology/ https://shaka.shakacode.com/glossary 301
+/docs/terminology https://shaka.shakacode.com/glossary 301
+/docs/throughput/ https://shaka.shakacode.com/principles 301
+/docs/throughput https://shaka.shakacode.com/principles 301
+/docs https://shaka.shakacode.com/docs 301
+/docs/architecture/ https://shaka.shakacode.com/docs/architecture 301
+/docs/architecture https://shaka.shakacode.com/docs/architecture 301
+/docs/* https://shaka.shakacode.com/docs 301
+/* https://shaka.shakacode.com/ 301
